@@ -40,20 +40,23 @@ Stable.AI/
 │   ├── public/
 │   │   └── vite.svg
 │   ├── src/
-│   │   ├── pages/
-│   │   │   ├── dashboard.jsx
-│   │   │   └── sensors.jsx
-│   │   ├── App.jsx
-│   │   ├── layout.jsx
-│   │   ├── main.jsx
+│   │   ├── Assets/
+│   │   │   ├── react.svg
 │   │   ├── App.css
+│   │   ├── App.jsx
 │   │   └── index.css
+│   │   ├── main.jsx
+│   ├── .gitignore
+│   ├── elint.config.js
 │   ├── index.html
 │   ├── vite.config.js
-│   └── package.json
+│   ├── package.json
+│   ├── package-lock.json
+│   └── README.md
 │
 ├── resources/
 ├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
