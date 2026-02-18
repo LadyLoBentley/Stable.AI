@@ -26,8 +26,6 @@ Stable.AI/
 ├── backend/
 │   ├── core/
 │   ├── db/
-│   │   ├── .env
-│   │   └── .env.example
 │   ├── models/
 │   ├── routers/
 │   ├── schemas/
