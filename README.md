@@ -59,8 +59,9 @@ Stable.AI/
 ├── LICENSE
 └── README.md
 ```
+---nano ~/.zshrc
 
----
+
 
 ## Running the Project
 
@@ -69,21 +70,6 @@ Backend and frontend run separately.
 ---
 
 ## Backend Setup (FastAPI)
-
-### Ensure that anaconda is NOT the framework. 
-
-Anytime I ran into any issues, it was because of anaconda. Ensure that you
-have the correct environment.
-
-```bash
-conda config --set auto_activate_base false
-echo $CONDA_DEFAULT_ENV
-which python
-```
-
-Python should NOT point to /opt/miniconda/3... Restart the terminal. :)
-
-### Set Up The Environment
 
 Ensure we are in the backend directory. Create a virtual environment, then activate it. Ensure all requirements is 
 met and FastAPI is installed.
