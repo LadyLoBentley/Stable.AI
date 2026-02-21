@@ -129,8 +129,37 @@ http://localhost:5173
 
 ### Database Setup (Supabase)
 
-Install the Supabase CLI
+Inside the `backend/` directory, create a `.env` file. This file contains secrets and **must not** be committed (it 
+should be listed in `.gitignore`).
+
+You may copy `backend/.env.example` and replace the placeholder values with your Supabase credentials:
+
+```env
+SUPABASE_URL=your_project_url
+SUPABASE_ANON_KEY=your_public_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+```
+
+Ensure that the Supabase client is installed:
 
 ```bash
-npm install supabase --save-dev
+cd backend
+source .venv/bin/activate
+pip install supabase python-dotenv
 ```
+
+### Testing Database Connection 
+
+Run the backend server:
+
+```bash 
+uvicorn main:app --reload --port 8002
+```
+
+Open browser:
+
+```
+http://127.0.0.1:8002/supabase/ping
+```
+
+You should receive a message (200) showing that the database is successfully connected.
