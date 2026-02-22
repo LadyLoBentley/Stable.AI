@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Header from "./component/Header.jsx"
+import Footer from "./component/Footer.jsx"
+import Card from "./component/Card.jsx"
+import spirit from "./assets/Spirit.jpg"
+import rain from "./assets/Rain.jpeg"
+import rooster from "./assets/Rooster.jpeg"
+import sweetPotato from "./assets/Sweet_Potato.jpeg"
+import taterTot from "./assets/Tater_Tot.jpeg"
+import clyde from "./assets/Clyde.jpeg"
+import alladin from "./assets/Alladin.jpeg"
+import frank from "./assets/Frank.jpeg"
+import daisy from "./assets/Daisy.jpg"
+import gingerbread from "./assets/Gingerbread.jpeg"
+import dusty from "./assets/Dusty.jpeg"
+import lady from "./assets/Lady.jpeg"
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    return (
+        <>
+            <Header/>
+            <div className="card-container">
+                <Card image={spirit} name="Spirit" status="Normal" location="Pasture A" nextTask="Feed PM"/>
+                <Card image={rain} name="Rain" status="Injury" location="Pasture A" nextTask="Replace Bandage"/>
+                <Card image={rooster} name="Rooster" status="Meds Due" location="Pasture B" nextTask="Give Medication 6:00PM"/>
+                <Card image={sweetPotato} name="Sweet Potato" status="Normal" location="Stall 01" nextTask="Feed PM"/>
+                <Card image={taterTot} name="Tater Tot" status="Normal" location="pasture C" nextTask="Feed PM"/>
+                <Card image={clyde} name="Clyde" status="Quarantine" location="Stall 10" nextTask={"Observation"}/>
+                <Card image={alladin} name="Alladin" status="Normal" location="Stall 02" nextTask="Feed PM"/>
+                <Card image={frank} name="Frank" status="Meds Due" location="stall 03" nextTask="Give Medication 6:00PM"/>
+                <Card image={daisy} name="Daisy" status="Normal" location="Pasture C" nextTask="Feed PM"/>
+                <Card image={gingerbread} name="Gingerbread" status="Normal" location="Stall 05" nextTask="Feed PM"/>
+                <Card image={dusty} name="Dusty" status="Injury" location="Stall 08" nextTask="Stretch Legs"/>
+                <Card image={lady} name="Lady" status="Normal" location="Pasture B" nextTask="Feed PM"/>
+            </div>
+            <Footer/>
+        </>
+    );
 }
 
 export default App
