@@ -1,0 +1,17 @@
+/* Font import */
+@import url('https://fonts.googleapis.com/css2?family=Allura&display=swap');
+
+.welcomeMessage{
+    font-family: 'Allura', cursive;
+    font-size: 2.5rem;
+    color: #16a34a;
+    letter-spacing:0.5px;
+}
+
+.loginPrompt{
+    font-family: Arial, sans-serif;
+    font-size: 2rem;
+    padding:0;
+    border-radius: 5px;
+    margin: 0;
+}
