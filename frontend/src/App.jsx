@@ -1,6 +1,7 @@
 import Header from "./component/Header.jsx"
 import Footer from "./component/Footer.jsx"
-import Horses from "./pages/Horses.jsx";
+//import Horses from "./pages/Horses.jsx";
+import Form from "./pages/HorseForm.jsx"
 
 function App() {
     const activeUser = "Lauren"
@@ -8,7 +9,7 @@ function App() {
     return (
         <>
             <Header user={activeUser}/>
-            <Horses />
+            <Form />
             <Footer />
         </>
     );

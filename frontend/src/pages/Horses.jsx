@@ -29,7 +29,7 @@ function Horses() {
             <Card image={gingerbread} name="Gingerbread" status="Normal" location="Stall 05" nextTask="Feed PM"/>
             <Card image={dusty} name="Dusty" status="Injury" location="Stall 08" nextTask="Stretch Legs"/>
             <Card image={lady} name="Lady" status="Normal" location="Pasture B" nextTask="Feed PM"/>
-            </div>
+        </div>
     );
 }
 
