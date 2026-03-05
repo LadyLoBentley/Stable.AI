@@ -14,7 +14,7 @@ import dusty from "../assets/Dusty.jpeg"
 import lady from "../assets/Lady.jpeg"
 import spirit from "../assets/Spirit.jpg"
 
-function Horses() {
+function Dashboard() {
     return (
         <div className="cardContainer">
             <Card image={spirit} name="Spirit" status="Normal" location="Pasture A" nextTask="Feed PM"/>
@@ -33,4 +33,4 @@ function Horses() {
     );
 }
 
-export default Horses;
+export default Dashboard;

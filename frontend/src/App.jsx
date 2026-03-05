@@ -1,6 +1,8 @@
+import { Routes, Route} from 'react-router-dom';
 import Header from "./component/Header.jsx"
 import Footer from "./component/Footer.jsx"
-import Horses from "./pages/Horses.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+
 
 function App() {
     const activeUser = "Lauren"
@@ -8,7 +10,9 @@ function App() {
     return (
         <>
             <Header user={activeUser}/>
-            <Horses />
+            <Routes>
+                <Route path="/" element={<Dashboard />} />
+            </Routes>
             <Footer />
         </>
     );
