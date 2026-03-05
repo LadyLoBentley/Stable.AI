@@ -1,7 +1,8 @@
 import { Routes, Route} from 'react-router-dom';
-import Header from "./component/Header.jsx"
-import Footer from "./component/Footer.jsx"
+import Header from "./components/Header.jsx"
+import Footer from "./components/Footer.jsx"
 import Dashboard from "./pages/Dashboard.jsx";
+import Chatbot from "./components/Chatbot/Chatbot.jsx";
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Dashboard />} />
             </Routes>
+            <Chatbot />
             <Footer />
         </>
     );
