@@ -1,8 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap');
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: "Inter", sans-serif;
+
+}
+
+.page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.appLayout {
+    display: flex;
+    flex: 1;
+    align-items: flex-start;
+}
+
+.mainContent {
+    flex: 1;
+    transition: all 0.3s ease;
 }
 
 /* Header Component*/
@@ -10,18 +32,58 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 32px;
+    padding: 14px 32px;
     background: white;
-    border-radius: 12px;
-    margin: 18px auto 10px;
-    max-width: 1400px;
-
-    box-shadow: 0 3px 10px rgba(0,0,0,0.06)
+    border-radius: 0;
+    margin: 0;
+    width: 100%;
+    height: 78px;
+    border-bottom: 1px solid #eee;
 }
 
-body {
-    margin: 0;
-    font-family: "Inter", sans-serif;
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.menuToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+}
+
+.menuToggle:hover {
+    background-color: #f0f0f0;
+}
+
+.menuToggle .material-symbols-rounded {
+    font-size: 30px;
+    color: #22a559;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: "Georgia", serif;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.logo span {
+    color: #22a559
+}
+
+.logoIcon img {
+    width: 50px;
+    height: 50px;
 }
 
 .cardContainer {
@@ -31,9 +93,31 @@ body {
     column-gap: 24px;
     row-gap: 48px;
     padding: 30px 20px;
-    max-width: 1400px;
+    width: 100%;
     margin: 0 auto;
     align-items: stretch;
+    background-color: #f0f0f0;
+}
+
+.footer {
+    color: #555;
+    font-size: 18px;
+    padding: 0 30px;
+    opacity: 0.8;
+    border-top: 1px solid #eee;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Georgia", serif;
+    font-weight: 700;
+}
+
+.footerLogoIcon img {
+    width: 20px;
+    height: 20px;
 }
 
 .material-symbols-rounded {

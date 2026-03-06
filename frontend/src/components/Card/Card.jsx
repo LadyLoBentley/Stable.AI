@@ -18,16 +18,9 @@ function Card(props) {
                 <h2 className={styles.cardTitle}>{props.name}</h2>
                 <p className={styles.cardText}>
                     <b>Status:</b> {props.status} <br />
-                    <b>Location:</b> {props.location} <br />
-                    <b>Next Task:</b> {props.nextTask}
+                    <b>Location:</b> {props.location}
                 </p>
 
-            </div>
-            <div className={styles.cardButton}>
-                <Button
-                    label="Open Profile"
-                    onClick={(e) => handleClick(e)}
-                />
             </div>
         </div>
     );

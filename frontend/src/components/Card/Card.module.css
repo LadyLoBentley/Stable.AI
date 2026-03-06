@@ -41,7 +41,7 @@
 }
 
 .cardTitle {
-    font-family: Arial, sans-serif;
+    font-family: "Georgia", serif;
     margin: 0;
     color: hsl(0, 0%, 20%);
     padding-bottom: 6px;
@@ -49,14 +49,7 @@
 }
 
 .cardText {
-    font-family: Arial, sans-serif;
     color: hsl(0, 0%, 30%);
     font-size: 18px;
     line-height: 1.4;
-}
-
-.cardButton {
-    margin-top: auto;
-    display: flex;
-    justify-content: center;
 }

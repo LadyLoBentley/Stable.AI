@@ -1,0 +1,46 @@
+.sidenav {
+    width: 0;
+    overflow: hidden;
+    background: white;
+    padding: 24px 0;
+    box-shadow: none;
+    transition: width 0.3s ease, padding 0.3s ease;
+    flex-shrink: 0;
+}
+
+.open {
+    width: 260px;
+    padding:24px;
+
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.navList {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.navList li {
+    margin: 8px 0;
+}
+
+.navList a {
+    display: block;
+    padding: 10px 16px;
+    color: #2e8b57;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+}
+
+.navList a:hover {
+    background-color: #22a559;
+    color: white;
+}
