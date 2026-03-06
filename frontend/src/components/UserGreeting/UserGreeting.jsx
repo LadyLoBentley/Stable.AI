@@ -4,7 +4,7 @@ function UserGreeting(props) {
 
 
     const welcomeMessage = <h2 className={styles.welcomeMessage}>
-                                    Howdy {props.name}
+                                    Howdy, {props.name}!
                                     </h2>
 
     const loginPrompt = <h2 className={styles.loginPrompt}>

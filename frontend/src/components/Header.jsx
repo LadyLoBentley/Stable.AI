@@ -4,7 +4,9 @@ function Header(props){
 
     return(
         <header className="header">
-            <h1>Stable.AI</h1>
+            <div class="logo">
+            Stable.<span>AI</span>
+            </div>
             <UserGreeting isLoggedIn={true} name={props.user}/>
         </header>
     );

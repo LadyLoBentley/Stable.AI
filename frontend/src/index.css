@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap');
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: "Inter", sans-serif;
@@ -10,18 +14,22 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 32px;
+    padding: 14px 32px;
     background: white;
-    border-radius: 12px;
-    margin: 18px auto 10px;
-    max-width: 1400px;
-
+    border-radius: 0;
+    margin: 0;
+    width: 100%;
     box-shadow: 0 3px 10px rgba(0,0,0,0.06)
 }
 
-body {
-    margin: 0;
-    font-family: "Inter", sans-serif;
+.logo {
+    font-family: "Georgia", serif;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.logo span {
+    color: #22a559
 }
 
 .cardContainer {
