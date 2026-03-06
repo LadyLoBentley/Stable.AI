@@ -7,6 +7,12 @@
 body {
     margin: 0;
     font-family: "Inter", sans-serif;
+
+}
+
+.appBody {
+    display: flex;
+    align-items: flex-start;
 }
 
 /* Header Component*/
@@ -19,10 +25,40 @@ body {
     border-radius: 0;
     margin: 0;
     width: 100%;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.06)
+    height: 78px;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.menuToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+}
+
+.menuToggle:hover {
+    background-color: #f0f0f0;
+}
+
+.menuToggle .material-symbols-rounded {
+    font-size: 30px;
+    color: #22a559;
 }
 
 .logo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     font-family: "Georgia", serif;
     font-size: 28px;
     font-weight: 700;
@@ -31,6 +67,12 @@ body {
 .logo span {
     color: #22a559
 }
+
+.logoIcon img {
+    width: 50px;
+    height: 50px;
+}
+
 
 .cardContainer {
     display: grid;
@@ -42,6 +84,26 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     align-items: stretch;
+}
+
+.footer {
+    color: #555;
+    font-size: 18px;
+    padding: 0 30px;
+    opacity: 0.8;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Georgia", serif;
+    font-weight: 700;
+}
+
+.footerLogoIcon img {
+    width: 20px;
+    height: 20px;
 }
 
 .material-symbols-rounded {
