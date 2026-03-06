@@ -16,25 +16,27 @@ function App() {
     const activeUser = "Lauren"
     const [showNav, setShowNav] = useState(false);
 
-    function toggleNav() {
+    function ToggleNav() {
         setShowNav(prev => !prev);
     }
 
-    function closeNav() {
+    function CloseNav() {
         setShowNav(false);
     }
 
     return (
         <div className="page">
-            <Header user={activeUser} toggleNav={toggleNav} />
+            <Header user={activeUser} toggleNav={ToggleNav} />
 
-            {showNav && <div className="overlay" onClick={closeNav}></div>}
+            <div className="appLayout">
+                <Navbar isOpen={showNav} closeNav={CloseNav} />
 
-            <navBar isOpen={showNav} closeNav={closeNav} />
-
-            <Routes>
-                <Route path="/" element={<Dashboard />} />
-            </Routes>
+                <main className={`mainContent ${showNav ? "navOpen" : ""}`}>
+                    <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                    </Routes>
+                </main>
+            </div>
 
             <Chatbot />
             <Footer />
