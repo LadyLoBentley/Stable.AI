@@ -2,7 +2,8 @@ import { Routes, Route} from 'react-router-dom';
 import { useState } from 'react';
 
 // Pages
-import Dashboard from "./pages/Dashboard.jsx";
+import Home from "./pages/Home.jsx";
+import AddInventoryForm from "./pages/AddInventoryForm.jsx";
 
 // Components
 import Header from "./components/Header.jsx"
@@ -33,7 +34,8 @@ function App() {
 
                 <main className={`mainContent ${showNav ? "navOpen" : ""}`}>
                     <Routes>
-                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/" element={<Home />} />
+                        <Route path="/add-item" element={<AddInventoryForm />} />
                     </Routes>
                 </main>
             </div>

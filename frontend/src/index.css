@@ -10,6 +10,22 @@ body {
 
 }
 
+.material-symbols-rounded {
+    font-family: 'Material Symbols Rounded', serif;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+}
+
+/*---------------- PAGE LAYOUT ----------------*/
+
 .page {
     min-height: 100vh;
     display: flex;
@@ -24,10 +40,13 @@ body {
 
 .mainContent {
     flex: 1;
+    background-color: #f0f0f0;
     transition: all 0.3s ease;
 }
 
-/* Header Component*/
+
+/*------------------ HEADER -------------------*/
+
 .header{
     display: flex;
     align-items: center;
@@ -86,6 +105,7 @@ body {
     height: 50px;
 }
 
+/*--------------------HOME---------------------*/
 .cardContainer {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -96,8 +116,384 @@ body {
     width: 100%;
     margin: 0 auto;
     align-items: stretch;
-    background-color: #f0f0f0;
 }
+
+/* ---------------- FORM PAGE ---------------- */
+.formContainer {
+    width: 100%;
+    max-width: 1280px;
+    background: #f0f0f0;
+
+    padding: 56px 58px 44px;
+    box-shadow: inset 0 0 0 1px #e8e8e8;
+    margin: 0 auto;
+}
+
+.formContainer h2 {
+    font-family: "Georgia", serif;
+    margin: 0 0 36px;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.05;
+}
+
+.formNote {
+    background: #eef7f1;
+    border-left: 4px solid #24b25f;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: #2f4f3f;
+    margin-bottom: 28px;
+}
+
+.formInputs {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+/* Dropdown fields */
+
+.dropdownFieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.customFieldBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 16px;
+}
+
+.field-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+/* Textarea Fields */
+
+.textareaLabelRow {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.charCount {
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-bottom: 0;
+}
+
+.charCount.good {
+    color: #24b25f;
+}
+
+.charCount.warning {
+    color: #c98900;
+}
+
+.charCount.danger {
+    color: #d94b4b;
+}
+
+/* Image upload */
+
+.uploadImageField {
+    display: flex;
+    flex-direction: column;
+}
+
+.uploadImageLabelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.uploadImageBox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.uploadImageInput {
+    display: none;
+}
+
+.uploadImageDropzone {
+    width: 100%;
+    min-height: 180px;
+    border: 1.5px dashed #cfcfcf;
+    border-radius: 20px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 24px;
+    text-align: center;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.uploadImageDropzone:hover {
+    border-color: #24b25f;
+    background: #f8fcf9;
+}
+
+.uploadImageTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1b1b1b;
+    font-family: "Georgia", serif;
+}
+
+.uploadImageSubtext {
+    font-size: 0.92rem;
+    color: #777;
+}
+
+.uploadImagePreviewCard {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border: 1.5px solid #dcdcdc;
+    border-radius: 20px;
+    background: #ffffff;
+    padding: 16px;
+}
+
+.uploadImagePreview {
+    width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    border-radius: 16px;
+    background: #f3f3f3;
+}
+
+.uploadImageMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.uploadImageName {
+    font-weight: 600;
+    color: #222;
+    word-break: break-word;
+}
+
+.uploadImageSize {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.uploadImageActions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.uploadImageActionButton {
+    min-width: 140px;
+    height: 48px;
+    border: none;
+    border-radius: 16px;
+    padding: 0 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Georgia", serif;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    box-sizing: border-box;
+}
+
+.uploadImageActionButton:hover {
+    transform: translateY(-1px);
+}
+
+.uploadImageActionButton.danger {
+    background: #fdeeee;
+    font-size: 15px;
+    color: #c44747;
+}
+
+.uploadImageActionButton.danger:hover {
+    background: #f9dfdf;
+}
+
+.uploadImageError {
+    font-size: 0.9rem;
+    color: #c44747;
+    font-weight: 500;
+}
+
+.formAlert {
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 22px;
+    border: 1px solid transparent;
+}
+
+.formAlert.success {
+    background: #eef7f1;
+    border-color: #cfe7d6;
+    color: #1f7d47;
+}
+
+.formAlert.error {
+    background: #fdeeee;
+    border-color: #f3caca;
+    color: #b03d3d;
+}
+
+/* Each row */
+.inventory-form-row1,
+.inventory-form-row2,
+.inventory-form-row3,
+.inventory-form-row4{
+    display: grid;
+    gap: 20px;
+    align-items: start;
+}
+
+.inventory-form-row1,
+.inventory-form-row2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.inventory-form-row3 {
+    grid-template-columns: 1fr;
+}
+
+/* ---------------- GENERIC FIELD STYLING ---------------- */
+.formInputs > div > div,
+.formInputs > div > label,
+.formInputs > div > * {
+    width: 100%;
+}
+
+.formContainer label {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1b1b1b;
+    font-family: "Georgia", serif;
+}
+
+.formContainer b {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1b1b1b;
+    font-family: "Georgia", serif;
+}
+
+/* inputs/selects/textarea */
+input,
+select,
+textarea {
+    width: 100%;
+    border: 1.5px solid #cfcfcf;
+    border-radius: 20px;
+    padding: 16px 20px;
+    background: #fff;
+    color: #111;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 0;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #9a9a9a;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #24b25f;
+    box-shadow: 0 0 0 4px rgba(36, 178, 95, 0.14);
+}
+
+input,
+select {
+    min-height: 72px;
+    font-size: 1.05rem;
+}
+
+textarea {
+    min-height: 120px;
+    line-height: 1.5;
+    font-size: 1.05rem;
+    padding-top: 16px;
+}
+
+.textareaLabelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.autoExpand {
+    overflow: hidden;
+    resize: none;
+}
+
+/* Error message */
+.fieldWrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.requiredMark {
+    font-weight: 700;
+    margin-left: 2px;
+}
+
+.inputError {
+    border-color: #d94b4b !important;
+    box-shadow: 0 0 0 4px rgba(217, 75, 75, 0.12) !important;
+}
+
+.fieldError {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 6px;
+    font-size: 0.88rem;
+    color: #d94b4b;
+    font-weight: 500;
+}
+
+/* ---------------- BUTTON ---------------- */
+.formButton {
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+}
+/*------------------FOOTER-------------------*/
 
 .footer {
     color: #555;
@@ -120,16 +516,3 @@ body {
     height: 20px;
 }
 
-.material-symbols-rounded {
-    font-family: 'Material Symbols Rounded', serif;
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-}

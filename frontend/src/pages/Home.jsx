@@ -14,7 +14,7 @@ import dusty from "../assets/Dusty.jpeg"
 import lady from "../assets/Lady.jpeg"
 import spirit from "../assets/Spirit.jpg"
 
-function Dashboard() {
+function Home() {
     return (
         <>
             <div className="cardContainer">
@@ -35,4 +35,4 @@ function Dashboard() {
     );
 }
 
-export default Dashboard;
+export default Home;

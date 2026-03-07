@@ -1,6 +1,7 @@
 /* Button Component */
 .button {
     font-size: 16px;
+    font-family: "Georgia", serif;
     background-color: #22c55e;
     color: white;
     padding: 10px 20px;
