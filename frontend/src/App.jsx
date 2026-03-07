@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 // Pages
 import Home from "./pages/Home.jsx";
+import Inventory from "./pages/Inventory.jsx";
 import AddInventoryForm from "./pages/AddInventoryForm.jsx";
 
 // Components
@@ -10,6 +11,7 @@ import Header from "./components/Header.jsx"
 import Navbar from "./components/Navbar/Navbar.jsx"
 import Chatbot from "./components/Chatbot/Chatbot.jsx";
 import Footer from "./components/Footer.jsx"
+
 
 
 function App() {
@@ -35,6 +37,7 @@ function App() {
                 <main className={`mainContent ${showNav ? "navOpen" : ""}`}>
                     <Routes>
                         <Route path="/" element={<Home />} />
+                        <Route path={"/inventory"} element={<Inventory />} />
                         <Route path="/add-item" element={<AddInventoryForm />} />
                     </Routes>
                 </main>
