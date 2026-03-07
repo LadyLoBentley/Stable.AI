@@ -12,7 +12,8 @@ class ItemResponse(SQLModel):
     instructions: str
     image_url: str
 
-    stock_status: StockStatus
+    stock_status: str
+    unit: str
 
     created_at: datetime
     updated_at: datetime

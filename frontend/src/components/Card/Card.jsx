@@ -1,26 +1,35 @@
-import Button from "../Button/Button.jsx"
+import styles from "./Card.module.css";
 
-import styles from "./Card.module.css"
-
-function Card(props) {
-
-    const handleClick = (e) => console.log(e);
-
+function Card({
+    image,
+    imageAlt = "Card image",
+    title,
+    details = [],
+    onClick
+}) {
     return (
-        <div className={styles.card}>
+        <div
+            className={styles.card}
+            onClick={onClick}
+            role="button"
+            tabIndex={0}
+        >
             <div className={styles.cardBody}>
                 <img
                     className={styles.cardImage}
-                    src={props.image}
-                    alt="Spirit the horse"
-                    onClick={(e) => handleClick(e)}
+                    src={image}
+                    alt={imageAlt}
                 />
-                <h2 className={styles.cardTitle}>{props.name}</h2>
-                <p className={styles.cardText}>
-                    <b>Status:</b> {props.status} <br />
-                    <b>Location:</b> {props.location}
-                </p>
 
+                <h2 className={styles.cardTitle}>{title}</h2>
+
+                <div className={styles.cardText}>
+                    {details.map((detail, index) => (
+                        <p key={index}>
+                            <b>{detail.label}:</b> {detail.value}
+                        </p>
+                    ))}
+                </div>
             </div>
         </div>
     );

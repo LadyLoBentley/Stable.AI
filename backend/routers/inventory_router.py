@@ -60,9 +60,10 @@ def get_inventory(session: Session = Depends(get_session)):
             quantity = item.quantity,
             category = item.category,
             grade = item.grade,
+            unit = item.unit,
             instructions = item.instructions,
             image_url = item.image_url,
-            stock_status = item.stock_status,
+            stock_status = item.stock_status.label,
             created_at = item.created_at,
             updated_at = item.updated_at
         )

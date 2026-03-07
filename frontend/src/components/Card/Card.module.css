@@ -1,55 +1,77 @@
-/* Card Component*/
+/* Card Component */
 
-.card{
-
+.card {
     border: 1px solid hsl(0, 0%, 85%);
     border-radius: 12px;
     box-shadow: 0px 6px 18px hsla(0, 0%, 0%, 0.08);
-    padding: 14px 16px;
-    text-align: center;
+    padding: 16px;
     background: white;
-    gap: 12px;
 
     display: flex;
     flex-direction: column;
     height: 100%;
 
+    cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .card:hover{
     z-index: 10;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow:
-            0 10px 24px hsla(0, 0%, 0%, 0.10),
-            0 0 0 2px rgba(34, 197, 94, 0.25);
+        0 10px 24px hsla(0, 0%, 0%, 0.10),
+        0 0 0 2px rgba(34, 197, 94, 0.25);
 }
 
+/* Image */
+
 .cardImage{
-    height: 80%;
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: 10px;
+    margin-bottom: 10px;
 }
 
+/* Body */
+
 .cardBody{
-    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 8px;
 }
+
+/* Title */
 
 .cardTitle {
     font-family: "Georgia", serif;
+    font-size: 24px;
     margin: 0;
     color: hsl(0, 0%, 20%);
-    padding-bottom: 6px;
+    padding-bottom: 8px;
     border-bottom: 1px solid hsl(0, 0%, 92%);
 }
 
+/* Metadata container */
+
 .cardText {
-    color: hsl(0, 0%, 30%);
-    font-size: 18px;
-    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    color: hsl(0, 0%, 35%);
+    font-size: 16px;
+}
+
+/* Each metadata line */
+
+.cardText p {
+    margin: 0;
+}
+
+/* Labels */
+
+.cardText b {
+    color: hsl(0, 0%, 25%);
+    font-weight: 600;
 }
