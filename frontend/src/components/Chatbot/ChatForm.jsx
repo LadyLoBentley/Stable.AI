@@ -17,9 +17,9 @@ const ChatForm = ({chatHistory, setChatHistory, generateBotResponse}) => {
         // Update chat history with the user's message
         setChatHistory(history => [...history, {role: "user", text: userMessage}]);
 
-        // Add a "Thinking..." placeholder for the bot's response
+        // Add a "Thinking..." __init__.py for the bot's response
         setTimeout(() => {
-            // Add a "Thinking..." placeholder for the bot's response
+            // Add a "Thinking..." __init__.py for the bot's response
             setChatHistory((history) => [...history, {role: "bot", text: "Thinking..."}]);
 
             // Call function to generate bot's response
