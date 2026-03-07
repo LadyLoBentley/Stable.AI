@@ -53,7 +53,6 @@ export function AddInventoryForm() {
                 return "";
 
             case "quantity":
-                if (value === "" || value === null) return "Quantity is required.";
                 if (Number(value) < 0) return "Quantity cannot be negative.";
                 return "";
 
@@ -123,6 +122,8 @@ export function AddInventoryForm() {
 
     //--------------------Handle Form Submission------------------//
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     useEffect(() => {
         if (!submitStatus.message) return;
 
@@ -174,7 +175,7 @@ export function AddInventoryForm() {
         try {
             const formData = new FormData();
             formData.append("label", label);
-            formData.append("Quantity", quantity);
+            formData.append("quantity", quantity);
             formData.append("category", category);
             formData.append("grade", grade);
             formData.append("instructions", instructions);
@@ -183,7 +184,7 @@ export function AddInventoryForm() {
                 formData.append("image", imageFile);
             }
 
-            const response = await fetch("", {
+            const response = await fetch("http://localhost:8002/api/inventory/", {
                 method: "POST",
                 body: formData
             })
@@ -191,12 +192,12 @@ export function AddInventoryForm() {
             const result = await response.json();
 
             if (!response.ok) {
-                throw new Error(result.error || "Failed to add inventory item.");
+                throw new Error(result.detail || "Failed to add inventory item.");
             }
 
             setSubmitStatus({
                 type: "success",
-                message: "Item has successfully submitted."
+                message: "Item submitted successfully."
             });
 
             setLabel("");
@@ -342,7 +343,7 @@ export function AddInventoryForm() {
                             icon_label="Item image help"
                             title="Item Image"
                             body="Upload one clear image of the item for quick identification. Only one image is allowed."
-                            maxSizeMB={10}
+                            maxSizeMB={5}
                             isRequired={true}
                             error={touched.imageFile ? errors.imageFile : ""}
                             onBlur={() => handleBlur("imageFile", imageFile)}
