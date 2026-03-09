@@ -1,4 +1,5 @@
-import {useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { handleBlur, updateField } from "./../utils/formUtil.js"
 
 // Form components
 import TextField from "../components/Form/TextField.jsx"
@@ -77,31 +78,6 @@ export function AddInventoryForm() {
         }
     }
 
-    // Marks a field as touched
-    function handleBlur(fieldName, value) {
-        setTouched((prev) => ({
-            ...prev,
-            [fieldName]: true
-        }));
-
-        setErrors((prev) => ({
-            ...prev,
-            [fieldName]: validateField(fieldName, value)
-        }));
-    }
-
-    // Updates an error when value changes
-    function updateField(fieldName, value, setter) {
-        setter(value);
-
-        if (touched[fieldName]) {
-            setErrors((prev) => ({
-                ...prev,
-                [fieldName]: validateField(fieldName, value),
-            }));
-        }
-    }
-
     //-------------------------Item Label-------------------------//
     const [label, setLabel] = useState("");
 
@@ -121,8 +97,6 @@ export function AddInventoryForm() {
     const [imageFile, setImageFile] = useState(null);
 
     //--------------------Handle Form Submission------------------//
-
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (!submitStatus.message) return;
@@ -254,7 +228,7 @@ export function AddInventoryForm() {
                             label={<b>Item: </b>}
                             placeholder="Enter Item Label"
                             value={label}
-                            onChange={(value) => updateField("label", value, setLabel)}
+                            onChange={(value) =>updateField("label", value, setLabel, touched, setErrors, validateField)}
                             icon_label="Item help"
                             title="Item Label"
                             body="Use the common name staff would recognize immediately.
@@ -265,7 +239,7 @@ export function AddInventoryForm() {
                                 Examples: Farnam – Fly Spray or Alfalfa Hay"
                             isRequired={true}
                             error={touched.label ? errors.label : ""}
-                            onBlur={() => handleBlur("label", label)}
+                            onBlur={() => handleBlur("label", label, setTouched, setErrors, validateField)}
                         />
 
                         <NumberField                    // Quantity Field
@@ -273,13 +247,13 @@ export function AddInventoryForm() {
                             label={<b>Quantity: </b>}
                             value={quantity}
                             placeholder={0}
-                            onChange={(value) => updateField("quantity", value, setQuantity)}
+                            onChange={(value) =>updateField("quantity", value, setQuantity, touched, setErrors, validateField)}
                             icon_label="Quantity help"
                             title="Item Quantity"
                             body="Enter the current quantity available in inventory. Quantity cannot be negative."
                             error={touched.quantity ? errors.quantity : ""}
+                            onBlur={() => handleBlur("quantity", quantity, setTouched, setErrors, validateField)}
                         />
-
                     </div>
                     <div className="inventory-form-row2">
 
@@ -288,7 +262,7 @@ export function AddInventoryForm() {
                             label={<b>Category: </b>}
                             options={categoryOptions}
                             value={category}
-                            onChange={(value) => updateField("category", value, setCategory)}
+                            onChange={(value) =>updateField("category", value, setCategory, touched, setErrors, validateField)}
                             allowCustom={true}
                             customLabel={<b>Specify Category: </b>}
                             icon_label="Category help"
@@ -296,7 +270,7 @@ export function AddInventoryForm() {
                             body="Choose the closest match. Use Other only when the item does not fit an existing category."
                             isRequired={true}
                             error={touched.category ? errors.category : ""}
-                            onBlur={() => handleBlur("category", category)}
+                            onBlur={() => handleBlur("category", category, setTouched, setErrors, validateField)}
                         />
 
                         <DropdownField                  // Grade Field
@@ -304,7 +278,7 @@ export function AddInventoryForm() {
                             label={<b>Grade: </b>}
                             options={gradeOptions}
                             value={grade}
-                            onChange={(value) => updateField("grade", value, setGrade)}
+                            onChange={(value) =>updateField("grade", value, setGrade, touched, setErrors, validateField)}
                             allowCustom={false}
                             customLabel={<b>Specify Grade: </b>}
                             icon_label="Grade help"
@@ -312,7 +286,7 @@ export function AddInventoryForm() {
                             body="Use grade for products with quality levels, such as hay. If the item does not have a grade, select Not Applicable."
                             isRequired={true}
                             error={touched.grade ? errors.grade : ""}
-                            onBlur={() => handleBlur("grade", grade)}
+                            onBlur={() => handleBlur("grade", grade, setTouched, setErrors, validateField)}
                         />
 
                     </div>
@@ -322,14 +296,14 @@ export function AddInventoryForm() {
                             label={<b>Instructions: </b>}
                             value={instructions}
                             placeholder="Enter Instructions for product use"
-                            onChange={(value) => updateField("instructions", value, setInstructions)}
+                            onChange={(value) =>updateField("instructions", value, setInstructions, touched, setErrors, validateField)}
                             maxLength={1000}
                             icon_label="Instructions help"
                             title="Instructions"
                             body="Add notes for use, dosage, feeding directions, storage, or handling so staff know exactly how the item should be used."
                             isRequired={true}
                             error={touched.instructions ? errors.instructions : ""}
-                            onBlur={() => handleBlur("instructions", instructions)}
+                            onBlur={() => handleBlur("instructions", instructions, setTouched, setErrors, validateField)}
                             touched={touched.instructions}
                         />
                     </div>
@@ -339,14 +313,14 @@ export function AddInventoryForm() {
                             id="item-image"
                             label={<b>Item Image:</b>}
                             value={imageFile}
-                            onChange={(file) => updateField("imageFile", file, setImageFile)}
+                            onChange={(value) => updateField("imageFile", value, setImageFile, touched, setErrors, validateField)}
                             icon_label="Item image help"
                             title="Item Image"
                             body="Upload one clear image of the item for quick identification. Only one image is allowed."
                             maxSizeMB={5}
                             isRequired={true}
                             error={touched.imageFile ? errors.imageFile : ""}
-                            onBlur={() => handleBlur("imageFile", imageFile)}
+                            onBlur={() => handleBlur("imageFile", imageFile, setTouched, setErrors, validateField)}
                         />
                     </div>
 

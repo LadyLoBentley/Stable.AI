@@ -2,6 +2,7 @@ import InfoTip from '../InfoTip/InfoTip.jsx';
 
 function TextField({
                        id,
+                       type="text",
                        label,
                        placeholder,
                        value,
@@ -32,7 +33,7 @@ function TextField({
             </span>
         </label>
             <input
-                type="text"
+                type={type}
                 id={id}
                 name={label}
                 placeholder={placeholder}

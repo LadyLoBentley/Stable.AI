@@ -7,7 +7,6 @@
 body {
     margin: 0;
     font-family: "Inter", sans-serif;
-    background-color: #f0f0f0;
 
 }
 
@@ -36,12 +35,11 @@ body {
 .appLayout {
     display: flex;
     flex: 1;
-    align-items: flex-start;
+    background-color: #f0f0f0;
 }
 
 .mainContent {
     flex: 1;
-    background-color: #f0f0f0;
     transition: all 0.3s ease;
 }
 
@@ -58,7 +56,7 @@ body {
     margin: 0;
     width: 100%;
     height: 78px;
-    border-bottom: 1px solid #eee;
+
 }
 
 .headerLeft {
@@ -123,7 +121,7 @@ body {
 .mainTitle {
     font-family: "Georgia", serif;
     margin: 30px 20px 10px;
-    font-size: 3rem;
+    font-size: 2.5rem;
     font-weight: 700;
     color: #111;
     line-height: 1.05;
@@ -146,7 +144,8 @@ body {
 .formContainer {
     width: 100%;
     max-width: 1280px;
-    background: #f0f0f0;
+    background: white;
+
 
     padding: 56px 58px 44px;
     box-shadow: inset 0 0 0 1px #e8e8e8;
@@ -156,7 +155,7 @@ body {
 .formContainer h2{
     font-family: "Georgia", serif;
     margin: 0 0 36px;
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 700;
     color: #111;
     line-height: 1.05;
@@ -409,7 +408,16 @@ body {
     grid-template-columns: 1fr;
 }
 
+
 /* ---------------- GENERIC FIELD STYLING ---------------- */
+
+
+.stallFieldsRow {
+    display: flex;
+    gap: 20px;
+    align-items: end;
+}
+
 .formInputs > div > div,
 .formInputs > div > label,
 .formInputs > div > * {
@@ -431,7 +439,7 @@ body {
 }
 
 /* inputs/selects/textarea */
-input,
+input:not([type="checkbox"]),
 select,
 textarea {
     width: 100%;
@@ -457,7 +465,15 @@ textarea:focus {
     box-shadow: 0 0 0 4px rgba(36, 178, 95, 0.14);
 }
 
-input,
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    height: 72px;
+}
+
+input:not([type="checkbox"]),
 select {
     min-height: 72px;
     font-size: 1.05rem;
@@ -482,6 +498,32 @@ textarea {
 .autoExpand {
     overflow: hidden;
     resize: none;
+}
+
+/* Checkbox design */
+.checkboxFieldWrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+}
+
+.checkboxRow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: fit-content;
+}
+
+.checkboxInput {
+    width: 24px !important;
+    height: 24px;
+    min-height: 24px !important;
+    padding: 0 !important;
+    margin: 0;
+    border-radius: 6px !important;
+    flex-shrink: 0;
+
+    accent-color: #24b25f;
 }
 
 /* Error message */
@@ -525,7 +567,7 @@ textarea {
     font-size: 18px;
     padding: 0 30px;
     opacity: 0.8;
-    border-top: 1px solid #eee;
+
 }
 
 .footer-logo {

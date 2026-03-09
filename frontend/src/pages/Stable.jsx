@@ -14,7 +14,8 @@ import dusty from "../assets/Dusty.jpeg";
 import lady from "../assets/Lady.jpeg";
 import spirit from "../assets/Spirit.jpg";
 
-function Home() {
+function Stable() {
+
     const horses = [
         {
             id: 1,
@@ -151,19 +152,22 @@ function Home() {
     ];
 
     return (
-        <div className="cardContainer">
-            {horses.map((horse) => (
-                <Card
-                    key={horse.id}
-                    image={horse.image}
-                    imageAlt={horse.imageAlt}
-                    title={horse.title}
-                    details={horse.details}
-                    onClick={() => console.log(`Open profile for ${horse.title}`)}
-                />
-            ))}
-        </div>
+        <>
+            <h2 className="mainTitle">Horses</h2>
+            <div className="cardContainer">
+                {horses.map((horse) => (
+                    <Card
+                        key={horse.id}
+                        image={horse.image}
+                        imageAlt={horse.imageAlt}
+                        title={horse.title}
+                        details={horse.details}
+                        onClick={() => console.log(`Open profile for ${horse.title}`)}
+                    />
+                ))}
+            </div>
+        </>
     );
 }
 
-export default Home;
+export default Stable;
