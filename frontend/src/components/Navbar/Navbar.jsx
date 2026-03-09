@@ -63,6 +63,7 @@ const Navbar = ({ isOpen, closeNav }) => {
                     )}
                 </li>
 
+                {/*
                 <li>
                     <div className={styles.sectionHeader}>
                         <a href="/documents">Documents</a>
@@ -82,8 +83,9 @@ const Navbar = ({ isOpen, closeNav }) => {
                         <ul className={styles.subList}>
                             <li><a href="/add-document">+ Document</a></li>
                         </ul>
-                    )}
                 </li>
+
+                */}
             </ul>
         </aside>
     );
