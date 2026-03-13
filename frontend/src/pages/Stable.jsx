@@ -23,9 +23,9 @@ function Stable() {
             title: "Spirit",
             imageAlt: "Spirit the horse",
             details: [
-                { label: "Status", value: "Normal" },
-                { label: "Location", value: "Pasture A" },
-                { label: "Next Task", value: "Feed PM" }
+                { label: "Sex", value: "Stallion" },
+                { label: "Breed", value: "Mustang" },
+                { label: "Location", value: "Stallion Paddock" }
             ]
         },
         {
@@ -34,9 +34,9 @@ function Stable() {
             title: "Rain",
             imageAlt: "Rain the horse",
             details: [
-                { label: "Status", value: "Injury" },
-                { label: "Location", value: "Pasture A" },
-                { label: "Next Task", value: "Replace Bandage" }
+                { label: "Sex", value: "Mare" },
+                { label: "Breed", value: "American Paint Horse" },
+                { label: "Location", value: "Mare's Meadow" }
             ]
         },
         {
@@ -45,9 +45,9 @@ function Stable() {
             title: "Rooster",
             imageAlt: "Rooster the horse",
             details: [
-                { label: "Status", value: "Meds Due" },
-                { label: "Location", value: "Pasture B" },
-                { label: "Next Task", value: "Give Medication 6:00 PM" }
+                { label: "Sex", value: "Gelding" },
+                { label: "Breed", value: "Appaloosa" },
+                { label: "Location", value: "Gelding's Field" }
             ]
         },
         {
@@ -56,9 +56,9 @@ function Stable() {
             title: "Sweet Potato",
             imageAlt: "Sweet Potato the horse",
             details: [
-                { label: "Status", value: "Normal" },
-                { label: "Location", value: "Stall 01" },
-                { label: "Next Task", value: "Feed PM" }
+                { label: "Sex", value: "Gelding" },
+                { label: "Breed", value: "American Warmblood" },
+                { label: "Location", value: "Main Barn - Stall 01" },
             ]
         },
         {
@@ -67,9 +67,9 @@ function Stable() {
             title: "Tater Tot",
             imageAlt: "Tater Tot the horse",
             details: [
-                { label: "Status", value: "Normal" },
-                { label: "Location", value: "Pasture C" },
-                { label: "Next Task", value: "Feed PM" }
+                { label: "Sex", value: "Gelding" },
+                { label: "Breed", value: "Shetland Pony" },
+                { label: "Location", value: "Pony Paddock" }
             ]
         },
         {
@@ -78,9 +78,9 @@ function Stable() {
             title: "Clyde",
             imageAlt: "Clyde the horse",
             details: [
-                { label: "Status", value: "Quarantine" },
-                { label: "Location", value: "Stall 10" },
-                { label: "Next Task", value: "Observation" }
+                { label: "Sex", value: "Gelding" },
+                { label: "Breed", value: "Quarter Horse" },
+                { label: "Location", value: "Main Barn - Stall 10" },
             ]
         },
         {
@@ -89,9 +89,9 @@ function Stable() {
             title: "Alladin",
             imageAlt: "Alladin the horse",
             details: [
-                { label: "Status", value: "Normal" },
-                { label: "Location", value: "Stall 02" },
-                { label: "Next Task", value: "Feed PM" }
+                { label: "Sex", value: "Stallion" },
+                { label: "Breed", value: "Arabian" },
+                { label: "Location", value: "Main Barn - Stall 02" },
             ]
         },
         {
@@ -100,9 +100,9 @@ function Stable() {
             title: "Frank",
             imageAlt: "Frank the horse",
             details: [
-                { label: "Status", value: "Meds Due" },
-                { label: "Location", value: "Stall 03" },
-                { label: "Next Task", value: "Give Medication 6:00 PM" }
+                { label: "Sex", value: "Gelding" },
+                { label: "Breed", value: "Quarter Horse" },
+                { label: "Location", value: "Main Barn - Stall 03" },
             ]
         },
         {
@@ -111,9 +111,9 @@ function Stable() {
             title: "Daisy",
             imageAlt: "Daisy the horse",
             details: [
-                { label: "Status", value: "Normal" },
-                { label: "Location", value: "Pasture C" },
-                { label: "Next Task", value: "Feed PM" }
+                { label: "Sex", value: "Mare" },
+                { label: "Breed", value: "Shetland Pony" },
+                { label: "Location", value: "Pony Paddock" },
             ]
         },
         {
@@ -122,9 +122,9 @@ function Stable() {
             title: "Gingerbread",
             imageAlt: "Gingerbread the horse",
             details: [
-                { label: "Status", value: "Normal" },
-                { label: "Location", value: "Stall 05" },
-                { label: "Next Task", value: "Feed PM" }
+                { label: "Sex", value: "Mare" },
+                { label: "Breed", value: "American Paint Horse" },
+                { label: "Location", value: "Main Barn - Stall 05" },
             ]
         },
         {
@@ -133,9 +133,9 @@ function Stable() {
             title: "Dusty",
             imageAlt: "Dusty the horse",
             details: [
-                { label: "Status", value: "Injury" },
-                { label: "Location", value: "Stall 08" },
-                { label: "Next Task", value: "Stretch Legs" }
+                { label: "Sex", value: "Gelding" },
+                { label: "Breed", value: "Unknown" },
+                { label: "Location", value: "Main Barn - Stall 08" },
             ]
         },
         {
@@ -144,9 +144,9 @@ function Stable() {
             title: "Lady",
             imageAlt: "Lady the horse",
             details: [
-                { label: "Status", value: "Normal" },
-                { label: "Location", value: "Pasture B" },
-                { label: "Next Task", value: "Feed PM" }
+                { label: "Sex", value: "Mare" },
+                { label: "Breed", value: "Cross-Breed" },
+                { label: "Location", value: "Mare's Meadow" },
             ]
         }
     ];
