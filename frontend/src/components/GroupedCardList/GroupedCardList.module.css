@@ -1,0 +1,57 @@
+.groupedList {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: 30px 20px;
+    width: 100%;
+}
+
+.groupSection {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.groupHeader {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #dcdcdc;
+    font-family: "Georgia", serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #222;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.2s ease;
+}
+
+.groupMeta {
+    font-family: "Inter", sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #666;
+    min-width: 24px;
+    text-align: right;
+    transition: color 0.2s ease;
+}
+
+.groupHeader:hover {
+    color: #24b25f;
+    transform: translateX(2px);
+}
+
+.groupHeader:hover .groupMeta {
+    color: #24b25f;
+}
+
+.cardGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
