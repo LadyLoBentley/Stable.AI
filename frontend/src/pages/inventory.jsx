@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Card from "../components/Card/Card.jsx";
+import GroupedCardList from "../components/GroupedCardList/GroupedCardList.jsx";
 
 function Inventory() {
     const [inventoryItems, setInventoryItems] = useState([]);
@@ -44,29 +44,24 @@ function Inventory() {
         return <p className="pageMessage">No items found.</p>;
     }
 
-
     return (
-        <>
-        <h2 className="mainTitle">Inventory</h2>
+        <div className="inventory-page">
+            <h1 className="mainTitle">Inventory</h1>
 
-        <div className="cardContainer">
-            {inventoryItems.map((item) => (
-                <Card
-                    key={item.item_id}
-                    image={item.image_url}
-                    imageAlt={item.label}
-                    title={item.label}
-                    details={[
-                        { label: "Quantity", value: `${item.quantity} ${item.unit}` },
-                        { label: "Category", value: item.category },
-                        { label: "Grade", value: item.grade },
-                        { label: "Stock Status", value: item.stock_status }
-                    ]}
-                    onClick={() => console.log(`Open inventory item ${item.item_id}`)}
-                />
-            ))}
+            <GroupedCardList
+                items={inventoryItems}
+                groupBy={(item) => item.category || "Other"}
+                getKey={(item) => item.item_id}
+                getImage={(item) => item.image_url || ""}
+                getImageAlt={(item) => item.label || "Inventory item"}
+                getTitle={(item) => item.label}
+                getDetails={(item) => [
+                    { label: "Quantity", value: `${item.quantity ?? 0} ${item.unit || ""}`.trim() },
+                    { label: "Grade", value: item.grade || "Not Applicable" },
+                    { label: "Stock Status", value: item.stock_status || "Unknown" },
+                ]}
+            />
         </div>
-        </>
     );
 }
 
