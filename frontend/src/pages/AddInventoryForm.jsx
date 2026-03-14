@@ -16,7 +16,10 @@ export function AddInventoryForm() {
         "Grain",
         "Treats",
         "Supplements",
+        "Food Additive",
+        "Electrolytes",
         "Medication",
+        "Dewormer",
         "Grooming",
         "Barn Supplies",
         "Other"
@@ -149,7 +152,7 @@ export function AddInventoryForm() {
         try {
             const formData = new FormData();
             formData.append("label", label);
-            formData.append("quantity", quantity);
+            formData.append("quantity", String(quantity));
             formData.append("category", category);
             formData.append("grade", grade);
             formData.append("instructions", instructions);
@@ -161,13 +164,13 @@ export function AddInventoryForm() {
             const response = await fetch("http://localhost:8002/api/inventory/", {
                 method: "POST",
                 body: formData
-            })
+            });
 
-            const result = await response.json();
+            const text = await response.text();
 
             if (!response.ok) {
-                throw new Error(result.detail || "Failed to add inventory item.");
-            }
+                throw new Error(text || "Failed to add inventory item.");
+}
 
             setSubmitStatus({
                 type: "success",
@@ -190,12 +193,12 @@ export function AddInventoryForm() {
                 instructions: false,
                 imageFile: false,
             });
-        }
-        catch (err) {
+        } catch (err) {
+            console.error("Submit error:", err);
             setSubmitStatus({
                 type: "error",
                 message: err.message || "Something went wrong while submitting the item."
-            })
+            });
         }
     }
 
@@ -326,7 +329,7 @@ export function AddInventoryForm() {
 
                 </div>
                 <div className="formButton">
-                <Button label="Add Item"/>
+               <Button type="submit" label="Add Item" />
                 </div>
             </form>
         </div>

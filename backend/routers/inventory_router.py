@@ -37,16 +37,17 @@ async def add_inventory(
     )
 
     return ItemResponse(
-        item_id = create_item.item_id,
-        label = create_item.label,
-        quantity = create_item.quantity,
-        category = create_item.category,
-        grade = create_item.grade,
-        instructions = create_item.instructions,
-        image_url = create_item.image_url,
-        stock_status = create_item.stock_status,
-        created_at = create_item.created_at,
-        updated_at = create_item.updated_at,
+        item_id=create_item.item_id,
+        label=create_item.label,
+        quantity=create_item.quantity,
+        category=create_item.category,
+        grade=create_item.grade,
+        unit=create_item.unit,
+        instructions=create_item.instructions,
+        image_url=create_item.image_url,
+        stock_status=create_item.stock_status.label,
+        created_at=create_item.created_at,
+        updated_at=create_item.updated_at,
     )
 
 @router.get("/", response_model=list[ItemResponse])

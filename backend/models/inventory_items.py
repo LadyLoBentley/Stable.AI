@@ -16,6 +16,19 @@ class StockStatus(str, Enum):
             "in_stock": "In Stock",
         }[self.value]
 
+CATEGORY_CONFIG = {
+        "Hay": {"unit": "bales", "threshold": 20},
+        "Supplements": {"unit": "tubs", "threshold": 2},
+        "Electrolytes": {"unit": "tubs", "threshold": 2},
+        "Medication": {"unit": "doses", "threshold": 2},
+        "Food Additive": {"unit": "bags", "threshold": 10},
+        "Grooming": {"unit": "items", "threshold": 3},
+        "Barn Supplies": {"unit": "units", "threshold": 5},
+        "Grain": {"unit": "bags", "threshold": 10},
+        "Dewormer": {"unit": "doses", "threshold": 15},
+        "Treats": {"unit": "bags", "threshold": 5},
+    }
+
 def now_utc() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -23,51 +36,12 @@ class InventoryItems(SQLModel, table=True) :
     __tablename__ = "inventory_items"
 
     @property
-    def unit(self) -> str:
-        if self.category == "Hay":
-            return "bales"
-
-        if self.category == "Supplements":
-            return "tubs"
-
-        if self.category == "Medication":
-            return "doses"
-
-        if self.category == "Grooming":
-            return "bottles"
-
-        if self.category == "Barn Supplies":
-            return "units"
-
-        if self.category == "Grain":
-            return "bags"
-
-        if self.category == "Treats":
-            return "bags"
-
-        return "units"
+    def unit(self):
+        return CATEGORY_CONFIG.get(self.category, {}).get("unit", "units")
 
     @property
-    def low_stock_threshold(self) -> int:
-        if self.category == "Hay":
-            return 20
-
-        if self.category == "Grooming":
-            return 3
-
-        if self.category == "Supplements":
-            return 2
-
-        if self.category == "Medication":
-            return 2
-
-        if self.category == "Grain":
-            return 10
-
-        if self.category == "Treats":
-            return 5
-
-        return 5
+    def low_stock_threshold(self):
+        return CATEGORY_CONFIG.get(self.category, {}).get("threshold", 5)
 
     @property
     def stock_status(self) -> StockStatus:
@@ -88,7 +62,7 @@ class InventoryItems(SQLModel, table=True) :
     quantity: int = Field(index=True, default=0)
     category: str = Field(index=True)
     grade: str = Field(index=True)
-    instructions: str = Field(max_length=1000)
+    instructions: str = Field()
     image_url: str = Field()
 
     # datetime metadata
