@@ -437,7 +437,10 @@ function HorseForm() {
                             onBlur={() => handleBlur("breed", formData.breed, setTouched, setErrors, validateField)}
                         />
                         </div>
+                    </div>
 
+                    <div className="formSection">
+                        <h3>Location Assignment</h3>
                         <div className="inventory-form-row2">
                             <CheckboxField
                                 id="hasStall"
@@ -500,7 +503,10 @@ function HorseForm() {
                                     }
                                 />
                         </div>
+                    </div>
 
+                    <div className="formSection">
+                        <h3>Horse Disposition & Notes</h3>
                         <div className="inventory-form-row3">
                             <TextAreaField
                                 id="temperament"
@@ -533,10 +539,15 @@ function HorseForm() {
                                 onBlur={() => handleBlur("notes", formData.notes, setTouched, setErrors, validateField)}
                                 touched={touched.notes}
                             />
+                        </div>
+                    </div>
 
+                    <div className="formSection">
+                        <h3>Upload Image</h3>
+                        <div className="inventory-form-row4">
                             <UploadImage
                                 id="image"
-                                label={<b>Horse Image:</b>}
+                                label={<b>Select Image: </b>}
                                 value={formData.image}
                                 onChange={(value) => updateField("image", value)}
                                 icon_label="Item image help"
