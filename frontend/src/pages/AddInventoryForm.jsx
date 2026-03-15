@@ -224,112 +224,114 @@ export function AddInventoryForm() {
 
             <form onSubmit={HandleSubmit}>
                 <div className="formInputs">
-                    <div className="inventory-form-row1">
+                    <div className="formSection">
+                        <h3>Add Item</h3>
+                        <div className="inventory-form-row2">
 
-                        <TextField                      // Item Label Field
-                            id="label"
-                            label={<b>Item: </b>}
-                            placeholder="Enter Item Label"
-                            value={label}
-                            onChange={(value) =>updateField("label", value, setLabel, touched, setErrors, validateField)}
-                            icon_label="Item help"
-                            title="Item Label"
-                            body="Use the common name staff would recognize immediately.
+                            <TextField                      // Item Label Field
+                                id="label"
+                                label={<b>Item: </b>}
+                                placeholder="Enter Item Label"
+                                value={label}
+                                onChange={(value) =>updateField("label", value, setLabel, touched, setErrors, validateField)}
+                                icon_label="Item help"
+                                title="Item Label"
+                                body="Use the common name staff would recognize immediately.
 
-                                If the item has a brand, use the format,
-                                BrandName – Product.
+                                    If the item has a brand, use the format,
+                                    BrandName – Product.
 
-                                Examples: Farnam – Fly Spray or Alfalfa Hay"
-                            isRequired={true}
-                            error={touched.label ? errors.label : ""}
-                            onBlur={() => handleBlur("label", label, setTouched, setErrors, validateField)}
-                        />
+                                    Examples: Farnam – Fly Spray or Alfalfa Hay"
+                                isRequired={true}
+                                error={touched.label ? errors.label : ""}
+                                onBlur={() => handleBlur("label", label, setTouched, setErrors, validateField)}
+                            />
 
-                        <NumberField                    // Quantity Field
-                            id="quantity"
-                            label={<b>Quantity: </b>}
-                            value={quantity}
-                            placeholder={0}
-                            onChange={(value) =>updateField("quantity", value, setQuantity, touched, setErrors, validateField)}
-                            icon_label="Quantity help"
-                            title="Item Quantity"
-                            body="Enter the current quantity available in inventory. Quantity cannot be negative."
-                            error={touched.quantity ? errors.quantity : ""}
-                            onBlur={() => handleBlur("quantity", quantity, setTouched, setErrors, validateField)}
-                        />
+                            <NumberField                    // Quantity Field
+                                id="quantity"
+                                label={<b>Quantity: </b>}
+                                value={quantity}
+                                placeholder={0}
+                                onChange={(value) =>updateField("quantity", value, setQuantity, touched, setErrors, validateField)}
+                                icon_label="Quantity help"
+                                title="Item Quantity"
+                                body="Enter the current quantity available in inventory. Quantity cannot be negative."
+                                error={touched.quantity ? errors.quantity : ""}
+                                onBlur={() => handleBlur("quantity", quantity, setTouched, setErrors, validateField)}
+                            />
+                        </div>
+                        <div className="inventory-form-row2">
+
+                            <DropdownField                // Category Field
+                                id="category"
+                                label={<b>Category: </b>}
+                                options={categoryOptions}
+                                value={category}
+                                onChange={(value) =>updateField("category", value, setCategory, touched, setErrors, validateField)}
+                                allowCustom={true}
+                                customLabel={<b>Specify Category: </b>}
+                                icon_label="Category help"
+                                title="Category"
+                                body="Choose the closest match. Use Other only when the item does not fit an existing category."
+                                isRequired={true}
+                                error={touched.category ? errors.category : ""}
+                                onBlur={() => handleBlur("category", category, setTouched, setErrors, validateField)}
+                            />
+
+                            <DropdownField                  // Grade Field
+                                id="grade"
+                                label={<b>Grade: </b>}
+                                options={gradeOptions}
+                                value={grade}
+                                onChange={(value) =>updateField("grade", value, setGrade, touched, setErrors, validateField)}
+                                allowCustom={false}
+                                customLabel={<b>Specify Grade: </b>}
+                                icon_label="Grade help"
+                                title="Grade"
+                                body="Use grade for products with quality levels, such as hay. If the item does not have a grade, select Not Applicable."
+                                isRequired={true}
+                                error={touched.grade ? errors.grade : ""}
+                                onBlur={() => handleBlur("grade", grade, setTouched, setErrors, validateField)}
+                            />
+
+                        </div>
+                        <div className="inventory-form-row3">
+                            <TextAreaField                  // Instructions Field
+                                id="instructions"
+                                label={<b>Instructions: </b>}
+                                value={instructions}
+                                placeholder="Enter Instructions for product use"
+                                onChange={(value) =>updateField("instructions", value, setInstructions, touched, setErrors, validateField)}
+                                maxLength={1000}
+                                icon_label="Instructions help"
+                                title="Instructions"
+                                body="Add notes for use, dosage, feeding directions, storage, or handling so staff know exactly how the item should be used."
+                                isRequired={true}
+                                error={touched.instructions ? errors.instructions : ""}
+                                onBlur={() => handleBlur("instructions", instructions, setTouched, setErrors, validateField)}
+                                touched={touched.instructions}
+                            />
+                        </div>
+
+                        <div className="inventory-form-row4">
+                            <UploadImage
+                                id="item-image"
+                                label={<b>Item Image:</b>}
+                                value={imageFile}
+                                onChange={(value) => updateField("imageFile", value, setImageFile, touched, setErrors, validateField)}
+                                icon_label="Item image help"
+                                title="Item Image"
+                                body="Upload one clear image of the item for quick identification. Only one image is allowed."
+                                maxSizeMB={5}
+                                isRequired={true}
+                                error={touched.imageFile ? errors.imageFile : ""}
+                                onBlur={() => handleBlur("imageFile", imageFile, setTouched, setErrors, validateField)}
+                            />
+                            <div className="formButton">
+                                <Button type="submit" label="Add Item" />
+                            </div>
+                        </div>
                     </div>
-                    <div className="inventory-form-row2">
-
-                        <DropdownField                // Category Field
-                            id="category"
-                            label={<b>Category: </b>}
-                            options={categoryOptions}
-                            value={category}
-                            onChange={(value) =>updateField("category", value, setCategory, touched, setErrors, validateField)}
-                            allowCustom={true}
-                            customLabel={<b>Specify Category: </b>}
-                            icon_label="Category help"
-                            title="Category"
-                            body="Choose the closest match. Use Other only when the item does not fit an existing category."
-                            isRequired={true}
-                            error={touched.category ? errors.category : ""}
-                            onBlur={() => handleBlur("category", category, setTouched, setErrors, validateField)}
-                        />
-
-                        <DropdownField                  // Grade Field
-                            id="grade"
-                            label={<b>Grade: </b>}
-                            options={gradeOptions}
-                            value={grade}
-                            onChange={(value) =>updateField("grade", value, setGrade, touched, setErrors, validateField)}
-                            allowCustom={false}
-                            customLabel={<b>Specify Grade: </b>}
-                            icon_label="Grade help"
-                            title="Grade"
-                            body="Use grade for products with quality levels, such as hay. If the item does not have a grade, select Not Applicable."
-                            isRequired={true}
-                            error={touched.grade ? errors.grade : ""}
-                            onBlur={() => handleBlur("grade", grade, setTouched, setErrors, validateField)}
-                        />
-
-                    </div>
-                    <div className="inventory-form-row3">
-                        <TextAreaField                  // Instructions Field
-                            id="instructions"
-                            label={<b>Instructions: </b>}
-                            value={instructions}
-                            placeholder="Enter Instructions for product use"
-                            onChange={(value) =>updateField("instructions", value, setInstructions, touched, setErrors, validateField)}
-                            maxLength={1000}
-                            icon_label="Instructions help"
-                            title="Instructions"
-                            body="Add notes for use, dosage, feeding directions, storage, or handling so staff know exactly how the item should be used."
-                            isRequired={true}
-                            error={touched.instructions ? errors.instructions : ""}
-                            onBlur={() => handleBlur("instructions", instructions, setTouched, setErrors, validateField)}
-                            touched={touched.instructions}
-                        />
-                    </div>
-
-                    <div className="inventory-form-row4">
-                        <UploadImage
-                            id="item-image"
-                            label={<b>Item Image:</b>}
-                            value={imageFile}
-                            onChange={(value) => updateField("imageFile", value, setImageFile, touched, setErrors, validateField)}
-                            icon_label="Item image help"
-                            title="Item Image"
-                            body="Upload one clear image of the item for quick identification. Only one image is allowed."
-                            maxSizeMB={5}
-                            isRequired={true}
-                            error={touched.imageFile ? errors.imageFile : ""}
-                            onBlur={() => handleBlur("imageFile", imageFile, setTouched, setErrors, validateField)}
-                        />
-                    </div>
-
-                </div>
-                <div className="formButton">
-               <Button type="submit" label="Add Item" />
                 </div>
             </form>
         </div>

@@ -21,12 +21,12 @@ const Navbar = ({ isOpen, closeNav }) => {
             <ul className={styles.navList}>
                 <li>
                     <div className={styles.sectionHeader}>
-                        <a href="/">Stable</a>
+                        <a href="/">Horses</a>
                         <button
                             type="button"
                             className={styles.arrowBtn}
                             onClick={() => toggleSection("stable")}
-                            aria-label="Toggle Stable submenu"
+                            aria-label="Toggle HorseDashboard submenu"
                         >
                             <span className="material-symbols-rounded">
                                 {openSection === "stable" ? "expand_less" : "expand_more"}

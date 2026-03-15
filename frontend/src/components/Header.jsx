@@ -1,4 +1,4 @@
-import UserGreeting from "./UserGreeting/UserGreeting.jsx";
+
 
 function Header(props){
 
@@ -20,7 +20,6 @@ function Header(props){
                     Stable.<span>AI</span>
                 </div>
             </div>
-            <UserGreeting isLoggedIn={true} name={props.user}/>
         </header>
     );
 }

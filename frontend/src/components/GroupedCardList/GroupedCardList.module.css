@@ -1,15 +1,26 @@
 .groupedList {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    padding: 30px 20px;
     width: 100%;
+    padding: 24px 20px 40px;
+}
+
+.contentWrap {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 24px;
+    transition: max-width 0.3s ease, margin 0.3s ease;
+}
+
+.mainContent.navOpen .contentWrap {
+    max-width: 1500px;
+}
+
+.listingPageHeader {
+    margin-bottom: 32px;
 }
 
 .groupSection {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    margin-bottom: 36px;
 }
 
 .groupHeader {
@@ -17,7 +28,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 12px 0;
     background: transparent;
     border: none;
     border-bottom: 1px solid #dcdcdc;
@@ -27,31 +38,28 @@
     color: #222;
     cursor: pointer;
     text-align: left;
-    transition: color 0.2s ease;
-}
-
-.groupMeta {
-    font-family: "Inter", sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #666;
-    min-width: 24px;
-    text-align: right;
-    transition: color 0.2s ease;
 }
 
 .groupHeader:hover {
     color: #24b25f;
-    transform: translateX(2px);
+}
+
+.groupMeta {
+    font-family: "Inter", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #666;
 }
 
 .groupHeader:hover .groupMeta {
     color: #24b25f;
+    transform: scale(1.15);
 }
 
 .cardGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 400px));
     gap: 24px;
-    align-items: stretch;
+    justify-content: start;
+    margin-top: 18px;
 }

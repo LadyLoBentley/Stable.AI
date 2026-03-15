@@ -16,7 +16,59 @@ function FormManager() {
         stallId: "",
         temperament: "",
         notes: "",
-        image: null
+        image: null,
+
+        // Medical information
+        vetClinic: "",
+        vetName: "",
+        vetPhone: "",
+
+        rabiesExpire: "",
+        tetanusExpire: "",
+        westNileExpire: "",
+        eeeWeeExpire: "",
+        fluRhinoExpire: "",
+
+        cogginsExpire: "",
+        farrierDue: "",
+        dentalDue: "",
+        dewormDue: "",
+
+        medicalConditions: [],
+        allergies: [],
+        medications: [],
+        supplements: [],
+        medicalNotes: "",
+
+        // Food Information
+        feedHay: true,
+        hayType: "",
+        hayReplacement: "",
+
+        grainType: "",
+        grainAmount: "",
+        addFoodAdditive: false,
+        foodAdditive: "",
+
+        isFoodAggressive: false,
+        feedingInstructions: "",
+
+        // Owner Information
+        ownerName: "",
+        ownerPhone: "",
+        ownerEmail: "",
+
+        emergencyContactName: "",
+        emergencyContactRelations: "",
+        emergencyContactPhone: "",
+
+        streetAddress: "",
+        aptNo: "",
+        city: "",
+        state: "",
+        zip: "",
+
+        signedWaiver: false
     });
 
     return (

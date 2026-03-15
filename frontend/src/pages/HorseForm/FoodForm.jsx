@@ -1,37 +1,31 @@
 import { useState, useEffect } from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
+import {handleBlur, updateField} from "../../utils/FormUtil.js";
+import TextField from "../../components/Form/TextField.jsx";
+import CheckboxField from "../../components/Form/Checkbox.jsx";
+import DropdownField from "../../components/Form/DropdownField.jsx";
+import NumberField from "../../components/Form/NumberField.jsx";
+import TextAreaField from "../../components/Form/TextAreaField.jsx";
+import Button from "../../components/Button/Button.jsx";
 
 
 function FoodForm() {
-     const { formData, setFormData } = useOutletContext();
+    const { formData, setFormData } = useOutletContext();
     const navigate = useNavigate();
 
-    const breeds = ["American Warmblood"];
-
-    const locationType = [
-        "stall",
-        "pasture",
-        "other"
-    ];
-
-    const sexOptions = [
-        "Mare",
-        "Gelding",
-        "Stallion"
-    ];
 
     const [touched, setTouched] = useState({
-        horseName: false,
-        breed: false,
-        sex: false,
-        birthdate: false,
-        pastureName: false,
-        hasStall: false,
-        barn: false,
-        stallId: false,
-        temperament: false,
-        notes: false,
-        image: false
+        feedHay: false,
+        hayType: false,
+        hayReplacement: false,
+
+        grainType: false,
+        grainAmount: false,
+        addFoodAdditive: false,
+        foodAdditive: false,
+
+        isFoodAggressive: false,
+        feedingInstructions: false
     });
 
     const [submitStatus, setSubmitStatus] = useState({
@@ -43,58 +37,185 @@ function FoodForm() {
 
     function validateField(name, value) {
         switch (name) {
-            case "horseName":
-                if (!value?.trim()) return "Name of horse is required.";
+            case "feedHay":
                 return "";
 
-            case "breed":
-                if (!value?.trim()) return "Breed is required.";
+            case "hayType":
+                if (formData.feedHay && !value) return "Hay type is required.";
                 return "";
 
-            case "sex":
-                if (!value?.trim()) return "Sex is required.";
+            case "hayReplacement":
+                if (!formData.feedHay && !value?.trim()) return "Hay replacement is required.";
                 return "";
 
-            case "birthdate":
-                if (!value?.trim()) return "Birthdate is required.";
+            case "grainType":
+                if (!value?.trim()) return "Grain type is required.";
                 return "";
 
-            case "pastureName":
-                if (!value?.trim()) return "Pasture location is required.";
+            case "grainAmount":
                 return "";
 
-            case "hasStall":
+            case "addFoodAdditive":
                 return "";
 
-            case "barn":
-                if (formData.hasStall && !value?.trim()) {
-                    return "Barn is required if stall is assigned.";
-                }
+            case "foodAdditive":
+                if (formData.addFoodAdditive && !value) return "Food Additive is required.";
                 return "";
 
-            case "stallId":
-                if (formData.hasStall && !value?.trim()) {
-                    return "Stall ID is required.";
-                }
-                return "";
-
-            case "temperament":
-                if (!value?.trim()) return "Horse temperament is required.";
-                return "";
-
-            case "notes":
-                return "";
-
-            case "image":
-                if (!value) return "Image of the horse is required.";
-                return "";
-
+            case "isFoodAggressive":
+            case "feedingInstructions":
             default:
                 return "";
         }
     }
 
-    function updateFormField(fieldName, value) {
+    //------------------------FEEDHAY-------------------------\\
+    function handleFeedHayChange(value) {
+        setFormData((prev) => ({
+            ...prev,
+            feedHay: value,
+            hayType: value ? prev.hayType : "",
+            hayReplacement: value ? "" : prev.hayReplacement
+        }));
+
+        if (touched.hayType) {
+            setErrors((prev) => ({
+                ...prev,
+                hayType: validateField("hayType", value ? formData.hayType : ""),
+                hayReplacement: validateField("hayReplacement", value ? "" : formData.hayReplacement)
+            }));
+        }
+    }
+
+    //------------------------ADD FOOD ADDITIVE-------------------------\\
+    function handleFoodAdditiveChange(value) {
+        setFormData((prev) => ({
+            ...prev,
+            addFoodAdditive: value,
+            foodAdditive: value ? prev.foodAdditive : "",
+        }));
+
+        setErrors((prev) => ({
+            ...prev,
+            foodAdditive: validateField("foodAdditive", value ? formData.foodAdditive : ""),
+        }));
+    }
+
+    //----------------------HAY---------------------\\
+    const [hay, setHay] = useState([]);
+    const [hayLoading, setHayLoading] = useState(true);
+    const [hayError, setHayError] = useState("");
+
+    useEffect(() => {
+        async function fetchHay() {
+            try {
+                setHayLoading(true);
+                setHayError("");
+
+                const response = await fetch("http://localhost:8002/api/inventory/");
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch hay: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                const hayNames = Array.isArray(data)
+                    ? data
+                        .filter((item) => item.category === "Hay")
+                        .map((item) => item.label)
+                    : [];
+
+                setHay(hayNames);
+            } catch (error) {
+                console.error("Error fetching hay:", error);
+                setHayError(`Could not fetch hay: ${error.message}`);
+            } finally {
+                setHayLoading(false);
+            }
+        }
+
+        fetchHay();
+    }, []);
+
+    //----------------------GRAIN---------------------\\
+    const [grain, setGrain] = useState([]);
+    const [grainLoading, setGrainLoading] = useState(true);
+    const [grainError, setGrainError] = useState("");
+
+    useEffect(() => {
+        async function fetchGrain() {
+            try {
+                setGrainLoading(true);
+                setGrainError("");
+
+                const response = await fetch("http://localhost:8002/api/inventory/");
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch grain: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                const grainNames = Array.isArray(data)
+                    ? data
+                        .filter((item) => item.category === "Grain")
+                        .map((item) => item.label)
+                    : [];
+
+                setGrain(grainNames);
+            } catch (error) {
+                console.error("Error fetching grain:", error);
+                setGrainError(`Could not fetch grain: ${error.message}`);
+            } finally {
+                setGrainLoading(false);
+            }
+        }
+
+        fetchGrain();
+    }, []);
+
+
+    //-------------------------FOOD ADDITIVES--------------------------\\
+    const [foodAdditives, setFoodAdditives] = useState([]);
+    const [foodAdditivesLoading, setFoodAdditivesLoading] = useState(true);
+    const [foodAdditivesError, setFoodAdditivesError] = useState("");
+
+    useEffect(() => {
+        async function fetchFoodAdditives() {
+            try {
+                setFoodAdditivesLoading(true);
+                setFoodAdditivesError("");
+
+                const response = await fetch("http://localhost:8002/api/inventory/");
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch food additives: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                const foodAdditiveNames = Array.isArray(data)
+                    ? data
+                        .filter((item) => item.category === "Food Additive")
+                        .map((item) => item.label)
+                    : [];
+
+                setFoodAdditives(foodAdditiveNames);
+            }
+            catch (error) {
+                console.error("Error fetching food additives:", error);
+                setFoodAdditivesError(`Could not fetch food additives: ${error.message}`);
+            }
+            finally {
+                setFoodAdditivesLoading(false);
+            }
+        }
+
+        fetchFoodAdditives();
+    }, []);
+
+    function updateField(fieldName, value) {
         setFormData((prev) => ({
             ...prev,
             [fieldName]: value
@@ -125,33 +246,33 @@ function FoodForm() {
         e.preventDefault();
 
         const newTouched = {
-            horseName: true,
-            breed: true,
-            sex: true,
-            birthdate: true,
-            pastureName: true,
-            hasStall: true,
-            barn: true,
-            stallId: true,
-            temperament: true,
-            notes: true,
-            image: true
+            feedHay: true,
+            hayType: true,
+            hayReplacement: true,
+
+            grainType: true,
+            grainAmount: true,
+            addFoodAdditive: true,
+            foodAdditive: true,
+
+            isFoodAggressive: true,
+            feedingInstructions: true
         };
 
         setTouched(newTouched);
 
         const newErrors = {
-            horseName: validateField("horseName", formData.horseName),
-            breed: validateField("breed", formData.breed),
-            sex: validateField("sex", formData.sex),
-            birthdate: validateField("birthdate", formData.birthdate),
-            pastureName: validateField("pastureName", formData.pastureName),
-            hasStall: validateField("hasStall", formData.hasStall),
-            barn: validateField("barn", formData.barn),
-            stallId: validateField("stallId", formData.stallId),
-            temperament: validateField("temperament", formData.temperament),
-            notes: validateField("notes", formData.notes),
-            image: validateField("image", formData.image)
+            feedHay: validateField("feedHay", formData.feedHay),
+            hayType: validateField("hayType", formData.hayType),
+            hayReplacement: validateField("hayReplacement", formData.hayReplacement),
+
+            grainType: validateField("grainType", formData.grainType),
+            grainAmount: validateField("grainAmount", formData.grainAmount),
+            addFoodAdditive: validateField("addFoodAdditive", formData.addFoodAdditive),
+            foodAdditive: validateField("foodAdditive", formData.foodAdditive),
+
+            isFoodAggressive: validateField("isFoodAggressive", formData.isFoodAggressive),
+            feedingInstructions: validateField("feedingInstructions", formData.feedingInstructions),
         };
 
         setErrors(newErrors);
@@ -166,24 +287,194 @@ function FoodForm() {
             return;
         }
 
-        navigate("medical");
+        navigate("owner");
     }
 
-   return (
+    return (
         <div className="formContainer">
             <h2>Feeding Regime</h2>
 
             {submitStatus.message && (
-                    <div
-                        className={
-                        submitStatus.type === "success"
-                            ? "formAlert success"
-                            : "formAlert error"
+                <div
+                    className={
+                    submitStatus.type === "success"
+                        ? "formAlert success"
+                        : "formAlert error"
                     }
-                    >
-                        {submitStatus.message}
+                >
+                    {submitStatus.message}
+                </div>
+            )}
+
+            {hayLoading && (
+                <div className="formAlert">
+                    Loading hay...
+                </div>
+            )}
+
+            {hayError && (
+                <div className="formAlert error">
+                    {hayError}
+                </div>
+            )}
+
+            {grainLoading && (
+                <div className="formAlert">
+                    Loading grain...
+                </div>
+            )}
+
+            {grainError && (
+                <div className="formAlert error">
+                    {grainError}
+                </div>
+            )}
+
+            {foodAdditivesLoading && (
+                <div className="formAlert">
+                    Loading food additives...
+                </div>
+            )}
+
+            {foodAdditivesError && (
+                <div className="formAlert error">
+                    {foodAdditivesError}
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
+                <div className="formInputs">
+                    <div className="formSection">
+                        <h3>Select Primary Feed</h3>
+                        <div className="inventory-form-row3">
+                            <CheckboxField
+                                id="feedHay"
+                                label={<b>Horse is fed hay</b>}
+                                checked={formData.feedHay}
+                                onChange={handleFeedHayChange}
+                                error={touched.feedHay ? errors.feedHay : ""}
+                                onBlur={() =>
+                                    handleBlur("feedHay", formData.feedHay, setTouched, setErrors, validateField)
+                                }
+                            />
+
+                            {formData.feedHay && (
+                                <DropdownField
+                                    id="hayType"
+                                    label={<b>Select Hay Type: </b>}
+                                    options={hay}
+                                    value={formData.hayType}
+                                    onChange={(value) => updateField("hayType", value)}
+                                    allowCustom={false}
+                                    isRequired={true}
+                                    error={touched.hayType ? errors.hayType : ""}
+                                    onBlur={() => handleBlur("hayType", formData.hayType, setTouched, setErrors, validateField)}
+                                />
+                            )}
+
+                            {!formData.feedHay && (
+                                <DropdownField
+                                    id="hayReplacement"
+                                    label={<b>Hay alternative: </b>}
+                                    options={foodAdditives}
+                                    value={formData.hayReplacement}
+                                    onChange={(value) => updateField("hayReplacement", value)}
+                                    allowCustom={false}
+                                    isRequired={true}
+                                    error={touched.hayReplacement ? errors.hayReplacement : ""}
+                                    onBlur={() => handleBlur("hayReplacement", formData.hayReplacement, setTouched, setErrors, validateField)}
+                                />
+                                )}
+                        </div>
                     </div>
-                )}
+
+                    <div className="formSection">
+                        <h3>Select Grain</h3>
+                        <div className="inventory-form-row2">
+                            <DropdownField
+                                id="grainType"
+                                label={<b>Select Grain: </b>}
+                                options={grain}
+                                value={formData.grainType}
+                                onChange={(value) => updateField("grainType", value)}
+                                isRequired={true}
+                                error={touched.grainType ? errors.grainType : ""}
+                                onBlur={() => handleBlur("grainType", formData.grainType, setTouched, setErrors, validateField)}
+                            />
+
+                            <NumberField                    // Quantity Field
+                                id="grainAmount"
+                                label={<b>Serving Amount: </b>}
+                                value={formData.grainAmount}
+                                onChange={(value) =>updateField("grainAmount", value)}
+                                icon_label="Serving amount help"
+                                title="Serving Amount"
+                                body="Enter the amount of grain per serving based on owners request and product recommendations for easy care lookup."
+                                error={touched.grainAmount ? errors.grainAmount : ""}
+                                onBlur={() => handleBlur("grainAmount", formData.grainAmount, setTouched, setErrors, validateField)}
+                            />
+                        </div>
+
+                        <div className="inventory-form-row3">
+                            <CheckboxField
+                                id="addFoodAdditive"
+                                label={<b>Grain is mixed with an additive</b>}
+                                checked={formData.addFoodAdditive}
+                                onChange={handleFoodAdditiveChange}
+                                error={touched.addFoodAdditive ? errors.addFoodAdditive : ""}
+                                onBlur={() =>
+                                    handleBlur("addFoodAdditive", formData.addFoodAdditive, setTouched, setErrors, validateField)
+                                }
+                            />
+
+                            {formData.addFoodAdditive && (
+                                <DropdownField
+                                    id="foodAdditive"
+                                    label={<b>Select Food Additive: </b>}
+                                    options={foodAdditives}
+                                    value={formData.foodAdditive}
+                                    onChange={(value) => updateField("foodAdditive", value)}
+                                    isRequired={true}
+                                    error={touched.foodAdditive ? errors.foodAdditive : ""}
+                                    onBlur={() => handleBlur("foodAdditive", formData.foodAdditive, setTouched, setErrors, validateField)}
+                                />
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="formSection">
+                        <h3>Additional Information</h3>
+                        <div className="inventory-form-row4">
+                            <CheckboxField
+                                id="isFoodAggressive"
+                                label={<b>Horse exhibits food aggression</b>}
+                                checked={formData.isFoodAggressive}
+                                onChange={(value) => updateField("isFoodAggressive", value)}
+                                error={touched.isFoodAggressive ? errors.isFoodAggressive : ""}
+                                onBlur={() =>
+                                    handleBlur("isFoodAggressive", formData.isFoodAggressive, setTouched, setErrors, validateField)
+                                }
+                            />
+
+                            <TextAreaField
+                                id="feedingInstructions"
+                                label={<b>Feeding Instructions and Notes: </b>}
+                                value={formData.feedingInstructions}
+                                placeholder="Enter any specific feeding instructions to meet horse care requirements. Add notes on horse disposition around food. Example: Horse tends to be alpha in pasture, please feed first."
+                                onChange={(value) =>updateField("feedingInstructions", value)}
+                                maxLength={1000}
+                                isRequired={false}
+                                error={touched.feedingInstructions ? errors.feedingInstructions : ""}
+                                onBlur={() => handleBlur("feedingInstructions", formData.feedingInstructions, setTouched, setErrors, validateField)}
+                                touched={touched.temperament}
+                            />
+                        </div>
+                        <div className="formButton">
+                            <Button label="Next" type="submit"/>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     );
 }

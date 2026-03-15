@@ -35,12 +35,31 @@ body {
 .appLayout {
     display: flex;
     flex: 1;
-    background-color: #f0f0f0;
 }
 
 .mainContent {
     flex: 1;
+    min-height: 100%;
     transition: all 0.3s ease;
+    box-shadow: inset 0 0 0 1px #e8e8e8;
+}
+
+/* Route-based layout backgrounds */
+.listingLayout {
+    background-color: #f0f0f0;
+}
+
+.formLayout {
+    background-color: #ffffff;
+}
+
+.listingPage {
+    background-color: #f0f0f0;
+    box-shadow: inset 0 0 0 1px #e8e8e8;
+}
+
+.formPage {
+    background-color: #ffffff;
 }
 
 
@@ -110,7 +129,6 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     grid-auto-rows: auto;
     column-gap: 24px;
-    background-color: #f0f0f0;
     row-gap: 48px;
     padding: 30px 20px;
     width: 100%;
@@ -120,7 +138,7 @@ body {
 
 .mainTitle {
     font-family: "Georgia", serif;
-    margin: 30px 20px 10px;
+    margin: 0 0 8px;
     font-size: 2.5rem;
     font-weight: 700;
     color: #111;
@@ -143,11 +161,9 @@ body {
 .formContainer {
     width: 100%;
     max-width: 1280px;
-    background: white;
 
 
     padding: 56px 58px 44px;
-    box-shadow: inset 0 0 0 1px #e8e8e8;
     margin: 0 auto;
 }
 
@@ -160,6 +176,15 @@ body {
     line-height: 1.05;
 }
 
+.formContainer h3{
+    font-family: "Georgia", serif;
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 20px;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 8px;
+}
+
 .formNote {
     background: #eef7f1;
     border-left: 4px solid #24b25f;
@@ -170,10 +195,222 @@ body {
     margin-bottom: 28px;
 }
 
+.formSection {
+    border: 1px solid #e2e2e2;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 28px;
+    background: #fafafa;
+}
+
 .formInputs {
     display: flex;
     flex-direction: column;
     gap: 22px;
+}
+
+
+.scheduleBox{
+    background:#f7f8fa;
+    border-radius:12px;
+    padding:18px;
+    margin-top:16px;
+}
+
+.timeRow{
+    display:flex;
+    gap:24px;
+    margin-top:12px;
+}
+
+.scheduleDaysGrid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:6px;
+    margin-top:10px;
+}
+
+.dayCheck{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:4px;
+    font-size:14px;
+}
+
+.scheduleLabel{
+    font-weight:600;
+    margin-top:14px;
+    display:block;
+}
+
+.scheduleAdd{
+    margin-top:18px;
+    padding-top:14px;
+    border-top:1px solid #e5e5e5;
+}
+
+.scheduleListTitle{
+    margin-top:20px;
+    margin-bottom:10px;
+}
+
+.careScheduleCard{
+    border:1px solid #e2e2e2;
+    border-radius:10px;
+    padding:14px;
+    margin-top:10px;
+    background:white;
+}
+
+.scheduleNotes{
+    color:#666;
+    font-size:14px;
+}
+
+.yearlyScheduleList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.yearlyScheduleRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 16px;
+    align-items: end;
+}
+
+.yearlyRemoveWrap {
+    display: flex;
+    align-items: end;
+    justify-content: flex-start;
+}
+
+.yearlyAddButton {
+    margin-top: 14px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.yearlyScheduleList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.yearlyScheduleRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 20px;
+    align-items: end;
+}
+
+.yearlyRemoveWrap {
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.yearlyAddButton {
+    margin-top: 14px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.scheduleAdd {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid #e5e5e5;
+    display: flex;
+    justify-content: center;
+}
+
+.scheduleActionButton.primary {
+    min-width: 220px;
+    height: 52px;
+    border-radius: 5px;
+    padding: 0 26px;
+}
+
+.scheduleActionButton {
+    border: none;
+    border-radius: 14px;
+    min-height: 52px;
+    padding: 0 22px;
+    font-family: "Georgia", serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.scheduleActionButton.primary {
+    font-size: 16px;
+    font-family: "Georgia", serif;
+    background-color: #22c55e;
+    color: white;
+}
+
+.scheduleActionButton.primary:hover {
+    background: #1f9a52;
+    transform: translateY(-1px);
+}
+
+.scheduleInlineButton {
+    border: none;
+    background: transparent;
+    color: #24b25f;
+    font-family: "Inter", sans-serif;
+    font-size: 0.96rem;
+    font-weight: 700;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.scheduleInlineButton:hover {
+    color: #1f9a52;
+    text-decoration: underline;
+}
+
+.careScheduleCard {
+    border: 1px solid #e2e2e2;
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-top: 12px;
+    background: #fff;
+}
+
+.careScheduleCardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.careScheduleItemName {
+    margin: 0;
+    font-family: "Georgia", serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1b1b1b;
+}
+
+.careScheduleMeta {
+    margin: 8px 0 0;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+.scheduleNotes {
+    margin-top: 10px;
+    color: #666;
+    font-size: 0.92rem;
+    line-height: 1.45;
 }
 
 /* Dropdown fields */
@@ -195,7 +432,26 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    min-height: 28px;
     margin-bottom: 8px;
+}
+
+input[type="date"] {
+    width: 100%;
+    min-height: 72px;
+    border: 1.5px solid #cfcfcf;
+    border-radius: 20px;
+    padding: 16px 20px;
+    background: #fff;
+    color: #111;
+    font-size: 1.05rem;
+    font-family: "Inter", sans-serif;
+    box-sizing: border-box;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.8;
 }
 
 /* Textarea Fields */
@@ -227,6 +483,7 @@ body {
 .charCount.danger {
     color: #d94b4b;
 }
+
 
 /* Image upload */
 
@@ -396,9 +653,13 @@ body {
     display: grid;
     gap: 20px;
     align-items: start;
+    margin-top: 20px;
 }
 
-.inventory-form-row1,
+.inventory-form-row1 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
 .inventory-form-row2 {
     grid-template-columns: 1fr 1fr;
 }
@@ -407,8 +668,8 @@ body {
     grid-template-columns: 1fr;
 }
 
-
 /* ---------------- GENERIC FIELD STYLING ---------------- */
+
 
 
 .stallFieldsRow {
@@ -499,6 +760,126 @@ textarea {
     resize: none;
 }
 
+.tagSearchField {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.tagSearchLabel {
+    font-family: "Georgia", serif;
+    font-size: 1.15rem;
+    color: #1b1b1b;
+}
+
+.tagChipGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tagChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #eef7f1;
+    border: 1px solid #cfe7d6;
+    color: #1f7d47;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-weight: 600;
+}
+
+.tagChipRemove {
+    border: none;
+    background: transparent;
+    color: #1f7d47;
+    font-size: 1rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+
+.tagSearchInputWrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tagSearchButtonWrap {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.tagSearchInput {
+    width: 100%;
+    min-height: 72px;
+    border: 1.5px solid #cfcfcf;
+    border-radius: 20px;
+    padding: 16px 20px;
+    background: #fff;
+    color: #111;
+    font-size: 1.05rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tagSearchInput:focus {
+    border-color: #24b25f;
+    box-shadow: 0 0 0 4px rgba(36, 178, 95, 0.14);
+}
+
+.tagSuggestions {
+    position: absolute;
+    top: 82px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: white;
+    border: 1px solid #d8d8d8;
+    border-radius: 16px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.tagSearchLabelRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.tagSuggestionItem {
+    width: 100%;
+    text-align: left;
+    background: white;
+    border: none;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.tagSuggestionItem:hover,
+.tagSuggestionItem.highlighted {
+    background: #f3fbf6;
+}
+
+.tagNoResults {
+    font-size: 0.95rem;
+    color: #666;
+    padding: 4px 2px 0;
+}
+
+.tagFieldMessage {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #b03d3d;
+}
+
+
 /* Checkbox design */
 .checkboxFieldWrapper {
     display: flex;
@@ -529,6 +910,7 @@ textarea {
 .fieldWrapper {
     display: flex;
     flex-direction: column;
+    gap: 10px;
 }
 
 
@@ -557,6 +939,7 @@ textarea {
     display: flex;
     justify-content: center;
     margin-top: 28px;
+    font-weight:700;
 }
 /*------------------FOOTER-------------------*/
 

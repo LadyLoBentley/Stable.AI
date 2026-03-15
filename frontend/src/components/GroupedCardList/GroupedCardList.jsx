@@ -3,6 +3,8 @@ import Card from "../Card/Card.jsx";
 import styles from "./GroupedCardList.module.css";
 
 function GroupedCardList({
+    title,
+    categoryOrder = [],
     items = [],
     groupBy,
     getKey,
@@ -11,20 +13,6 @@ function GroupedCardList({
     getTitle,
     getDetails
 }) {
-    const categoryOrder = [
-        "Hay",
-        "Grain",
-        "Food Additive",
-        "Treats",
-        "Supplements",
-        "Electrolytes",
-        "Medication",
-        "Dewormer",
-        "Barn Supplies",
-        "Grooming",
-        "Other"
-    ];
-
     const groupedItems = useMemo(() => {
         return items.reduce((groups, item) => {
             const groupName = groupBy(item)?.trim() || "Other";
@@ -48,49 +36,63 @@ function GroupedCardList({
     }
 
     const sortedGroups = Object.keys(groupedItems).sort((a, b) => {
+        if (!categoryOrder.length) {
+            return a.localeCompare(b);
+        }
+
         const indexA = categoryOrder.indexOf(a);
         const indexB = categoryOrder.indexOf(b);
 
         const safeA = indexA === -1 ? Number.MAX_SAFE_INTEGER : indexA;
         const safeB = indexB === -1 ? Number.MAX_SAFE_INTEGER : indexB;
 
-        return safeA - safeB;
+        if (safeA !== safeB) {
+            return safeA - safeB;
+        }
+
+        return a.localeCompare(b);
     });
 
     return (
         <div className={styles.groupedList}>
-            {sortedGroups.map((groupName) => {
-                const isOpen = openGroups[groupName] ?? false;
+            <div className={styles.contentWrap}>
+                <div className="listingPageHeader">
+                    <h2 className="mainTitle">{title}</h2>
+                </div>
 
-                return (
-                    <section key={groupName} className={styles.groupSection}>
-                        <button
-                            type="button"
-                            className={styles.groupHeader}
-                            onClick={() => toggleGroup(groupName)}
-                        >
-                            <span>{groupName} ({groupedItems[groupName].length})</span>
-                            <span className={styles.groupMeta}>
-                                {isOpen ? "−" : "+"}
-                            </span>
-                        </button>
+                {sortedGroups.map((groupName) => {
+                    const isOpen = openGroups[groupName] ?? false;
 
-                        {isOpen && (
-                            <div className={styles.cardGrid}>
-                                {groupedItems[groupName].map((item) => (
-                                    <Card
-                                        key={getKey(item)}
-                                        image={getImage(item)}
-                                        imageAlt={getImageAlt(item)}
-                                        title={getTitle(item)}
-                                        details={getDetails(item)}
-                                    />
-                                ))}
-                            </div>
-                        )}
-                    </section>
-                );
-            })}
+                    return (
+                        <section key={groupName} className={styles.groupSection}>
+                            <button
+                                type="button"
+                                className={styles.groupHeader}
+                                onClick={() => toggleGroup(groupName)}
+                            >
+                                <span>{groupName} ({groupedItems[groupName].length})</span>
+                                <span className={styles.groupMeta}>
+                                    {isOpen ? "−" : "+"}
+                                </span>
+                            </button>
+
+                            {isOpen && (
+                                <div className={styles.cardGrid}>
+                                    {groupedItems[groupName].map((item) => (
+                                        <Card
+                                            key={getKey(item)}
+                                            image={getImage(item)}
+                                            imageAlt={getImageAlt(item)}
+                                            title={getTitle(item)}
+                                            details={getDetails(item)}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+                    );
+                })}
+            </div>
         </div>
     );
 }

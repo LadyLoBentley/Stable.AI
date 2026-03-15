@@ -8,6 +8,7 @@ from routers.breed_router import router as breed_router
 from routers.barn_router import router as barn_router
 from routers.pasture_router import router as pasture_router
 from routers.health_router import router as health_router
+from routers.allergy_router import router as allergy_router
 from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
@@ -34,3 +35,5 @@ app.include_router(barn_router, prefix="/api")
 app.include_router(pasture_router, prefix="/api")
 
 app.include_router(health_router, prefix="/api")
+
+app.include_router(allergy_router, prefix="/api")

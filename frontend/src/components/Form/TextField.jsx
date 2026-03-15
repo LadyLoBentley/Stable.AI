@@ -25,11 +25,13 @@ function TextField({
             <span className="field-label">
                 {label}
                 {isRequired && <span className="requiredMark">*</span>}
-                <InfoTip
-                    label={icon_label}
-                    title={title}
-                    body={body}
-                />
+                {(icon_label || title || body) && (
+                    <InfoTip
+                        label={icon_label}
+                        title={title}
+                        body={body}
+                    />
+                )}
             </span>
         </label>
             <input
