@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation} from 'react-router-dom';
+import { Routes, Route} from 'react-router-dom';
 import { useState } from 'react';
 
 // Pages
@@ -23,12 +23,6 @@ function App() {
 
     const [showNav, setShowNav] = useState(false);
 
-    const location = useLocation();
-
-    const isFormPage =
-        location.pathname.startsWith("/add-horse") ||
-        location.pathname === "/add-item";
-
     function ToggleNav() {
         setShowNav(prev => !prev);
     }
@@ -41,7 +35,7 @@ function App() {
         <div className="page">
             <Header toggleNav={ToggleNav} />
 
-            <div className={`appLayout ${isFormPage ? "formLayout" : "listingLayout"}`}>
+            <div className={`appLayout`}>
                 <Navbar isOpen={showNav} closeNav={CloseNav} />
 
                 <main className={`mainContent ${showNav ? "navOpen" : ""}`}>
