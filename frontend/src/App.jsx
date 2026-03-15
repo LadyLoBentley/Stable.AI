@@ -1,8 +1,8 @@
-import { Routes, Route} from 'react-router-dom';
+import { Routes, Route, useLocation} from 'react-router-dom';
 import { useState } from 'react';
 
 // Pages
-import Stable from "./pages/Stable.jsx";
+import HorseDashboard from "./pages/HorseDashboard.jsx";
 import FormManager from "./pages/HorseForm/FormManager.jsx";
 import HorseForm from "./pages/HorseForm/HorseForm.jsx";
 import FoodForm from "./pages/HorseForm/FoodForm.jsx";
@@ -21,8 +21,13 @@ import Footer from "./components/Footer.jsx"
 
 function App() {
 
-    const activeUser = "Lauren"
     const [showNav, setShowNav] = useState(false);
+
+    const location = useLocation();
+
+    const isFormPage =
+        location.pathname.startsWith("/add-horse") ||
+        location.pathname === "/add-item";
 
     function ToggleNav() {
         setShowNav(prev => !prev);
@@ -34,20 +39,20 @@ function App() {
 
     return (
         <div className="page">
-            <Header user={activeUser} toggleNav={ToggleNav} />
+            <Header toggleNav={ToggleNav} />
 
-            <div className="appLayout">
+            <div className={`appLayout ${isFormPage ? "formLayout" : "listingLayout"}`}>
                 <Navbar isOpen={showNav} closeNav={CloseNav} />
 
                 <main className={`mainContent ${showNav ? "navOpen" : ""}`}>
                     <Routes>
-                        <Route path="/" element={<Stable />} />
+                        <Route path="/" element={<HorseDashboard />} />
 
                         <Route path="/add-horse" element={<FormManager />}>
                             <Route index element={<HorseForm />} />
-                            <Route index="food" element={<FoodForm />} />
-                            <Route index="medical" element={<MedicalForm />} />
-                            <Route index="owner" element={<OwnerForm />} />
+                            <Route path="medical/food" element={<FoodForm />} />
+                            <Route path="medical" element={<MedicalForm />} />
+                            <Route path="medical/food/owner" element={<OwnerForm />} />
                         </Route>
 
                         <Route path={"/inventory"} element={<Inventory />} />

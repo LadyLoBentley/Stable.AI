@@ -75,7 +75,9 @@ function HorseForm() {
             }
 
             case "pastureName":
-                if (!value?.trim()) return "Pasture location is required.";
+                if (!formData.hasStall && !value?.trim()) {
+                    return "Pasture location is required if no stall is assigned.";
+                }
                 return "";
 
             case "hasStall":
@@ -108,6 +110,7 @@ function HorseForm() {
                 return "";
         }
     }
+
     //----------------------Breed Dropdown Field---------------------\\
     const [breeds, setBreeds] = useState([]);
     const [breedsLoading, setBreedsLoading] = useState(true);
@@ -314,12 +317,12 @@ function HorseForm() {
             return;
         }
 
-        navigate("food");
+        navigate("medical");
     }
 
     return (
         <div className="formContainer">
-            <h2>Horse Details</h2>
+            <h2>Horse Form</h2>
 
             {submitStatus.message && (
                 <div
@@ -371,195 +374,185 @@ function HorseForm() {
 
              <form onSubmit={HandleSubmit}>
                 <div className="formInputs">
-                    <div className="inventory-form-row1">
-
-                        <TextField
-                            id="horseName"
-                            label={<b>Horse Name: </b>}
-                            placeholder="Enter Horse's Name"
-                            value={formData.horseName}
-                            onChange={(value) => updateField("horseName", value)}
-                            icon_label="Name help"
-                            title="Horse Name"
-                            body="Please enter your horse name."
-                            isRequired={true}
-                            error={touched.horseName ? errors.horseName : ""}
-                            onBlur={() => handleBlur("horseName", formData.horseName, setTouched, setErrors, validateField)}
-                        />
-
-                        <TextField
-                            id="birthdate"
-                            type="date"
-                            className="dateInput"
-                            label={<b>Birthday: </b>}
-                            value={formData.birthdate}
-                            onChange={(value) => updateField("birthdate", value)}
-                            icon_label="Birth date help"
-                            title="Birth date"
-                            body="Select the horse's birthdate. If the exact date is unknown, enter January 1 of the estimated year."
-                            isRequired={true}
-                            error={touched.birthdate ? errors.birthdate : ""}
-                            onBlur={() => handleBlur("birthdate", formData.birthdate, setTouched, setErrors, validateField)}
-                        />
-                    </div>
-
-                    <div className="inventory-form-row2">
-
-                        <DropdownField
-                        id="sex"
-                        label={<b>Sex: </b>}
-                        options={sexOptions}
-                        value={formData.sex}
-                        onChange={(value) =>updateField("sex", value)}
-                        allowCustom={false}
-                        customLabel={<b>Sex: </b>}
-                        icon_label="Sex help"
-                        title="Sex"
-                        body="If male is fixed, choose gelding. Otherwise, choose stallion."
-                        isRequired={true}
-                        error={touched.sex ? errors.sex : ""}
-                        onBlur={() => handleBlur("sex", formData.sex, setTouched, setErrors, validateField)}
-                    />
-
-
-                    <DropdownField
-                        id="breed"
-                        label={<b>Breed: </b>}
-                        options={breeds}
-                        value={formData.breed}
-                        onChange={(value) =>updateField("breed", value)}
-                        allowCustom={false}
-                        icon_label="Breed help"
-                        title="Breed"
-                        body="Choose your horse breed. Select Unknown if unsure or Mixed Breed if crossbred."
-                        isRequired={true}
-                        error={touched.breed ? errors.breed : ""}
-                        onBlur={() => handleBlur("breed", formData.breed, setTouched, setErrors, validateField)}
-                    />
-                    </div>
-
-                    <div className="inventory-form-row1">
-                        <CheckboxField
-                            id="hasStall"
-                            label={<b>Horse is assigned a stall.</b>}
-                            checked={formData.hasStall}
-                            onChange={handleHasStallChange}
-                            icon_label="Stall help"
-                            title="Stall Assignment"
-                            body="Check this if the horse is assigned a stall. If checked, stall ID and barn name are required."
-                            error={touched.hasStall ? errors.hasStall : ""}
-                            onBlur={() =>
-                                handleBlur("hasStall", formData.hasStall, setTouched, setErrors, validateField)
-                            }
-                        />
-                    </div>
-
-                    {formData.hasStall && (
-                        <div className="stallFieldsRow">
-                            <DropdownField
-                                id="barn"
-                                label={<b>Barn Name: </b>}
-                                options={barns}
-                                value={formData.barn}
-                                onChange={(value) => updateField("barn", value)}
-                                allowCustom={false}
-                                icon_label="Barn help"
-                                title="Barn Name"
-                                body="Select the barn where this horse's stall is located."
+                    <div className="formSection">
+                        <h3>Horse Details</h3>
+                        <div className="inventory-form-row2">
+                            <TextField
+                                id="horseName"
+                                label={<b>Horse Name: </b>}
+                                placeholder="Enter Horse's Name"
+                                value={formData.horseName}
+                                onChange={(value) => updateField("horseName", value)}
                                 isRequired={true}
-                                error={touched.barn ? errors.barn : ""}
-                                onBlur={() =>
-                                    handleBlur("barn", formData.barn, setTouched, setErrors, validateField)
-                                }
+                                error={touched.horseName ? errors.horseName : ""}
+                                onBlur={() => handleBlur("horseName", formData.horseName, setTouched, setErrors, validateField)}
                             />
 
                             <TextField
-                                id="stallId"
-                                label={<b>Stall ID: </b>}
-                                placeholder="Enter stall ID"
-                                value={formData.stallId}
-                                onChange={(value) => updateField("stallId", value)}
-                                icon_label="Stall ID help"
-                                title="Stall ID"
-                                body="Enter the assigned stall ID for this horse."
+                                id="birthdate"
+                                type="date"
+                                className="dateInput"
+                                label={<b>Birthday: </b>}
+                                value={formData.birthdate}
+                                onChange={(value) => updateField("birthdate", value)}
+                                icon_label="Birth date help"
+                                title="Birth date"
+                                body="Select the horse's birthdate. If the exact date is unknown, enter January 1 of the estimated year."
                                 isRequired={true}
-                                error={touched.stallId ? errors.stallId : ""}
+                                error={touched.birthdate ? errors.birthdate : ""}
+                                onBlur={() => handleBlur("birthdate", formData.birthdate, setTouched, setErrors, validateField)}
+                            />
+                        </div>
+
+                        <div className="inventory-form-row2">
+                        <DropdownField
+                            id="sex"
+                            label={<b>Sex: </b>}
+                            options={sexOptions}
+                            value={formData.sex}
+                            onChange={(value) =>updateField("sex", value)}
+                            allowCustom={false}
+                            customLabel={<b>Sex: </b>}
+                            icon_label="Sex help"
+                            title="Sex"
+                            body="If male is fixed, choose gelding. Otherwise, choose stallion."
+                            isRequired={true}
+                            error={touched.sex ? errors.sex : ""}
+                            onBlur={() => handleBlur("sex", formData.sex, setTouched, setErrors, validateField)}
+                        />
+
+
+                        <DropdownField
+                            id="breed"
+                            label={<b>Breed: </b>}
+                            options={breeds}
+                            value={formData.breed}
+                            onChange={(value) =>updateField("breed", value)}
+                            allowCustom={false}
+                            icon_label="Breed help"
+                            title="Breed"
+                            body="Choose your horse breed. Select Unknown if unsure or Mixed Breed if crossbred."
+                            isRequired={true}
+                            error={touched.breed ? errors.breed : ""}
+                            onBlur={() => handleBlur("breed", formData.breed, setTouched, setErrors, validateField)}
+                        />
+                        </div>
+
+                        <div className="inventory-form-row2">
+                            <CheckboxField
+                                id="hasStall"
+                                label={<b>Horse is assigned a stall.</b>}
+                                checked={formData.hasStall}
+                                onChange={handleHasStallChange}
+                                error={touched.hasStall ? errors.hasStall : ""}
                                 onBlur={() =>
-                                    handleBlur("stallId", formData.stallId, setTouched, setErrors, validateField)
+                                    handleBlur("hasStall", formData.hasStall, setTouched, setErrors, validateField)
                                 }
                             />
                         </div>
-                    )}
 
-                    <div className="inventory-form-row4">
-                        <DropdownField
-                                id="pastureName"
-                                label={<b>Pasture Name: </b>}
-                                options={pastures}
-                                value={formData.pastureName}
-                                onChange={(value) => updateField("pastureName", value)}
-                                allowCustom={false}
-                                icon_label="Pasture help"
-                                title="Pasture Assignment"
-                                body="Each horse must be assigned to a designated pasture. Ensure that the horse meets pasture requirements."
+                        {formData.hasStall && (
+                            <div className="stallFieldsRow">
+                                <DropdownField
+                                    id="barn"
+                                    label={<b>Barn Name: </b>}
+                                    options={barns}
+                                    value={formData.barn}
+                                    onChange={(value) => updateField("barn", value)}
+                                    allowCustom={false}
+                                    isRequired={true}
+                                    error={touched.barn ? errors.barn : ""}
+                                    onBlur={() =>
+                                        handleBlur("barn", formData.barn, setTouched, setErrors, validateField)
+                                    }
+                                />
+
+                                <TextField
+                                    id="stallId"
+                                    label={<b>Stall ID: </b>}
+                                    placeholder="Enter stall ID"
+                                    value={formData.stallId}
+                                    onChange={(value) => updateField("stallId", value)}
+                                    isRequired={true}
+                                    error={touched.stallId ? errors.stallId : ""}
+                                    onBlur={() =>
+                                        handleBlur("stallId", formData.stallId, setTouched, setErrors, validateField)
+                                    }
+                                />
+                            </div>
+                        )}
+
+                        <div className="inventory-form-row4">
+                            <DropdownField
+                                    id="pastureName"
+                                    label={<b>Pasture Name: </b>}
+                                    options={pastures}
+                                    value={formData.pastureName}
+                                    onChange={(value) => updateField("pastureName", value)}
+                                    allowCustom={false}
+                                    icon_label="Pasture help"
+                                    title="Pasture Assignment"
+                                    body="Assign a pasture if the horse is not stalled. If the horse is stalled, this can remain blank unless you also want to assign turnout pasture."
+                                    isRequired={!formData.hasStall}
+                                    error={touched.pastureName ? errors.pastureName : ""}
+                                    onBlur={() =>
+                                        handleBlur("pastureName", formData.pastureName, setTouched, setErrors, validateField)
+                                    }
+                                />
+                        </div>
+
+                        <div className="inventory-form-row3">
+                            <TextAreaField
+                                id="temperament"
+                                label={<b>Temperament: </b>}
+                                value={formData.temperament}
+                                placeholder="Enter the disposition of the horse"
+                                onChange={(value) =>updateField("temperament", value)}
+                                maxLength={1000}
+                                icon_label="Temperament help"
+                                title="Temperament"
+                                body="Add details of horse characteristics. example: Horse tends to take the role of alpha, feed before other horses nearby. Horse shows signs of food aggression. Horse is social."
                                 isRequired={true}
-                                error={touched.pastureName ? errors.pastureName : ""}
-                                onBlur={() =>
-                                    handleBlur("pastureName", formData.pastureName, setTouched, setErrors, validateField)
-                                }
+                                error={touched.temperament ? errors.temperament : ""}
+                                onBlur={() => handleBlur("temperament", formData.temperament, setTouched, setErrors, validateField)}
+                                touched={touched.temperament}
                             />
+
+                            <TextAreaField
+                                id="notes"
+                                label={<b>Notes: </b>}
+                                value={formData.notes}
+                                placeholder="Enter any additional notes."
+                                onChange={(value) =>updateField("notes", value)}
+                                maxLength={1000}
+                                icon_label="Notes help"
+                                title="Notes"
+                                body="Add any other information about the horse to best support care."
+                                isRequired={false}
+                                error={touched.notes ? errors.notes : ""}
+                                onBlur={() => handleBlur("notes", formData.notes, setTouched, setErrors, validateField)}
+                                touched={touched.notes}
+                            />
+
+                            <UploadImage
+                                id="image"
+                                label={<b>Horse Image:</b>}
+                                value={formData.image}
+                                onChange={(value) => updateField("image", value)}
+                                icon_label="Item image help"
+                                title="Item Image"
+                                body="Upload one clear image of the horse for quick identification. Only one image is allowed."
+                                maxSizeMB={5}
+                                isRequired={true}
+                                error={touched.image ? errors.image : ""}
+                                onBlur={() => handleBlur("image", formData.image, setTouched, setErrors, validateField)}
+                            />
+                        </div>
+
+                        <div className="formButton">
+                            <Button label="Next" type="submit"/>
+                        </div>
                     </div>
-
-                    <div className="inventory-form-row3">
-                        <TextAreaField
-                            id="temperament"
-                            label={<b>Temperament: </b>}
-                            value={formData.temperament}
-                            placeholder="Enter the disposition of the horse"
-                            onChange={(value) =>updateField("temperament", value)}
-                            maxLength={1000}
-                            icon_label="Temperament help"
-                            title="Temperament"
-                            body="Add details of horse characteristics. example: Horse tends to take the role of alpha, feed before other horses nearby. Horse shows signs of food aggression. Horse is social."
-                            isRequired={true}
-                            error={touched.temperament ? errors.temperament : ""}
-                            onBlur={() => handleBlur("temperament", formData.temperament, setTouched, setErrors, validateField)}
-                            touched={touched.temperament}
-                        />
-
-                        <TextAreaField
-                            id="notes"
-                            label={<b>Notes: </b>}
-                            value={formData.notes}
-                            placeholder="Enter any additional notes."
-                            onChange={(value) =>updateField("notes", value)}
-                            maxLength={1000}
-                            icon_label="Notes help"
-                            title="Notes"
-                            body="Add any other information about the horse to best support care."
-                            isRequired={false}
-                            error={touched.notes ? errors.notes : ""}
-                            onBlur={() => handleBlur("notes", formData.notes, setTouched, setErrors, validateField)}
-                            touched={touched.notes}
-                        />
-
-                        <UploadImage
-                            id="image"
-                            label={<b>Horse Image:</b>}
-                            value={formData.image}
-                            onChange={(value) => updateField("image", value)}
-                            icon_label="Item image help"
-                            title="Item Image"
-                            body="Upload one clear image of the horse for quick identification. Only one image is allowed."
-                            maxSizeMB={5}
-                            isRequired={true}
-                            error={touched.image ? errors.image : ""}
-                            onBlur={() => handleBlur("image", formData.image, setTouched, setErrors, validateField)}
-                        />
-                    </div>
-                </div>
-                <div className="formButton">
-                    <Button label="Next" type="submit"/>
                 </div>
              </form>
         </div>

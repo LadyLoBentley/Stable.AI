@@ -6,6 +6,20 @@ function Inventory() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    const categoryOrder = [
+        "Hay",
+        "Grain",
+        "Food Additive",
+        "Treats",
+        "Supplements",
+        "Electrolytes",
+        "Medication",
+        "Dewormer",
+        "Barn Supplies",
+        "Grooming",
+        "Other"
+    ];
+
     useEffect(() => {
         async function fetchInventory() {
             try {
@@ -46,9 +60,9 @@ function Inventory() {
 
     return (
         <div className="inventory-page">
-            <h1 className="mainTitle">Inventory</h1>
-
             <GroupedCardList
+                title="Inventory"
+                categoryOrder={categoryOrder}
                 items={inventoryItems}
                 groupBy={(item) => item.category || "Other"}
                 getKey={(item) => item.item_id}
