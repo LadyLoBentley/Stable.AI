@@ -31,15 +31,16 @@ function InlineTextButton({ children, onClick, type = "button" }) {
 function createEmptyEntry() {
     return {
         itemName: "",
-        condition: "",
-        dosage: "",
+        dosageAmount: "",
+        dosageUnit: "",
         administrationTimes: [],
         frequencyType: "",
+        singleDoseDate: "",
         scheduleDetails: {
-        daysOfWeek: [],
-        daysOfMonth: [],
-        yearlyMonthDays: [{ month: "", day: "" }]
-     },
+            daysOfWeek: [],
+            daysOfMonth: [],
+            yearlyMonthDays: [{ month: "", day: "" }]
+        },
         notes: ""
     };
 }
@@ -55,43 +56,37 @@ function CareScheduleField({
     tipDosageBody,
     tipFrequencyTitle,
     tipFrequencyBody,
-    tipAmTitle,
-    tipAmBody,
-    tipPmTitle,
-    tipPmBody,
     tipNotesTitle,
     tipNotesBody
 }) {
-
     const [entry, setEntry] = useState(createEmptyEntry());
     const [error, setError] = useState("");
 
-    const frequencyOptions = ["Daily", "Weekly", "Monthly", "Yearly"];
+    const frequencyOptions = ["One-Time Dose", "Daily", "Weekly", "Monthly", "Yearly"];
 
-    const weekOptions = [
-        "Mon","Tue","Wed","Thu","Fri","Sat","Sun"
-    ];
+    const weekOptions = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
     const monthOptions = [
-        "January","February","March","April","May","June",
-        "July","August","September","October","November","December"
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
     ];
+
+    const units = ["mL / cc", "mg", "g", "oz", "scoop", "tablet", "capsule", "syringe", "dose", "Other"];
 
     function handleFrequencyChange(newFrequency) {
         setEntry(prev => ({
             ...prev,
             frequencyType: newFrequency,
+            singleDoseDate: newFrequency === "One-Time Dose" ? prev.singleDoseDate : "",
             scheduleDetails: {
                 daysOfWeek:
                     newFrequency === "Weekly"
                         ? prev.scheduleDetails.daysOfWeek
                         : [],
-
                 daysOfMonth:
                     newFrequency === "Monthly"
                         ? prev.scheduleDetails.daysOfMonth
                         : [],
-
                 yearlyMonthDays:
                     newFrequency === "Yearly"
                         ? prev.scheduleDetails.yearlyMonthDays.length
@@ -111,37 +106,28 @@ function CareScheduleField({
 
     function toggleAdministrationTime(time) {
         setEntry(prev => {
-
-            const exists =
-                prev.administrationTimes.includes(time);
+            const exists = prev.administrationTimes.includes(time);
 
             return {
                 ...prev,
-
-                administrationTimes:
-                    exists
-                        ? prev.administrationTimes.filter(t => t !== time)
-                        : [...prev.administrationTimes, time]
+                administrationTimes: exists
+                    ? prev.administrationTimes.filter(t => t !== time)
+                    : [...prev.administrationTimes, time]
             };
         });
     }
 
     function toggleDayOfWeek(day) {
         setEntry(prev => {
-
-            const exists =
-                prev.scheduleDetails.daysOfWeek.includes(day);
+            const exists = prev.scheduleDetails.daysOfWeek.includes(day);
 
             return {
                 ...prev,
-
                 scheduleDetails: {
                     ...prev.scheduleDetails,
-
-                    daysOfWeek:
-                        exists
-                            ? prev.scheduleDetails.daysOfWeek.filter(d => d !== day)
-                            : [...prev.scheduleDetails.daysOfWeek, day]
+                    daysOfWeek: exists
+                        ? prev.scheduleDetails.daysOfWeek.filter(d => d !== day)
+                        : [...prev.scheduleDetails.daysOfWeek, day]
                 }
             };
         });
@@ -149,31 +135,23 @@ function CareScheduleField({
 
     function toggleDayOfMonth(day) {
         setEntry(prev => {
-
-            const exists =
-                prev.scheduleDetails.daysOfMonth.includes(day);
+            const exists = prev.scheduleDetails.daysOfMonth.includes(day);
 
             return {
                 ...prev,
-
                 scheduleDetails: {
                     ...prev.scheduleDetails,
-
-                    daysOfMonth:
-                        exists
-                            ? prev.scheduleDetails.daysOfMonth.filter(d => d !== day)
-                            : [...prev.scheduleDetails.daysOfMonth, day]
+                    daysOfMonth: exists
+                        ? prev.scheduleDetails.daysOfMonth.filter(d => d !== day)
+                        : [...prev.scheduleDetails.daysOfMonth, day]
                 }
             };
         });
     }
 
     function updateYearlyMonthDay(index, field, newValue) {
-
         setEntry(prev => {
-
-            const updated =
-                [...prev.scheduleDetails.yearlyMonthDays];
+            const updated = [...prev.scheduleDetails.yearlyMonthDays];
 
             updated[index] = {
                 ...updated[index],
@@ -182,7 +160,6 @@ function CareScheduleField({
 
             return {
                 ...prev,
-
                 scheduleDetails: {
                     ...prev.scheduleDetails,
                     yearlyMonthDays: updated
@@ -194,10 +171,8 @@ function CareScheduleField({
     function addYearlyMonthDayRow() {
         setEntry(prev => ({
             ...prev,
-
             scheduleDetails: {
                 ...prev.scheduleDetails,
-
                 yearlyMonthDays: [
                     ...prev.scheduleDetails.yearlyMonthDays,
                     { month: "", day: "" }
@@ -207,23 +182,14 @@ function CareScheduleField({
     }
 
     function removeYearlyMonthDayRow(index) {
-
         setEntry(prev => {
-
-            const updated =
-                prev.scheduleDetails.yearlyMonthDays
-                    .filter((_, i) => i !== index);
+            const updated = prev.scheduleDetails.yearlyMonthDays.filter((_, i) => i !== index);
 
             return {
                 ...prev,
-
                 scheduleDetails: {
                     ...prev.scheduleDetails,
-
-                    yearlyMonthDays:
-                        updated.length
-                            ? updated
-                            : [{ month: "", day: "" }]
+                    yearlyMonthDays: updated.length ? updated : [{ month: "", day: "" }]
                 }
             };
         });
@@ -232,8 +198,9 @@ function CareScheduleField({
     function isEntryBlank() {
         return (
             !entry.itemName.trim() &&
-            !entry.dosage.trim() &&
+            !entry.dosageAmount &&
             !entry.frequencyType &&
+            !entry.singleDoseDate &&
             entry.administrationTimes.length === 0 &&
             entry.scheduleDetails.daysOfWeek.length === 0 &&
             entry.scheduleDetails.daysOfMonth.length === 0 &&
@@ -244,20 +211,19 @@ function CareScheduleField({
         );
     }
 
-
     function validateEntry() {
+        if (!entry.itemName.trim()) return "Item required";
 
-        if (!entry.itemName.trim())
-            return "Item required";
+        if (!entry.dosageAmount) return "Dosage amount required";
 
-        if (!entry.dosage.trim())
-            return "Dosage required";
+        if (!entry.frequencyType) return "Frequency required";
 
-        if (!entry.administrationTimes.length)
-            return "Select AM or PM";
+        if (entry.frequencyType === "One-Time Dose") {
+            if (!entry.singleDoseDate) return "Select one-time dose date";
+            return "";
+        }
 
-        if (!entry.frequencyType)
-            return "Frequency required";
+        if (!entry.administrationTimes.length) return "Select AM or PM";
 
         if (
             entry.frequencyType === "Weekly" &&
@@ -274,13 +240,11 @@ function CareScheduleField({
         }
 
         if (entry.frequencyType === "Yearly") {
+            const valid = entry.scheduleDetails.yearlyMonthDays.filter(
+                row => row.month && row.day
+            );
 
-            const valid =
-                entry.scheduleDetails.yearlyMonthDays
-                    .filter(row => row.month && row.day);
-
-            if (!valid.length)
-                return "Add yearly date";
+            if (!valid.length) return "Add yearly date";
         }
 
         return "";
@@ -302,17 +266,23 @@ function CareScheduleField({
         const cleanedEntry = {
             ...entry,
             id: crypto.randomUUID(),
+            administrationTimes:
+                entry.frequencyType === "One-Time Dose"
+                    ? []
+                    : entry.administrationTimes,
+            singleDoseDate:
+                entry.frequencyType === "One-Time Dose"
+                    ? entry.singleDoseDate
+                    : "",
             scheduleDetails: {
                 daysOfWeek:
                     entry.frequencyType === "Weekly"
                         ? entry.scheduleDetails.daysOfWeek
                         : [],
-
                 daysOfMonth:
                     entry.frequencyType === "Monthly"
                         ? entry.scheduleDetails.daysOfMonth
                         : [],
-
                 yearlyMonthDays:
                     entry.frequencyType === "Yearly"
                         ? entry.scheduleDetails.yearlyMonthDays.filter(
@@ -328,17 +298,11 @@ function CareScheduleField({
     }
 
     function handleRemoveEntry(id) {
-
-        onChange(
-            value.filter(item => item.id !== id)
-        );
+        onChange(value.filter(item => item.id !== id));
     }
 
     return (
-
-
         <div className="careScheduleField">
-
             <div className="sectionHeader">
                 <h3>{label}</h3>
             </div>
@@ -349,37 +313,39 @@ function CareScheduleField({
                 </div>
             )}
 
-            {/* BASIC INFO */}
-
-            <div className="inventory-form-row2">
-
+            <div className="inventory-form-row1">
                 <DropdownField
                     id={`${label}-item`}
                     label={<b>Item</b>}
                     options={itemOptions}
                     value={entry.itemName}
-                    onChange={(val)=>updateField("itemName",val)}
+                    onChange={(val) => updateField("itemName", val)}
                     allowCustom={true}
                     title={itemTipTitle}
                     body={itemTipBody}
                 />
 
                 <TextField
-                    id={`${label}-dosage`}
+                    id={`${label}-dosageAmount`}
                     label={<b>Dosage</b>}
-                    placeholder="Example: 2 tablets"
-                    value={entry.dosage}
-                    onChange={(val)=>updateField("dosage",val)}
+                    placeholder="Enter medicine dosage"
+                    value={entry.dosageAmount}
+                    onChange={(val) => updateField("dosageAmount", val)}
                     title={tipDosageTitle}
                     body={tipDosageBody}
                 />
 
+                <DropdownField
+                    id={`${label}-unit`}
+                    label={<b>Unit</b>}
+                    options={units}
+                    value={entry.dosageUnit}
+                    onChange={(val) => updateField("dosageUnit", val)}
+                    allowCustom={false}
+                />
             </div>
 
-            {/* SCHEDULE BOX */}
-
             <div className="scheduleBox">
-
                 <DropdownField
                     id={`${label}-frequency`}
                     label={<b>Frequency</b>}
@@ -391,98 +357,58 @@ function CareScheduleField({
                     body={tipFrequencyBody}
                 />
 
-                <div className="timeRow">
+                {entry.frequencyType === "One-Time Dose" && (
+                    <div className="inventory-form-row1">
+                        <TextField
+                            id={`${label}-singleDoseDate`}
+                            type="date"
+                            label={<b>Date Given</b>}
+                            value={entry.singleDoseDate}
+                            onChange={(val) => updateField("singleDoseDate", val)}
+                        />
+                    </div>
+                )}
 
-                    <CheckboxField
-                        id={`${label}-am`}
-                        label="AM"
-                        checked={
-                            entry.administrationTimes.includes("AM")
-                        }
-                        onChange={()=>toggleAdministrationTime("AM")}
-                        title={tipAmTitle}
-                        body={tipAmBody}
-                    />
-
-                    <CheckboxField
-                        id={`${label}-pm`}
-                        label="PM"
-                        checked={
-                            entry.administrationTimes.includes("PM")
-                        }
-                        onChange={()=>toggleAdministrationTime("PM")}
-                        title={tipPmTitle}
-                        body={tipPmBody}
-                    />
-
-                </div>
-
-
-                {entry.frequencyType==="Weekly" && (
-
+                {entry.frequencyType === "Weekly" && (
                     <>
                         <label className="scheduleLabel">
                             Days of Week
                         </label>
 
                         <div className="scheduleDaysGrid">
-
-                            {weekOptions.map(day=>(
-
+                            {weekOptions.map(day => (
                                 <label key={day} className="dayCheck">
-
                                     <CheckboxField
                                         id={`${label}-${day}`}
-                                        checked={
-                                            entry.scheduleDetails.daysOfWeek.includes(day)
-                                        }
-                                        onChange={()=>toggleDayOfWeek(day)}
+                                        checked={entry.scheduleDetails.daysOfWeek.includes(day)}
+                                        onChange={() => toggleDayOfWeek(day)}
                                     />
-
                                     <span>{day}</span>
-
                                 </label>
-
                             ))}
-
                         </div>
-
                     </>
-
                 )}
 
-
-                {entry.frequencyType==="Monthly" && (
-
+                {entry.frequencyType === "Monthly" && (
                     <>
                         <label className="scheduleLabel">
                             Days of Month
                         </label>
 
                         <div className="scheduleDaysGrid">
-
-                            {Array.from({length:31},(_,i)=>i+1).map(day=>(
-
+                            {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
                                 <label key={day} className="dayCheck">
-
                                     <CheckboxField
                                         id={`${label}-day-${day}`}
-                                        checked={
-                                            entry.scheduleDetails.daysOfMonth.includes(day)
-                                        }
-                                        onChange={()=>toggleDayOfMonth(day)}
+                                        checked={entry.scheduleDetails.daysOfMonth.includes(day)}
+                                        onChange={() => toggleDayOfMonth(day)}
                                     />
-
                                     <span>{day}</span>
-
                                 </label>
-
                             ))}
-
                         </div>
-
                     </>
-
                 )}
 
                 {entry.frequencyType === "Yearly" && (
@@ -510,7 +436,7 @@ function CareScheduleField({
                                         allowCustom={false}
                                     />
 
-                                   <div className="yearlyRemoveWrap">
+                                    <div className="yearlyRemoveWrap">
                                         {entry.scheduleDetails.yearlyMonthDays.length > 1 && (
                                             <InlineTextButton onClick={() => removeYearlyMonthDayRow(index)}>
                                                 Remove
@@ -521,35 +447,53 @@ function CareScheduleField({
                             ))}
                         </div>
 
-                       <div className="yearlyAddButton">
+                        <div className="yearlyAddButton">
                             <InlineTextButton onClick={addYearlyMonthDayRow}>
                                 + Add another date
                             </InlineTextButton>
                         </div>
                     </>
                 )}
+
+                {entry.frequencyType !== "One-Time Dose" && (
+                    <div className="timeRow">
+                        <label className="scheduleLabel">
+                            Administration Time:
+                        </label>
+
+                        <div className="timeOption">
+                            <CheckboxField
+                                id={`${label}-am`}
+                                label="AM"
+                                checked={entry.administrationTimes.includes("AM")}
+                                onChange={() => toggleAdministrationTime("AM")}
+                            />
+                        </div>
+
+                        <div className="timeOption">
+                            <CheckboxField
+                                id={`${label}-pm`}
+                                label="PM"
+                                checked={entry.administrationTimes.includes("PM")}
+                                onChange={() => toggleAdministrationTime("PM")}
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
 
-
-            {/* NOTES */}
-
             <div className="inventory-form-row4">
-
                 <TextAreaField
                     id={`${label}-notes`}
                     label={<b>Notes</b>}
                     value={entry.notes}
                     placeholder="Optional notes"
-                    onChange={(val)=>updateField("notes",val)}
+                    onChange={(val) => updateField("notes", val)}
                     maxLength={500}
                     title={tipNotesTitle}
                     body={tipNotesBody}
                 />
-
             </div>
-
-
-            {/* ADD BUTTON */}
 
             <div className="scheduleAdd">
                 <ActionButton onClick={handleAddEntry}>
@@ -557,19 +501,13 @@ function CareScheduleField({
                 </ActionButton>
             </div>
 
-
-            {/* SAVED ENTRIES */}
-
             {!!value.length && (
-
                 <div className="careScheduleList">
-
                     <h4 className="scheduleListTitle">
                         Scheduled {label}
                     </h4>
 
-                    {value.map(item=>(
-
+                    {value.map(item => (
                         <div
                             key={item.id}
                             className="careScheduleCard"
@@ -583,7 +521,10 @@ function CareScheduleField({
                             </div>
 
                             <p className="careScheduleMeta">
-                                {item.dosage} • {item.administrationTimes.join(", ")} • {item.frequencyType}
+                                {item.dosageAmount} {item.dosageUnit} •{" "}
+                                {item.frequencyType === "One-Time Dose"
+                                    ? `${item.frequencyType} on ${item.singleDoseDate}`
+                                    : `${item.administrationTimes.join(", ")} • ${item.frequencyType}`}
                             </p>
 
                             {item.notes && (
@@ -592,15 +533,10 @@ function CareScheduleField({
                                 </p>
                             )}
                         </div>
-
                     ))}
-
                 </div>
-
             )}
-
         </div>
-
     );
 }
 

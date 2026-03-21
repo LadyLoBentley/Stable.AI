@@ -1,78 +1,125 @@
 import { Outlet } from "react-router-dom";
-import {useState} from "react";
+import { useState } from "react";
 
+const initialFormData = {
+    // Horse Information
+    horseName: "",
+    breed: "",
+    sex: "",
+    birthdate: "",
+    height: "",
+    weight: "",
+
+    locationType: "stall",
+    turnoutType: "",
+    pastureName: "",
+    barn: "",
+    stallId: "",
+
+    escapeRisk: false,
+    mayBite: false,
+    mayKick: false,
+    difficultToCatch: false,
+    herdDominant: false,
+    sedationRequired: false,
+    foodAggressive: false,
+    requiresExperiencedHandler: false,
+
+    temperament: "",
+    notes: "",
+    image: null,
+
+    // Medical information
+    vetClinic: "",
+    vetName: "",
+    vetPhone: "",
+
+    isSameVet: true,
+    emergencyClinic: "",
+    emergencyVetName: "",
+    emergencyVetPhone: "",
+    emergencyAuthorization: false,
+    emergencyInstructions: "",
+
+    rabiesExpiration: "",
+    tetanusExpiration: "",
+    westNileExpiration: "",
+    eeeWeeExpiration: "",
+    fluRhinoExpiration: "",
+    cogginsExpiration: "",
+
+    hasShoes: false,
+    farrierName: "",
+    farrierPhone: "",
+    farrierDate: "",
+    dentistName: "",
+    dentistPhone: "",
+    dentalDate: "",
+    chiropractorName: "",
+    chiropractorPhone: "",
+    chiropractorDate: "",
+    massageTherapist: "",
+    therapistPhone: "",
+    massageDate: "",
+    lastDewormer: "",
+    dewormProvider: "",
+    dewormDate: "",
+
+    medicalConditions: [],
+    allergies: [],
+    medications: [],
+    supplements: [],
+
+    medicalNotes: "",
+
+    // Food Information
+    feedHay: true,
+    hayType: "",
+    hayAmount: "",
+    hayReplacement: "",
+    replacementAmount: "",
+    replacementUnit: "",
+
+    grainType: "",
+    grainAmount: "",
+    grainUnit: "",
+    addFoodAdditive: false,
+    foodAdditive: "",
+    additiveAmount: "",
+    additiveUnit: "",
+
+    mustSeparate: false,
+    soakFeed: false,
+    hayNet: false,
+    feedingInstructions: "",
+
+    // Owner Information
+    ownerName: "",
+    ownerPhone: "",
+    ownerEmail: "",
+
+    emergencyContactName: "",
+    emergencyContactRelations: "",
+    emergencyContactPhone: "",
+
+    streetAddress: "",
+    aptNo: "",
+    city: "",
+    state: "",
+    zip: "",
+
+    signedWaiver: false
+};
 
 function FormManager() {
+    const [formData, setFormData] = useState(initialFormData);
 
-    const [formData, setFormData] = useState({
-        // Horse Information
-        horseName: "",
-        breed: "",
-        sex: "",
-        birthdate: "",
-        pastureName: "",
-        hasStall: false,
-        barn: "",
-        stallId: "",
-        temperament: "",
-        notes: "",
-        image: null,
-
-        // Medical information
-        vetClinic: "",
-        vetName: "",
-        vetPhone: "",
-
-        rabiesExpire: "",
-        tetanusExpire: "",
-        westNileExpire: "",
-        eeeWeeExpire: "",
-        fluRhinoExpire: "",
-
-        cogginsExpire: "",
-        farrierDue: "",
-        dentalDue: "",
-        dewormDue: "",
-
-        medicalConditions: [],
-        allergies: [],
-        medications: [],
-        supplements: [],
-        medicalNotes: "",
-
-        // Food Information
-        feedHay: true,
-        hayType: "",
-        hayReplacement: "",
-
-        grainType: "",
-        grainAmount: "",
-        addFoodAdditive: false,
-        foodAdditive: "",
-
-        isFoodAggressive: false,
-        feedingInstructions: "",
-
-        // Owner Information
-        ownerName: "",
-        ownerPhone: "",
-        ownerEmail: "",
-
-        emergencyContactName: "",
-        emergencyContactRelations: "",
-        emergencyContactPhone: "",
-
-        streetAddress: "",
-        aptNo: "",
-        city: "",
-        state: "",
-        zip: "",
-
-        signedWaiver: false
-    });
+    function resetFormData() {
+        setFormData(initialFormData);
+    }
 
     return (
-        <Outlet context={{formData, setFormData}} />
+        <Outlet context={{ formData, setFormData, resetFormData }} />
     );
 }
 

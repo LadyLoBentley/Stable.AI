@@ -193,18 +193,61 @@ body {
     gap: 22px;
 }
 
+.scheduleLabel {
+    font-weight: 600;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    display: block;
+    color: #344054;
+    font-size: 0.95rem;
+}
 
 .scheduleBox{
-    background:#f7f8fa;
     border-radius:12px;
     padding:18px;
     margin-top:16px;
 }
 
-.timeRow{
-    display:flex;
-    gap:24px;
-    margin-top:12px;
+.timeRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 14px;
+    padding-top: 6px;
+}
+
+.timeOption {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid #e3e6ea;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.timeOption:hover {
+    border-color: #b9ddc7;
+    background: #f8fcf9;
+}
+
+.timeOption span {
+    font-family: "Inter", sans-serif;
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: #344054;
+}
+
+.timeOption input:checked + span {
+    color: #1f7d47;
+}
+
+.timeOption:has(input:checked) {
+    border-color: #22c55e;
+    background: #eef7f1;
 }
 
 .scheduleDaysGrid{
@@ -395,6 +438,46 @@ body {
     color: #666;
     font-size: 0.92rem;
     line-height: 1.45;
+}
+
+
+.locationToggleWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.locationToggle {
+  display: inline-flex;
+  border: 1.5px solid #cfcfcf;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  width: fit-content;
+  min-height: 72px;
+}
+
+.toggleOption {
+  border: none;
+  background: transparent;
+  padding: 0 34px;
+  min-height: 72px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #344054;
+  font-family: "Georgia", serif;
+  transition: all 0.2s ease;
+}
+
+.toggleOption:hover {
+  background: #f3f7f4;
+}
+
+.toggleOption.active {
+  background: #22c55e;
+  color: white;
 }
 
 /* Dropdown fields */
@@ -638,6 +721,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     gap: 20px;
     align-items: start;
     margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .inventory-form-row1 {
@@ -654,12 +738,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* ---------------- GENERIC FIELD STYLING ---------------- */
 
-
-
 .stallFieldsRow {
-    display: flex;
-    gap: 20px;
-    align-items: end;
+    display: grid;
+    grid-template-columns: 1.5fr 0.9fr;
+    gap: 24px;
+    align-items: start;
+    max-width: 860px;
 }
 
 .formInputs > div > div,
@@ -919,12 +1003,16 @@ textarea {
 }
 
 /* ---------------- BUTTON ---------------- */
+
 .formButton {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    gap: 16px;
     margin-top: 28px;
-    font-weight:700;
+    padding-top: 16px;
+    border-top: 1px solid #ececec;
 }
+
 /*------------------FOOTER-------------------*/
 
 .footer {

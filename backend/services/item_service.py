@@ -1,6 +1,8 @@
 from fastapi import HTTPException
 from sqlmodel import Session, select
+
 from models.inventory_items import InventoryItems
+
 from schemas.item_request import ItemRequest
 
 def normalize_label(label: str) -> str:
@@ -9,7 +11,7 @@ def normalize_label(label: str) -> str:
 def clean_label(label: str) -> str:
     return " ".join(label.strip().split())
 
-def CreateItem(
+def create_item(
         session: Session,
         submission: ItemRequest,
         image_url: str

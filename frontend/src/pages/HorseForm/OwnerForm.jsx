@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useOutletContext } from "react-router-dom";
+import {useNavigate, useOutletContext} from "react-router-dom";
 import {handleBlur} from "../../utils/FormUtil.js";
 import TextField from "../../components/Form/TextField.jsx";
 import DropdownField from "../../components/Form/DropdownField.jsx";
@@ -71,7 +71,8 @@ const relations = [
 ]
 
 function OwnerForm() {
-    const { formData, setFormData } = useOutletContext();
+    const { formData, setFormData, resetFormData } = useOutletContext();
+    const navigate = useNavigate();
 
 
     const [touched, setTouched] = useState({
@@ -145,7 +146,6 @@ function OwnerForm() {
                 if (!value) return "Waiver is required.";
                 return "";
 
-            case "aptNo":
             default:
                 return "";
         }
@@ -229,6 +229,225 @@ function OwnerForm() {
                 message: "Please fix the highlighted fields before submitting."
             });
             return;
+        }
+
+        setSubmitStatus({
+            type: "",
+            message: ""
+        });
+
+        try {
+            // 1. OWNER
+            const ownerPayload = new FormData();
+    ownerPayload.append("ownerName", formData.ownerName);
+    ownerPayload.append("ownerPhone", formData.ownerPhone);
+    ownerPayload.append("ownerEmail", formData.ownerEmail);
+
+    ownerPayload.append("emergencyContactName", formData.emergencyContactName);
+    ownerPayload.append("emergencyContactRelations", formData.emergencyContactRelations);
+    ownerPayload.append("emergencyContactPhone", formData.emergencyContactPhone);
+
+    ownerPayload.append("streetAddress", formData.streetAddress);
+    ownerPayload.append("aptNo", formData.aptNo || "");
+    ownerPayload.append("city", formData.city);
+    ownerPayload.append("state", formData.state);
+    ownerPayload.append("zip", formData.zip);
+
+    ownerPayload.append("signedWaiver", String(formData.signedWaiver));
+
+    const ownerResponse = await fetch("http://localhost:8002/api/owner/", {
+        method: "POST",
+        body: ownerPayload
+    });
+
+            if (!ownerResponse.ok) {
+                const errorData = await ownerResponse.json().catch(() => ({}));
+                throw new Error(errorData.detail || "Failed to save owner information.");
+            }
+
+            // 2. HORSE
+            const horsePayload = new FormData();
+            horsePayload.append("horseName", formData.horseName);
+            horsePayload.append("ownerName", formData.ownerName);
+            horsePayload.append("breed", formData.breed);
+            horsePayload.append("sex", formData.sex);
+            horsePayload.append("birthdate", formData.birthdate);
+            horsePayload.append("height", formData.height);
+            horsePayload.append("weight", formData.weight);
+
+            horsePayload.append("locationType", String(formData.locationType));
+            horsePayload.append("turnoutType", String(formData.turnoutType));
+            horsePayload.append("barn", formData.barn || "");
+            horsePayload.append("stallId", formData.stallId || "");
+            horsePayload.append("pastureName", formData.pastureName || "");
+
+            horsePayload.append("escapeRisk", formData.escapeRisk);
+            horsePayload.append("mayBite", formData.mayBite);
+            horsePayload.append("mayKick", formData.mayKick);
+            horsePayload.append("difficultToCatch", formData.difficultToCatch);
+            horsePayload.append("herdDominant", formData.herdDominant);
+            horsePayload.append("sedationRequired", formData.sedationRequired);
+            horsePayload.append("foodAggressive",formData.foodAggressive);
+            horsePayload.append("requiresExperiencedHandler", formData.requiresExperiencedHandler);
+
+            horsePayload.append("temperament", formData.temperament);
+            horsePayload.append("notes", formData.notes || "");
+            horsePayload.append("image", formData.image);
+
+            const horseResponse = await fetch("http://localhost:8002/api/horses/", {
+                method: "POST",
+                body: horsePayload
+            });
+
+            if (!horseResponse.ok) {
+                const errorData = await horseResponse.json().catch(() => ({}));
+                throw new Error(errorData.detail || "Failed to save horse information.");
+            }
+
+            // 3. MEDICAL
+            const medicalPayload = {
+                horseName: formData.horseName,
+                birthdate: formData.birthdate,
+
+                vetClinic: formData.vetClinic,
+                vetName: formData.vetName,
+                vetPhone: formData.vetPhone,
+
+                isSameVet: formData.isSameVet,
+                emergencyClinic: formData.emergencyClinic || null,
+                emergencyVetName: formData.emergencyVetName || null,
+                emergencyVetPhone: formData.emergencyVetPhone || null,
+                emergencyAuthorization: formData.emergencyAuthorization,
+                emergencyInstructions: formData.emergencyInstructions,
+
+                rabiesExpiration: formData.rabiesExpiration || null,
+                tetanusExpiration: formData.tetanusExpiration || null,
+                westNileExpiration: formData.westNileExpiration || null,
+                eeeWeeExpiration: formData.eeeWeeExpiration || null,
+                fluRhinoExpiration: formData.fluRhinoExpiration || null,
+                cogginsExpiration: formData.cogginsExpiration || null,
+
+                hasShoes: formData.hasShoes,
+                farrierName: formData.farrierName || null,
+                farrierDate: formData.farrierDate || null,
+                farrierPhone: formData.farrierPhone || null,
+                dentistName: formData.dentistName || null,
+                dentistPhone: formData.dentistPhone || null,
+                dentalDate: formData.dentalDate || null,
+                chiropractorName: formData.chiropractorName || null,
+                chiropractorPhone: formData.chiropractorPhone || null,
+                chiropractorDate: formData.chiropractorDate || null,
+                massageTherapist: formData.massageTherapist || null,
+                therapistPhone: formData.therapistPhone || null,
+                massageDate: formData.massageDate || null,
+                lastDewormer: formData.lastDewormer || null,
+                dewormProvider: formData.dewormProvider || null,
+                dewormDate: formData.dewormDate || null,
+
+                allergies: formData.allergies || [],
+                medicalConditions: formData.medicalConditions || [],
+                medications: formData.medications || [],
+                supplements: formData.supplements || [],
+
+                medicalNotes: formData.medicalNotes || null
+            };
+
+
+            const medicalResponse = await fetch("http://localhost:8002/api/medical_records/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(medicalPayload)
+            });
+
+            if (!medicalResponse.ok) {
+                const errorData = await medicalResponse.json().catch(() => ({}));
+                console.error("Medical API error:", errorData);
+                throw new Error(
+                    errorData.detail
+                        ? JSON.stringify(errorData.detail, null, 2)
+                        : "Failed to save medical information."
+                );
+            }
+
+            // 4. FEED
+            const feedPayload = {
+                horseName: formData.horseName,
+                birthdate: formData.birthdate,
+
+                feedHay: formData.feedHay,
+                hayType: formData.hayType || null,
+                hayAmount: formData.hayAmount === "" ? null : Number(formData.hayAmount),
+                hayReplacement: formData.hayReplacement || null,
+                replacementAmount: formData.replacementAmount === "" ? null : Number(formData.replacementAmount),
+                replacementUnit: formData.replacementUnit || null,
+
+                grainType: formData.grainType,
+                grainAmount: formData.grainAmount === "" ? null : Number(formData.grainAmount),
+                grainUnit: formData.grainUnit || null,
+                addFoodAdditive: formData.addFoodAdditive,
+                foodAdditive: formData.foodAdditive || null,
+                additiveAmount: formData.additiveAmount === "" ? null : Number(formData.additiveAmount),
+                additiveUnit: formData.additiveUnit || null,
+
+                mustSeparate: formData.mustSeparate,
+                soakFeed: formData.soakFeed,
+                hayNet: formData.hayNet,
+                feedingInstructions: formData.feedingInstructions || null
+            };
+
+            const feedResponse = await fetch("http://localhost:8002/api/feed/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(feedPayload)
+            });
+
+            if (!feedResponse.ok) {
+                const errorData = await feedResponse.json().catch(() => ({}));
+                throw new Error(errorData.detail || "Failed to save feeding information.");
+            }
+
+            setSubmitStatus({
+             type:"success",
+             message:"Horse profile submitted successfully."
+            });
+
+            setTimeout(() => {
+             resetFormData();
+             setErrors({});
+             setTouched({});
+            }, 800);
+
+            resetFormData();
+
+            setErrors({});
+                setTouched({
+                    ownerName: false,
+                    ownerPhone: false,
+                    ownerEmail: false,
+
+                    emergencyContactName: false,
+                    emergencyContactRelations: false,
+                    emergencyContactPhone: false,
+
+                    streetAddress: false,
+                    aptNo: false,
+                    city: false,
+                    state: false,
+                    zip: false,
+
+                    signedWaiver: false,
+                });
+
+        } catch (error) {
+            console.error("Final submission error:", error);
+            setSubmitStatus({
+                type: "error",
+                message: error.message || "Submission failed."
+            });
         }
     }
 
@@ -410,10 +629,11 @@ function OwnerForm() {
                                 onBlur={() => setTouched((prev) => ({ ...prev, signedWaiver: true }))}
                             />
                         </div>
-                        <div className="formButton">
-                            <Button label="Submit" type="submit"/>
-                        </div>
                     </div>
+                </div>
+                <div className="formButton">
+                    <Button label="Back" variant="secondary" type="button" onClick={() => navigate(-1)} />
+                    <Button label="Submit" type="submit"/>
                 </div>
             </form>
         </div>

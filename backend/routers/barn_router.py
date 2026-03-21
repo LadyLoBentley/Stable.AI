@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 from db.database import get_session
-from models.Barn import Barn
+from models.barn import Barn
 from schemas.barn_response import BarnResponse
 
 router = APIRouter(prefix="/barn", tags=["barn"])
