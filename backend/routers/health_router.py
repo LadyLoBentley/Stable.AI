@@ -3,7 +3,6 @@ from sqlmodel import Session, select
 from db.database import get_session
 from schemas.health_response import HealthResponse
 from models.health_conditions import HealthConditions
-from typing import List
 
 router = APIRouter(prefix="/health", tags=["health"])
 

@@ -1,6 +1,7 @@
 import traceback
 import uuid
 from fastapi import UploadFile, HTTPException
+
 from db.supabase_client import supabase
 
 # Image constraints

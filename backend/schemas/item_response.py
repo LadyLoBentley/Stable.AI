@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel
 from datetime import datetime
-from models.inventory_items import StockStatus
+from enums.inventory_stock_status import StockStatus
 
 class ItemResponse(SQLModel):
     item_id: str

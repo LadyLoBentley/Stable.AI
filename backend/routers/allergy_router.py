@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 from db.database import get_session
 from schemas.allergy_response import AllergyResponse
-from models.Allergies import Allergies
+from models.allergies import Allergies
 
 router = APIRouter(prefix="/allergies", tags=["allergies"])
 

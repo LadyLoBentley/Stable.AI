@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 from db.database import get_session
-from models.Breed import Breed
+from models.breed import Breed
 from schemas.breed_response import BreedResponse
 
 router = APIRouter(prefix="/breed", tags=["breed"])

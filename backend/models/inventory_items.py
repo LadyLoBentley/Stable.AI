@@ -1,20 +1,8 @@
 import uuid
 from sqlmodel import SQLModel, Field
 from datetime import datetime, timezone
-from enum import Enum
 
-class StockStatus(str, Enum):
-    OUT_OF_STOCK = "out_of_stock"
-    LOW_STOCK = "low_stock"
-    IN_STOCK = "in_stock"
-
-    @property
-    def label(self) -> str:
-        return {
-            "out_of_stock": "Out of Stock",
-            "low_stock": "Low Stock",
-            "in_stock": "In Stock",
-        }[self.value]
+from enums.inventory_stock_status import StockStatus
 
 CATEGORY_CONFIG = {
         "Hay": {"unit": "bales", "threshold": 20},
@@ -67,4 +55,4 @@ class InventoryItems(SQLModel, table=True) :
 
     # datetime metadata
     created_at: datetime = Field(default_factory=now_utc)
-    updated_at: datetime = Field(default_factory=now_utc)
+    updated_at: datetime = Field(default_factory=now_utc, sa_column_kwargs={"onupdate": now_utc})

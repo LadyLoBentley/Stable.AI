@@ -1,8 +1,11 @@
 
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
+
 from db.database import get_session
-from models.Pasture import Pasture
+
+from models.pasture import Pasture
+
 from schemas.pasture_response import PastureResponse
 
 router = APIRouter(prefix="/pastures", tags=["pastures"])
