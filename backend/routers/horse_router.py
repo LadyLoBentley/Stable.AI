@@ -86,6 +86,7 @@ async def add_horse(
     pasture_obj = session.get(Pasture, horse.pasture_id) if horse.pasture_id else None
 
     return HorseResponse(
+        horse_id=horse.horse_id,
         horse_name=horse.horse_name,
         owner_name=owner_obj.owner_name if owner_obj else "",
         breed=breed_obj.name if breed_obj else "",
@@ -112,11 +113,12 @@ async def add_horse(
         temperament=horse.temperament,
         notes=horse.notes,
         image=horse.image,
+
         created_at=horse.created_at,
         updated_at=horse.updated_at,
     )
 
-"""
+
 @router.get("/", response_model=list[HorseResponse])
 def get_horse(session: Session = Depends(get_session)):
     horses = session.exec(select(Horse)).all()
@@ -130,23 +132,37 @@ def get_horse(session: Session = Depends(get_session)):
 
         responses.append(
             HorseResponse(
+                horse_id=horse.horse_id,
                 horse_name=horse.horse_name,
                 owner_name = owner.owner_name,
-                breed = breed.name if breed else "",
+                breed = breed.name,
                 sex = horse.sex,
                 birthdate=horse.birthdate,
+                height=horse.height,
+                weight=horse.weight,
+
                 location_type = horse.location_type,
-                barn=barn.name if horse.location_type == LocationType.STALL else None,
+                turnout_type = horse.turnout_type,
+                barn=barn.name if horse.location_type == "stall" else None,
                 pasture_name=pasture.name if pasture else None,
-                stall_id=horse.stall_id if horse.location_type == LocationType.STALL else None,
+                stall_id=horse.stall_id if horse.location_type == "stall" else None,
+
+                escape_risk = horse.escape_risk,
+                may_bite = horse.may_bite,
+                may_kick = horse.may_kick,
+                difficult_to_catch = horse.difficult_to_catch,
+                herd_dominant = horse.herd_dominant,
+                sedation_required = horse.sedation_required,
+                food_aggressive = horse.food_aggressive,
+                requires_experienced_handler = horse.requires_experienced_handler,
+
                 temperament=horse.temperament,
                 notes=horse.notes,
                 image=horse.image,
+
                 created_at=horse.created_at,
                 updated_at=horse.updated_at
             )
         )
 
     return responses
-
-"""
