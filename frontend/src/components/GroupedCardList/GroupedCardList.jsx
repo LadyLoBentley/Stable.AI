@@ -26,7 +26,12 @@ function GroupedCardList({
         }, {});
     }, [items, groupBy]);
 
-    const [openGroups, setOpenGroups] = useState({});
+    const [openGroups, setOpenGroups] = useState(() => {
+        if (categoryOrder.length > 0) {
+            return { [categoryOrder[0]]: true };
+        }
+        return {};
+    });
 
     function toggleGroup(groupName) {
         setOpenGroups((prev) => ({

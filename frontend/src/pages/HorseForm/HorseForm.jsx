@@ -503,6 +503,9 @@ function HorseForm() {
                         label={<b>Turnout Type: </b>}
                         options={[
                           "Group Turnout",
+                          "Small Group Turnout",
+                          "Mares only",
+                          "Geldings only",
                           "Individual Paddock",
                           "Medical Turnout",
                           "Flexible"

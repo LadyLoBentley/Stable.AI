@@ -27,9 +27,20 @@ HorseDashboard.AI/
 │   ├── core/
 │   ├── db/
 │   ├── models/
+│   │   ├── horse.py
+│   │   ├── medical_records.py
+│   │   └── inventory_items.py
 │   ├── routers/
+│   │   ├── horse_router.py
+│   │   └── inventory_router.py
 │   ├── schemas/
+│   │   ├── horse_request.py
+│   │   ├── horse_response.py
+│   │   ├── item_request.py
+│   │   └── item_response.py
 │   ├── services/
+│   │   ├── feed_service.py
+│   │   └── medical_record_service.py
 │   ├── .env.example
 │   ├── dependencies.py
 │   ├── main.py
