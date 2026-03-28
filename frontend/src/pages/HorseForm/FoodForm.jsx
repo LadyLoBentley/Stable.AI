@@ -613,11 +613,11 @@ function FoodForm() {
                                 touched={touched.feedingInstructions}
                             />
                         </div>
+                        <div className="formButton">
+                            <Button label="Back" variant="secondary" type="button" onClick={() => navigate(-1)} />
+                            <Button label="Next" type="submit"/>
+                        </div>
                     </div>
-                </div>
-                <div className="formButton">
-                    <Button label="Back" variant="secondary" type="button" onClick={() => navigate(-1)} />
-                    <Button label="Next" type="submit"/>
                 </div>
             </form>
         </div>

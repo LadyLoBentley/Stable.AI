@@ -743,12 +743,11 @@ function HorseForm() {
                         onBlur={() => handleBlur("image", formData.image, setTouched, setErrors, validateField)}
                       />
                 </div>
+                <div className="formButton">
+                  <Button label="Cancel" variant="secondary" type="button" onClick={() => navigate(-1)} />
+                  <Button label="Next" type="submit" />
+                </div>
               </div>
-        </div>
-
-        <div className="formButton">
-          <Button label="Cancel" variant="secondary" type="button" onClick={() => navigate(-1)} />
-          <Button label="Next" type="submit" />
         </div>
       </form>
     </div>

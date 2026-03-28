@@ -10,6 +10,8 @@ import MedicalForm from "./pages/HorseForm/MedicalForm.jsx";
 import OwnerForm from "./pages/HorseForm/OwnerForm.jsx";
 import Inventory from "./pages/Inventory.jsx";
 import AddInventoryForm from "./pages/AddInventoryForm.jsx";
+import Documents from "./pages/Documents.jsx";
+import AddDocument from "./pages/AddDocument.jsx";
 
 // Components
 import Header from "./components/Header.jsx"
@@ -51,6 +53,10 @@ function App() {
 
                         <Route path={"/inventory"} element={<Inventory />} />
                         <Route path="/add-item" element={<AddInventoryForm />} />
+
+
+                        <Route path="/documents" element={<Documents />} />
+                        <Route path="/add-document" element={<AddDocument />} />
                     </Routes>
                 </main>
             </div>

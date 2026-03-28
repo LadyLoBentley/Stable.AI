@@ -62,8 +62,8 @@ function HorseDashboard() {
             getDetails={(horse) => [
                 { label: "Sex", value: horse.sex },
                 { label: "Breed", value: horse.breed },
-                ...(horse.stall_id ? [{ label: "Stall", value: horse.stall_id }] : [])
-            ]}
+                    ...(horse.stall_id ? [{ label: "Stall", value: horse.stall_id }] : [])
+                ]}
         />
     );
 }

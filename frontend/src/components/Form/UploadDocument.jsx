@@ -1,35 +1,22 @@
-import { useRef, useState, useEffect } from "react";
-import InfoTip from '../InfoTip/InfoTip.jsx';
+import { useRef, useState } from "react";
+import InfoTip from "../InfoTip/InfoTip.jsx";
 import Button from "../Button/Button.jsx";
 
-function UploadImage({
-                         id,
-                         label,
-                         value = null,
-                         onChange,
-                         icon_label,
-                         title,
-                         body,
-                         maxSizeMB = 10,
-                         onBlur,
-                         isRequired = false,
-                         error = ""
+function UploadDocument({
+    id,
+    label,
+    value = null,
+    onChange,
+    icon_label,
+    title,
+    body,
+    maxSizeMB = 10,
+    onBlur,
+    isRequired = false,
+    error = ""
 }) {
     const inputRef = useRef(null);
-    const [previewUrl, setPreviewUrl] = useState("");
     const [localError, setLocalError] = useState("");
-
-    useEffect(() => {
-        if (!value) {
-            setPreviewUrl("");
-            return;
-        }
-
-        const localUrl = URL.createObjectURL(value);
-        setPreviewUrl(localUrl);
-
-        return () => URL.revokeObjectURL(localUrl);
-    }, [value]);
 
     function handleFileSelect(e) {
         const file = e.target.files?.[0];
@@ -37,15 +24,21 @@ function UploadImage({
 
         setLocalError("");
 
-        if (!file.type.startsWith("image/")) {
-            setLocalError("Please upload a valid image file.");
+        const allowedTypes = [
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+            setLocalError("Please upload a PDF or Word document.");
             onChange(null);
             return;
         }
 
         const maxBytes = maxSizeMB * 1024 * 1024;
         if (file.size > maxBytes) {
-            setLocalError(`Image must be ${maxSizeMB} MB or smaller.`);
+            setLocalError(`File must be ${maxSizeMB} MB or smaller.`);
             onChange(null);
             return;
         }
@@ -84,7 +77,7 @@ function UploadImage({
                     id={id}
                     name={id}
                     type="file"
-                    accept="image/*"
+                    accept=".pdf,.doc,.docx"
                     onBlur={onBlur}
                     onChange={handleFileSelect}
                     className="uploadImageInput"
@@ -98,25 +91,24 @@ function UploadImage({
                     }
                 />
 
-                {!previewUrl ? (
+                {!value ? (
                     <label
                         htmlFor={id}
                         className={`uploadImageDropzone ${hasVisibleError ? "inputError" : ""}`}
                     >
-                        <span className="uploadImageTitle">Choose an image</span>
+                        <span className="uploadImageTitle">Choose a document</span>
                         <span className="uploadImageSubtext">
-                            JPG, PNG, or WEBP up to {maxSizeMB} MB
+                            PDF, DOC, or DOCX up to {maxSizeMB} MB
                         </span>
                     </label>
                 ) : (
                     <div
                         className={`uploadImagePreviewCard ${hasVisibleError ? "inputError" : ""}`}
                     >
-                        <img
-                            src={previewUrl}
-                            alt="Selected inventory item"
-                            className="uploadImagePreview"
-                        />
+                        <div className="uploadPdfPreview">
+                            <span className="uploadPdfIcon">📄</span>
+                            <span className="uploadPdfText">Document selected</span>
+                        </div>
 
                         <div className="uploadImageMeta">
                             <div className="uploadImageName">{value?.name}</div>
@@ -152,4 +144,4 @@ function UploadImage({
     );
 }
 
-export default UploadImage;
+export default UploadDocument;

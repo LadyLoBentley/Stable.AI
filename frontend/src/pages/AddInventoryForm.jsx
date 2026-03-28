@@ -62,6 +62,9 @@ export function AddInventoryForm() {
 
             case "category":
                 if (!value.trim()) return "Category is required.";
+                if (value === "Other" && !customCategory.trim()) {
+                    return "Please specify a custom category.";
+                }
                 return "";
 
             case "grade":
@@ -87,8 +90,9 @@ export function AddInventoryForm() {
     //--------------------------Quantity--------------------------//
     const [quantity, setQuantity] = useState(0);
 
-    //--------------------=-----Category---------=----------------//
+    //--------------------------Category--------------------------//
     const [category, setCategory] = useState("");
+    const [customCategory, setCustomCategory] = useState("");
 
     //----------------------------Grade---------------------------//
     const [grade, setGrade] = useState("");
@@ -96,7 +100,7 @@ export function AddInventoryForm() {
     //------------------------Instructions------------------------//
     const [instructions, setInstructions] = useState("");
 
-    //------------------------Instructions------------------------//
+    //------------------------Upload Image------------------------//
     const [imageFile, setImageFile] = useState(null);
 
     //--------------------Handle Form Submission------------------//
@@ -150,10 +154,11 @@ export function AddInventoryForm() {
         }
 
         try {
+            const finalCategory = category === "Other" ? customCategory.trim() : category;
             const formData = new FormData();
             formData.append("label", label);
             formData.append("quantity", String(quantity));
-            formData.append("category", category);
+            formData.append("category", finalCategory);
             formData.append("grade", grade);
             formData.append("instructions", instructions);
 
@@ -180,6 +185,7 @@ export function AddInventoryForm() {
             setLabel("");
             setQuantity(0);
             setCategory("");
+            setCustomCategory("");
             setGrade("");
             setInstructions("");
             setImageFile(null);
@@ -216,7 +222,7 @@ export function AddInventoryForm() {
                     >
                         {submitStatus.message}
                     </div>
-                )}
+            )}
 
             <div className="formNote">
                 Please check that the item does not already exist in the inventory before adding a new entry.
@@ -225,7 +231,7 @@ export function AddInventoryForm() {
             <form onSubmit={HandleSubmit}>
                 <div className="formInputs">
                     <div className="formSection">
-                        <h3>Add Item</h3>
+                        <h3>Item Details</h3>
                         <div className="inventory-form-row2">
 
                             <TextField                      // Item Label Field
@@ -251,7 +257,6 @@ export function AddInventoryForm() {
                                 id="quantity"
                                 label={<b>Quantity: </b>}
                                 value={quantity}
-                                placeholder={0}
                                 onChange={(value) =>updateField("quantity", value, setQuantity, touched, setErrors, validateField)}
                                 icon_label="Quantity help"
                                 title="Item Quantity"
@@ -267,9 +272,26 @@ export function AddInventoryForm() {
                                 label={<b>Category: </b>}
                                 options={categoryOptions}
                                 value={category}
-                                onChange={(value) =>updateField("category", value, setCategory, touched, setErrors, validateField)}
+                                onChange={(value) => {
+                                    updateField("category", value, setCategory, touched, setErrors, validateField);
+
+                                    if (value !== "Other") {
+                                        setCustomCategory("");
+                                    }
+                                }}
                                 allowCustom={true}
                                 customLabel={<b>Specify Category: </b>}
+                                customValue={customCategory}
+                                onCustomChange={(value) => {
+                                    setCustomCategory(value);
+
+                                    if (touched.category) {
+                                        setErrors((prev) => ({
+                                            ...prev,
+                                            category: validateField("category", category)
+                                        }));
+                                    }
+                                }}
                                 icon_label="Category help"
                                 title="Category"
                                 body="Choose the closest match. Use Other only when the item does not fit an existing category."
@@ -312,7 +334,10 @@ export function AddInventoryForm() {
                                 touched={touched.instructions}
                             />
                         </div>
+                    </div>
 
+                    <div className="formSection">
+                        <h3>Upoad Image</h3>
                         <div className="inventory-form-row4">
                             <UploadImage
                                 id="item-image"
@@ -327,9 +352,9 @@ export function AddInventoryForm() {
                                 error={touched.imageFile ? errors.imageFile : ""}
                                 onBlur={() => handleBlur("imageFile", imageFile, setTouched, setErrors, validateField)}
                             />
-                            <div className="formButton">
-                                <Button type="submit" label="Add Item" />
-                            </div>
+                        </div>
+                        <div className="formButton">
+                            <Button type="submit" label="Add Item" />
                         </div>
                     </div>
                 </div>
