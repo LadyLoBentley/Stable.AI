@@ -3,6 +3,7 @@ from typing import Optional
 from sqlmodel import SQLModel
 
 class OwnerResponse(SQLModel):
+    owner_id: str
     owner_name: str
     owner_phone: str
     owner_email: str

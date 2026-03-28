@@ -58,12 +58,11 @@ const Navbar = ({ isOpen, closeNav }) => {
 
                     {openSection === "inventory" && (
                         <ul className={styles.subList}>
-                            <li><a href="/add-item">+ Inventory Item</a></li>
+                            <li><a href="/add-item">+ Item</a></li>
                         </ul>
                     )}
                 </li>
 
-                {/*
                 <li>
                     <div className={styles.sectionHeader}>
                         <a href="/documents">Documents</a>
@@ -83,9 +82,8 @@ const Navbar = ({ isOpen, closeNav }) => {
                         <ul className={styles.subList}>
                             <li><a href="/add-document">+ Document</a></li>
                         </ul>
+                    )}
                 </li>
-
-                */}
             </ul>
         </aside>
     );

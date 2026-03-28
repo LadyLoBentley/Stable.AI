@@ -1039,7 +1039,8 @@ function MedicalForm() {
                         />
                     </div>
 
-                        <div className="formSection">
+                    <div className="formSection">
+                        <div className="inventory-form-row4">
                             <CareScheduleField
                                 label="Supplements"
                                 value={formData.supplements}
@@ -1059,11 +1060,12 @@ function MedicalForm() {
                                 tipNotesTitle="Medication Notes"
                                 tipNotesBody="Add any additional notes that may be helpful to give the best care tailored to the horse."
                             />
-                     </div>
-                </div>
-                <div className="formButton">
-                    <Button label="Back" variant="secondary" type="button" onClick={() => navigate(-1)} />
-                    <Button label="Next" type="submit"/>
+                        </div>
+                        <div className="formButton">
+                            <Button label="Back" variant="secondary" type="button" onClick={() => navigate(-1)} />
+                            <Button label="Next" type="submit"/>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

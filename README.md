@@ -22,48 +22,51 @@ provides non-diagnostic guidance and expert knowledge to inexperienced horse own
 ## Project Structure
 
 ```text
-HorseDashboard.AI/
+Stable.AI/
 ├── backend/
-│   ├── core/
-│   ├── db/
 │   ├── models/
 │   │   ├── horse.py
 │   │   ├── medical_records.py
 │   │   └── inventory_items.py
+│   ├── rag/
+│   │   ├── chunking.py
+│   │   ├── embedder.py
+│   │   ├── prompt_builder.py
+│   │   └── vector_store.py
 │   ├── routers/
+│   │   ├── feed_service.py
 │   │   ├── horse_router.py
-│   │   └── inventory_router.py
+│   │   ├── inventory_router.py
+│   │   └── rag_router.py
 │   ├── schemas/
 │   │   ├── horse_request.py
-│   │   ├── horse_response.py
-│   │   ├── item_request.py
 │   │   └── item_response.py
 │   ├── services/
+│   │   ├── medical_record_service.py
 │   │   ├── feed_service.py
-│   │   └── medical_record_service.py
-│   ├── .env.example
-│   ├── dependencies.py
+│   │   └── rag_service.py
 │   ├── main.py
 │   └── requirements.txt
 │   
-│
 ├── frontend/
 │   ├── public/
-│   │   └── vite.svg
 │   ├── src/
-│   │   ├── Assets/
-│   │   │   ├── react.svg
+│   │   ├── Components/
+│   │   │   └── Chatbot
+│   │   ├── Pages/
+│   │   │   ├── HorseForm/
+│   │   │   ├── AddInventoryForm.jsx
+│   │   │   ├── Documents.jsx
+│   │   │   └── Inventory.jsx
 │   │   ├── App.css
 │   │   ├── App.jsx
-│   │   └── index.css
-│   │   ├── main.jsx
-│   ├── .gitignore
+│   │   ├── index.css
+│   │   └──  main.jsx
 │   ├── elint.config.js
 │   ├── index.html
 │   ├── vite.config.js
 │   ├── package.json
-│   ├── package-lock.json
-│   └── README.md
+│   └── package-lock.json
 │
 ├── resources/
 ├── .gitignore

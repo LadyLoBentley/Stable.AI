@@ -629,11 +629,11 @@ function OwnerForm() {
                                 onBlur={() => setTouched((prev) => ({ ...prev, signedWaiver: true }))}
                             />
                         </div>
+                        <div className="formButton">
+                            <Button label="Back" variant="secondary" type="button" onClick={() => navigate(-1)} />
+                            <Button label="Submit" type="submit"/>
+                        </div>
                     </div>
-                </div>
-                <div className="formButton">
-                    <Button label="Back" variant="secondary" type="button" onClick={() => navigate(-1)} />
-                    <Button label="Submit" type="submit"/>
                 </div>
             </form>
         </div>
