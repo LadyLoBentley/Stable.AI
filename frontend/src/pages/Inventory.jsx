@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import GroupedCardList from "../components/GroupedCardList/GroupedCardList.jsx";
 
 function Inventory() {
     const [inventoryItems, setInventoryItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const navigate = useNavigate();
 
     const categoryOrder = [
         "Hay",
@@ -74,6 +76,7 @@ function Inventory() {
                     { label: "Grade", value: item.grade || "Not Applicable" },
                     { label: "Stock Status", value: item.stock_status || "Unknown" },
                 ]}
+                onCardClick={(item) => navigate(`/inventory/${item.item_id}`)}
             />
         </div>
     );

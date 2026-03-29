@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import GroupedCardList from "../components/GroupedCardList/GroupedCardList.jsx";
+import FormatDate from "../utils/FormatDate.jsx"
 
 function Documents() {
     const [documents, setDocuments] = useState([]);
@@ -68,14 +69,22 @@ function Documents() {
                 groupBy={(document) => document.category || "Other"}
                 getKey={(document) => document.document_id}
                 getImage={(document) =>
-                    document.file_type?.startsWith("image/") ? document.file_url : ""
-                }
+                document.file_url?.match(/\.(jpg|jpeg|png|webp)$/i)
+                    ? document.file_url
+                    : ""
+            }
+
+            getPdfUrl={(document) =>
+                document.file_url?.match(/\.pdf$/i)
+                    ? document.file_url
+                    : ""
+            }
                 getImageAlt={(document) => document.document_name || "document"}
                 getTitle={(document) => document.document_name}
                 getDetails={(document) => [
-                    { label: "Category", value: document.category },
-                    { label: "Uploaded", value: document.created_at},
-                    { label: "Updated", value: document.updated_at}
+                    { label: "Description", value: document.notes || "Other" },
+                    { label: "Uploaded", value: FormatDate(document.created_at) },
+                    { label: "Updated", value: FormatDate(document.updated_at) }
                 ]}
             />
         </div>

@@ -12,6 +12,8 @@ import Inventory from "./pages/Inventory.jsx";
 import AddInventoryForm from "./pages/AddInventoryForm.jsx";
 import Documents from "./pages/Documents.jsx";
 import AddDocument from "./pages/AddDocument.jsx";
+import InventoryDetailPage from "./pages/InventoryDetailPage.jsx";
+import HorseDetailPage from "./pages/HorseDetail/HorseDetailPage.jsx";
 
 // Components
 import Header from "./components/Header.jsx"
@@ -43,6 +45,7 @@ function App() {
                 <main className={`mainContent ${showNav ? "navOpen" : ""}`}>
                     <Routes>
                         <Route path="/" element={<HorseDashboard />} />
+                        <Route path="/horses/:horse_id" element={<HorseDetailPage />} />
 
                         <Route path="/add-horse" element={<FormManager />}>
                             <Route index element={<HorseForm />} />
@@ -52,8 +55,8 @@ function App() {
                         </Route>
 
                         <Route path={"/inventory"} element={<Inventory />} />
+                        <Route path={"/inventory/:item_id"} element={<InventoryDetailPage />} />
                         <Route path="/add-item" element={<AddInventoryForm />} />
-
 
                         <Route path="/documents" element={<Documents />} />
                         <Route path="/add-document" element={<AddDocument />} />

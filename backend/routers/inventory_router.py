@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, UploadFile, HTTPException
 from sqlmodel import Session, select
 
 from db.database import get_session
@@ -56,3 +56,12 @@ def get_inventory(session: Session = Depends(get_session)):
         )
         for item in inventory
     ]
+
+@router.get("/{item_id}", response_model=ItemResponse)
+def get_item(item_id: str, session: Session = Depends(get_session)):
+    item = session.get(InventoryItems, item_id)
+
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    return item

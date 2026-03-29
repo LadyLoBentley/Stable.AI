@@ -9,9 +9,11 @@ function GroupedCardList({
     groupBy,
     getKey,
     getImage,
+    getPdfUrl,
     getImageAlt,
     getTitle,
-    getDetails
+    getDetails,
+    onCardClick
 }) {
     const groupedItems = useMemo(() => {
         return items.reduce((groups, item) => {
@@ -86,10 +88,12 @@ function GroupedCardList({
                                     {groupedItems[groupName].map((item) => (
                                         <Card
                                             key={getKey(item)}
-                                            image={getImage(item)}
+                                            image={getImage?.(item)}
+                                            pdfUrl={getPdfUrl?.(item)}
                                             imageAlt={getImageAlt(item)}
                                             title={getTitle(item)}
                                             details={getDetails(item)}
+                                            onClick={() => onCardClick?.(item)}
                                         />
                                     ))}
                                 </div>

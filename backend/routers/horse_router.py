@@ -1,6 +1,6 @@
 from datetime import date
 from typing import Optional
-from fastapi import APIRouter, Depends, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, UploadFile, HTTPException
 from sqlmodel import Session, select
 
 from db.database import get_session
@@ -38,7 +38,7 @@ async def add_horse(
     escapeRisk: bool = Form(False),
     mayBite: bool = Form(False),
     mayKick: bool = Form(False),
-    difficultyToCatch = Form(False),
+    difficultyToCatch:bool = Form(False),
     herdDominant: bool = Form(False),
     sedationRequired: bool = Form(False),
     foodAggressive: bool = Form(False),
@@ -120,7 +120,7 @@ async def add_horse(
 
 
 @router.get("/", response_model=list[HorseResponse])
-def get_horse(session: Session = Depends(get_session)):
+def get_horses(session: Session = Depends(get_session)):
     horses = session.exec(select(Horse)).all()
 
     responses = []
@@ -164,5 +164,51 @@ def get_horse(session: Session = Depends(get_session)):
                 updated_at=horse.updated_at
             )
         )
-
     return responses
+
+@router.get("/{horse_id}", response_model=HorseResponse)
+def get_horse(horse_id: str, session: Session = Depends(get_session)):
+    horse = session.exec(
+        select(Horse).where(Horse.horse_id == horse_id)
+    ).first()
+
+    if not horse:
+        raise HTTPException(status_code=404, detail="Horse not found")
+
+    breed = session.get(Breed, horse.breed_id)
+    owner = session.get(OwnerInfo, horse.owner_id)
+    barn = session.get(Barn, horse.barn_id) if horse.barn_id else None
+    pasture = session.get(Pasture, horse.pasture_id) if horse.pasture_id else None
+
+    return HorseResponse(
+        horse_id=horse.horse_id,
+        horse_name=horse.horse_name,
+        owner_name=owner.owner_name if owner else "",
+        breed=breed.name if breed else "",
+        sex=horse.sex,
+        birthdate=horse.birthdate,
+        height=horse.height,
+        weight=horse.weight,
+
+        location_type=horse.location_type,
+        turnout_type=horse.turnout_type,
+        barn=barn.name if horse.location_type == "stall" and barn else None,
+        pasture_name=pasture.name if pasture else None,
+        stall_id=horse.stall_id if horse.location_type == "stall" else None,
+
+        escape_risk=horse.escape_risk,
+        may_bite=horse.may_bite,
+        may_kick=horse.may_kick,
+        difficult_to_catch=horse.difficult_to_catch,
+        herd_dominant=horse.herd_dominant,
+        sedation_required=horse.sedation_required,
+        food_aggressive=horse.food_aggressive,
+        requires_experienced_handler=horse.requires_experienced_handler,
+
+        temperament=horse.temperament,
+        notes=horse.notes,
+        image=horse.image,
+
+        created_at=horse.created_at,
+        updated_at=horse.updated_at
+    )

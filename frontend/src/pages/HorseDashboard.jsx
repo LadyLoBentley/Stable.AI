@@ -1,5 +1,6 @@
 import GroupedCardList from "../components/GroupedCardList/GroupedCardList.jsx";
 import { useEffect, useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 function HorseDashboard() {
     const barnOrder = [
@@ -10,6 +11,7 @@ function HorseDashboard() {
     const [horses, setHorses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchHorses() {
@@ -64,6 +66,7 @@ function HorseDashboard() {
                 { label: "Breed", value: horse.breed },
                     ...(horse.stall_id ? [{ label: "Stall", value: horse.stall_id }] : [])
                 ]}
+            onCardClick={(item) => navigate(`/horses/${item.horse_id}`)}
         />
     );
 }

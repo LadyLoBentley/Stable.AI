@@ -2,7 +2,8 @@ import styles from "./Card.module.css";
 
 function Card({
     image,
-    imageAlt = "Card image",
+    pdfUrl,
+    imageAlt = "Card preview",
     title,
     details = [],
     onClick
@@ -13,18 +14,34 @@ function Card({
             onClick={onClick}
             role="button"
             tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onClick?.();
+                }
+            }}
         >
             <div className={styles.cardBody}>
-                <img
-                    className={styles.cardImage}
-                    src={image}
-                    alt={imageAlt}
-                />
+                {pdfUrl && (
+                    <iframe
+                        className={styles.cardImage}
+                        src={pdfUrl}
+                        title={`${title} preview`}
+                    />
+                )}
+
+                {!pdfUrl && image && (
+                    <img
+                        className={styles.cardImage}
+                        src={image}
+                        alt={imageAlt}
+                    />
+                )}
 
                 <h2 className={styles.cardTitle}>{title}</h2>
 
                 <div className={styles.cardText}>
-                    {details.map((detail, index) => (
+                    {details?.map((detail, index) => (
                         <p key={index}>
                             <b>{detail.label}:</b> {detail.value}
                         </p>
