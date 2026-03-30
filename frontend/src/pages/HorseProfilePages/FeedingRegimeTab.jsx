@@ -1,34 +1,12 @@
-import { useParams } from "react-router-dom";
-import {useEffect, useState} from "react";
+import { useOutletContext } from "react-router-dom";
 import FormatDate from "../../utils/FormatDate";
 
-function HorseDetailPage() {
-    const {horse_id} = useParams();
-    const [horse, setHorse] = useState(null);
-
-    useEffect(() => {
-        async function fetchHorse() {
-            const response = await fetch(`http://127.0.0.1:8002/api/horses/${horse_id}`);
-            const data = await response.json();
-            setHorse(data);
-        }
-
-        fetchHorse();
-    }, [horse_id]);
-
-    if (!horse) return <p>Loading horse...</p>
+function FeedingRegimeTab() {
+    const { horse } = useOutletContext();
 
     return (
         <div className="formInputs">
             <div className="formContainer">
-                <h2>{horse.horse_name}</h2>
-                <div className="imageContainer">
-                    <img
-                        className="displayImage"
-                        src={horse.image}
-                        alt={horse.horse_name}
-                    />
-                </div>
 
                 <div className="formSection">
                     <h3>Details</h3>
@@ -73,9 +51,9 @@ function HorseDetailPage() {
                         <p>• Horse has history of biting</p>
                     )}
 
-                   {horse.may_kick && (
+                    {horse.may_kick && (
                         <p>• Horse has history of kicking</p>
-                   )}
+                    )}
 
                     {horse.difficult_to_catch && (
                         <p>• Horse is difficult to catch in the pasture</p>
@@ -96,6 +74,14 @@ function HorseDetailPage() {
                     {horse.requires_experienced_handler && (
                         <p>• Horse requires an experienced handler</p>
                     )}
+
+                    {!horse.escape_risk && !horse.may_bite && !horse.may_kick &&
+                        !horse.difficult_to_catch && !horse.herd_dominant &&
+                        !horse.sedation_required && !horse.food_aggressive &&
+                        !horse.requires_experienced_handler && (
+                            <p>• Horse has no safety concerns.</p>
+                        )
+                    }
                 </div>
 
                 <div className="formSection">
@@ -114,4 +100,4 @@ function HorseDetailPage() {
     )
 }
 
-export default HorseDetailPage;
+export default FeedingRegimeTab;

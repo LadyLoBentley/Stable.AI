@@ -1,11 +1,11 @@
 from datetime import date, datetime
-from typing import Optional
-from sqlmodel import SQLModel
+from typing import Optional, List
+from sqlmodel import SQLModel, Field
+
 
 class MedicalRecordResponse(SQLModel):
 
-    horse_name: str
-    birthdate: date
+    horse_id: str
 
     vet_clinic: str
     vet_name: str
@@ -43,6 +43,9 @@ class MedicalRecordResponse(SQLModel):
     deworm_date: Optional[date] = None
 
     medical_notes: Optional[str] = None
+
+    allergies: List[str] = Field(default_factory=list)
+    medical_conditions: List[str] = Field(default_factory=list)
 
     created_at: datetime
     updated_at: datetime

@@ -1,6 +1,6 @@
 from typing import Optional
-from fastapi import APIRouter, Depends, Form
-from sqlmodel import Session
+from fastapi import APIRouter, Depends, Form, HTTPException
+from sqlmodel import Session, select
 
 from db.database import get_session
 
@@ -50,10 +50,20 @@ def create_owner(
 
     return add_owner(session, submission)
 
-'''
+
 @router.get("/", response_model=list[OwnerResponse])
 def get_owners(session: Session = Depends(get_session)):
     owners = session.exec(select(OwnerInfo)).all()
     return owners
 
-'''
+@router.get("/{owner_id}", response_model=OwnerResponse)
+def get_owner_by_id(
+        owner_id: str,
+        session: Session = Depends(get_session)
+):
+    owner = session.exec(select(OwnerInfo).where(OwnerInfo.owner_id == owner_id)).first()
+
+    if not owner:
+        raise HTTPException(status_code=404, detail="Owner not found")
+
+    return owner

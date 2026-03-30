@@ -13,7 +13,11 @@ import AddInventoryForm from "./pages/AddInventoryForm.jsx";
 import Documents from "./pages/Documents.jsx";
 import AddDocument from "./pages/AddDocument.jsx";
 import InventoryDetailPage from "./pages/InventoryDetailPage.jsx";
-import HorseDetailPage from "./pages/HorseDetail/HorseDetailPage.jsx";
+import HorseProfile from "./pages/HorseProfilePages/HorseProfile.jsx";
+import HorseDetailTab from "./pages/HorseProfilePages/HorseDetailTab.jsx";
+import MedicalRecordTab from "./pages/HorseProfilePages/MedicalRecordTab.jsx";
+import FeedingRegimeTab from "./pages/HorseProfilePages/FeedingRegimeTab.jsx";
+import OwnerInformationTab from "./pages/HorseProfilePages/OwnerInformationTab.jsx";
 
 // Components
 import Header from "./components/Header.jsx"
@@ -45,7 +49,13 @@ function App() {
                 <main className={`mainContent ${showNav ? "navOpen" : ""}`}>
                     <Routes>
                         <Route path="/" element={<HorseDashboard />} />
-                        <Route path="/horses/:horse_id" element={<HorseDetailPage />} />
+
+                        <Route path="/horses/:horse_id" element={<HorseProfile />}>
+                            <Route index element={<HorseDetailTab />} />
+                            <Route path="medical" element={<MedicalRecordTab />} />
+                            <Route path="feed" element={<FeedingRegimeTab />} />
+                            <Route path="owner" element={<OwnerInformationTab />} />
+                        </Route>
 
                         <Route path="/add-horse" element={<FormManager />}>
                             <Route index element={<HorseForm />} />

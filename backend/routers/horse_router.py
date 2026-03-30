@@ -182,6 +182,7 @@ def get_horse(horse_id: str, session: Session = Depends(get_session)):
 
     return HorseResponse(
         horse_id=horse.horse_id,
+        owner_id=horse.owner_id,
         horse_name=horse.horse_name,
         owner_name=owner.owner_name if owner else "",
         breed=breed.name if breed else "",
