@@ -133,6 +133,7 @@ def get_horses(session: Session = Depends(get_session)):
         responses.append(
             HorseResponse(
                 horse_id=horse.horse_id,
+                owner_id=owner.owner_id,
                 horse_name=horse.horse_name,
                 owner_name = owner.owner_name,
                 breed = breed.name,
