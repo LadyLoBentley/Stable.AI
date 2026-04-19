@@ -17,6 +17,8 @@ from routers.feed_router import router as feed_router
 from routers.document_router import router as document_router
 from routers.medication_router import router as medication_router
 from routers.supplement_router import router as supplement_router
+from routers.rag_router import router as rag_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -48,3 +50,4 @@ app.include_router(feed_router, prefix="/api")
 app.include_router(document_router, prefix="/api")
 app.include_router(medication_router, prefix="/api")
 app.include_router(supplement_router, prefix="/api")
+app.include_router(rag_router, prefix="/api")
