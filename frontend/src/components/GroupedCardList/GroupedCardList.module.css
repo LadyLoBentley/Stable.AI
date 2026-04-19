@@ -27,11 +27,12 @@
 }
 
 .headerSubtitle {
-    margin: 8px 0 0;
+    margin: 10px 0 0;
     max-width: 780px;
-    font-size: 1rem;
-    color: #4d6659;
-    line-height: 1.5;
+    font-size: 1.02rem;
+    color: var(--ink-700, #3E5245);
+    line-height: 1.55;
+    font-weight: 400;
 }
 
 .headerAction {
@@ -48,35 +49,79 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 0;
+    padding: 16px 14px 14px;
     background: transparent;
     margin-top: 28px;
     border: none;
-    border-bottom: 1px solid #d8e3da;
-    font-family: "Georgia", serif;
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #284937;
+    border-bottom: 1px solid var(--stone-300, #CDD7C3);
+    font-family: var(--font-display, "Fraunces", "Georgia", serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--pine-900, #1F3A2A);
     cursor: pointer;
     text-align: left;
-    transition: color 0.18s ease;
+    transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    letter-spacing: -0.01em;
+    border-radius: 12px 12px 0 0;
 }
 
 .groupHeader:hover {
-    color: #1f7f4d;
+    color: var(--pine-700, #2F5D3E);
+    border-bottom-color: var(--sage-200, #BFCFB2);
+    background: rgba(238, 241, 231, 0.35);
 }
 
-.groupMeta {
+.groupHeaderOpen {
+    border-bottom-color: var(--pine-500, #4E8A63);
+    background: rgba(238, 241, 231, 0.28);
+}
+
+.groupTitleWrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.groupTitle {
+    display: inline-block;
+}
+
+.groupCount {
     font-family: "Inter", sans-serif;
-    font-size: 0.98rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    color: #4a6254;
-    transition: color 0.18s ease, transform 0.18s ease;
+    color: var(--pine-700, #2F5D3E);
+    background: var(--sage-50, #EEF1E7);
+    border: 1px solid var(--sage-200, #BFCFB2);
+    padding: 3px 10px;
+    border-radius: 999px;
+    min-width: 28px;
+    text-align: center;
+    letter-spacing: 0.02em;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 
-.groupHeader:hover .groupMeta {
-    color: #1f7f4d;
-    transform: scale(1.1);
+.groupHeader:hover .groupCount {
+    background: rgba(238, 241, 231, 0.95);
+    border-color: var(--pine-500, #4E8A63);
+    color: var(--pine-900, #1F3A2A);
+}
+
+.groupChevron {
+    font-size: 28px !important;
+    color: var(--ink-600, #4A5E4F);
+    transition: transform 0.22s ease, color 0.18s ease;
+    transform: rotate(0deg);
+    flex-shrink: 0;
+}
+
+.groupChevronOpen {
+    transform: rotate(180deg);
+    color: var(--pine-700, #2F5D3E);
+}
+
+.groupHeader:hover .groupChevron {
+    color: var(--pine-700, #2F5D3E);
 }
 
 .cardGrid {

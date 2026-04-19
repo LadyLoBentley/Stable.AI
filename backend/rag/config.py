@@ -17,8 +17,8 @@ RESOURCES_DIR = PROJECT_ROOT / "resources"
 CHROMA_DIR = BACKEND_DIR / "chroma_db"
 
 # model names
-LLM_MODEL = os.getenv("LLM_MODEL", "qwen3:4b")
-EMBED_MODEL = os.getenv("EMBED_MODEL", "mxbai-embed-large:latest")
+LLM_MODEL = os.getenv("LLM_MODEL", "qwen2.5:3b")
+EMBED_MODEL = os.getenv("EMBED_MODEL", "nomic-embed-text:latest")
 
 # retrieval settings
 TOP_K = int(os.getenv("RAG_TOP_K", "5"))

@@ -434,6 +434,11 @@ function MedicalRecordEditForm({
 
             <div className="formSection">
                 <h3>Edit Preventative Care</h3>
+
+                <h4 className="subSectionHeader">
+                    <span className="material-symbols-rounded" aria-hidden="true">construction</span>
+                    Farrier
+                </h4>
                 <div className="inventory-form-row3">
                     <CheckboxField
                         id="edit-hasShoes"
@@ -465,6 +470,10 @@ function MedicalRecordEditForm({
                     />
                 </div>
 
+                <h4 className="subSectionHeader">
+                    <span className="material-symbols-rounded" aria-hidden="true">dentistry</span>
+                    Dental
+                </h4>
                 <div className="inventory-form-row1">
                     <TextField
                         id="edit-dentistName"
@@ -487,6 +496,10 @@ function MedicalRecordEditForm({
                     />
                 </div>
 
+                <h4 className="subSectionHeader">
+                    <span className="material-symbols-rounded" aria-hidden="true">accessibility_new</span>
+                    Chiropractor
+                </h4>
                 <div className="inventory-form-row1">
                     <TextField
                         id="edit-chiropractorName"
@@ -509,6 +522,10 @@ function MedicalRecordEditForm({
                     />
                 </div>
 
+                <h4 className="subSectionHeader">
+                    <span className="material-symbols-rounded" aria-hidden="true">spa</span>
+                    Massage
+                </h4>
                 <div className="inventory-form-row1">
                     <TextField
                         id="edit-massageTherapist"
@@ -531,6 +548,10 @@ function MedicalRecordEditForm({
                     />
                 </div>
 
+                <h4 className="subSectionHeader">
+                    <span className="material-symbols-rounded" aria-hidden="true">science</span>
+                    Deworming
+                </h4>
                 <div className="inventory-form-row1">
                     <DropdownField
                         id="edit-lastDewormer"
@@ -558,7 +579,12 @@ function MedicalRecordEditForm({
 
             <div className="formSection">
                 <h3>Edit Conditions & Allergies</h3>
-                <div className="inventory-form-row2">
+
+                <h4 className="subSectionHeader">
+                    <span className="material-symbols-rounded" aria-hidden="true">medical_information</span>
+                    Health Conditions
+                </h4>
+                <div className="inventory-form-row3">
                     <TagSearchField
                         label="Health Conditions"
                         value={formData.medicalConditions}
@@ -566,7 +592,13 @@ function MedicalRecordEditForm({
                         options={healthConditions}
                         placeholder="Type to search or add a health condition..."
                     />
+                </div>
 
+                <h4 className="subSectionHeader">
+                    <span className="material-symbols-rounded" aria-hidden="true">coronavirus</span>
+                    Allergies
+                </h4>
+                <div className="inventory-form-row3">
                     <TagSearchField
                         label="Allergies"
                         value={formData.allergies}

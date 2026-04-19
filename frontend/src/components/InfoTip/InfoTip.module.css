@@ -9,9 +9,9 @@
     width: 20px;
     height: 20px;
     border-radius: 999px;
-    border: 1px solid #ced9cd;
-    background: #f7fbf7;
-    color: #547160;
+    border: 1px solid var(--stone-300, #CDD7C3);
+    background: var(--cream-50, #FDFBF4);
+    color: var(--ink-600, #4A5E4F);
     font-size: 12px;
     font-weight: 700;
     line-height: 1;
@@ -21,47 +21,52 @@
     justify-content: center;
     padding: 0;
     transition: all 0.18s ease;
-    box-shadow: 0 3px 10px rgba(43, 63, 49, 0.12);
+    box-shadow: 0 2px 6px rgba(31, 58, 42, 0.08);
 }
 
 .trigger:hover {
-    border-color: #2ba05d;
-    color: #218c51;
-    background: #eff8f0;
+    border-color: var(--pine-600, #3A7150);
+    color: var(--pine-700, #2F5D3E);
+    background: var(--sage-50, #EEF1E7);
 }
 
 .trigger:focus-visible {
     outline: none;
-    border-color: #24b25f;
-    box-shadow: 0 0 0 4px rgba(36, 178, 95, 0.14);
+    border-color: var(--pine-600, #3A7150);
+    box-shadow: 0 0 0 4px rgba(47, 93, 62, 0.14);
 }
 
 .tooltip {
     width: 300px;
     max-width: min(300px, calc(100vw - 16px));
     padding: 14px 16px;
-    border-radius: 16px;
-    border: 1px solid #dbe6dc;
-    background: linear-gradient(170deg, #ffffff 0%, #f7faf6 100%);
-    box-shadow: 0 14px 28px rgba(33, 55, 40, 0.14);
+    border-radius: var(--radius-lg, 18px);
+    border: 1px solid var(--stone-300, #CDD7C3);
+    background: linear-gradient(170deg,
+        var(--cream-50, #FDFBF4) 0%,
+        var(--cream-100, #FAF7EE) 100%);
+    box-shadow: var(--shadow-float, 0 22px 44px rgba(31, 58, 42, 0.14));
     z-index: 2147483647;
     pointer-events: auto;
     text-align: left;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
 .title {
-    font-family: "Georgia", serif;
-    font-size: 0.98rem;
-    font-weight: 700;
-    color: #23392d;
+    font-family: var(--font-display, "Fraunces", "Georgia", serif);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--pine-900, #1F3A2A);
     margin-bottom: 8px;
     line-height: 1.2;
+    letter-spacing: -0.005em;
 }
 
 .body {
     font-size: 0.88rem;
-    line-height: 1.45;
-    color: #455a4f;
+    line-height: 1.5;
+    color: var(--ink-700, #3E5245);
 }
 
 .linkRow {
@@ -73,13 +78,14 @@
     background: transparent;
     padding: 0;
     font-size: 0.88rem;
-    font-weight: 700;
-    color: #218c51;
+    font-weight: 600;
+    color: var(--pine-700, #2F5D3E);
     text-decoration: underline;
+    text-underline-offset: 3px;
     cursor: pointer;
     transition: color 0.18s ease;
 }
 
 .link:hover {
-    color: #1a7644;
+    color: var(--pine-900, #1F3A2A);
 }

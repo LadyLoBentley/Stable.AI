@@ -56,10 +56,6 @@ function Inventory() {
         return <p className="pageMessage errorMessage">{error}</p>;
     }
 
-    if (inventoryItems.length === 0) {
-        return <p className="pageMessage">No items found.</p>;
-    }
-
     return (
         <div className="inventory-page">
             <GroupedCardList
@@ -69,6 +65,7 @@ function Inventory() {
                 actionTo="/add-item"
                 categoryOrder={categoryOrder}
                 items={inventoryItems}
+                emptyMessage="No items in inventory yet. Add your first item to get started."
                 groupBy={(item) => item.category || "Other"}
                 getKey={(item) => item.item_id}
                 getImage={(item) => item.image_url || ""}

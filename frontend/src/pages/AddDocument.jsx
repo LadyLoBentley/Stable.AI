@@ -265,9 +265,10 @@ export function AddDocument() {
                                 error={touched.fileUrl && !fileUrl ? "Please upload a document." : ""}
                             />
                         </div>
-                        <div className="formButton">
-                            <Button type="submit" label="Upload Document" />
-                        </div>
+                    </div>
+
+                    <div className="formButton">
+                        <Button type="submit" label="Upload Document" />
                     </div>
                 </div>
             </form>

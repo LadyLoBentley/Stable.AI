@@ -169,40 +169,68 @@ function MedicalRecordTab() {
 
                         <div className="formSection">
                             <h3>Primary Vet</h3>
-                            <p><b>Vet Clinic:</b> {medicalRecord.vet_clinic}</p>
-                            <p><b>Veterinarian:</b> {medicalRecord.vet_name}</p>
-                            <p><b>Phone Number:</b> {medicalRecord.vet_phone}</p>
+                            <dl className="detailList">
+                                <div className={`detailRow ${medicalRecord.vet_clinic ? "" : "empty"}`}>
+                                    <dt>Vet Clinic</dt>
+                                    <dd>{medicalRecord.vet_clinic || "Not on file"}</dd>
+                                </div>
+                                <div className={`detailRow ${medicalRecord.vet_name ? "" : "empty"}`}>
+                                    <dt>Veterinarian</dt>
+                                    <dd>{medicalRecord.vet_name || "Not on file"}</dd>
+                                </div>
+                                <div className={`detailRow ${medicalRecord.vet_phone ? "" : "empty"}`}>
+                                    <dt>Phone Number</dt>
+                                    <dd>{medicalRecord.vet_phone || "Not on file"}</dd>
+                                </div>
+                            </dl>
                         </div>
 
                         <div className="formSection">
                             <h3>Emergency Information</h3>
                             {medicalRecord.is_same_vet ? (
-                                <p>
-                                    The primary veterinarian also handles emergency services for this horse.
-                                </p>
+                                <div className="safetyChipGroup">
+                                    <span className="safetyChip calm">
+                                        <span className="material-symbols-rounded">verified</span>
+                                        Primary veterinarian also handles emergencies
+                                    </span>
+                                </div>
                             ) : (
-                                <>
-                                    <p><b>Emergency Clinic:</b> {medicalRecord.emergency_clinic || "Not on file"}</p>
-                                    <p><b>Veterinarian:</b> {medicalRecord.emergency_vet_name || "Not on file"}</p>
-                                    <p><b>Phone Number:</b> {medicalRecord.emergency_vet_phone || "Not on file"}</p>
-                                </>
+                                <dl className="detailList">
+                                    <div className={`detailRow ${medicalRecord.emergency_clinic ? "" : "empty"}`}>
+                                        <dt>Emergency Clinic</dt>
+                                        <dd>{medicalRecord.emergency_clinic || "Not on file"}</dd>
+                                    </div>
+                                    <div className={`detailRow ${medicalRecord.emergency_vet_name ? "" : "empty"}`}>
+                                        <dt>Veterinarian</dt>
+                                        <dd>{medicalRecord.emergency_vet_name || "Not on file"}</dd>
+                                    </div>
+                                    <div className={`detailRow ${medicalRecord.emergency_vet_phone ? "" : "empty"}`}>
+                                        <dt>Phone Number</dt>
+                                        <dd>{medicalRecord.emergency_vet_phone || "Not on file"}</dd>
+                                    </div>
+                                </dl>
                             )}
 
-                            <div className="sectionDivider"></div>
-
-                            <p><b>Emergency Treatment Authorization</b></p>
-                            <p>
-                                <b>Status:</b>{" "}
-                                <span className={medicalRecord.emergency_authorization ? "authorized" : "notAuthorized"}>
+                            <h4 className="subSectionHeader">
+                                <span className="material-symbols-rounded">gavel</span>
+                                Emergency Treatment Authorization
+                            </h4>
+                            <div className="safetyChipGroup">
+                                <span className={`safetyChip ${medicalRecord.emergency_authorization ? "calm" : "warn"}`}>
+                                    <span className="material-symbols-rounded">
+                                        {medicalRecord.emergency_authorization ? "check_circle" : "cancel"}
+                                    </span>
                                     {medicalRecord.emergency_authorization ? "Authorized" : "Not Authorized"}
                                 </span>
-                            </p>
+                            </div>
 
                             {medicalRecord.emergency_instructions && (
                                 <>
-                                    <div className="sectionDivider" />
-                                    <p><b>Emergency Instructions</b></p>
-                                    <p>{medicalRecord.emergency_instructions}</p>
+                                    <h4 className="subSectionHeader">
+                                        <span className="material-symbols-rounded">description</span>
+                                        Emergency Instructions
+                                    </h4>
+                                    <p className="instructionsText">{medicalRecord.emergency_instructions}</p>
                                 </>
                             )}
                         </div>
@@ -210,31 +238,42 @@ function MedicalRecordTab() {
                         <div className="formSection">
                             <h3>Health Records</h3>
 
-                            <p><b>Vaccination & Health Records</b></p>
+                            <h4 className="subSectionHeader">
+                                <span className="material-symbols-rounded">vaccines</span>
+                                Vaccination & Health Records
+                            </h4>
                             <div className="recordsTable">
-                                <VaccineRow label="Rabies Expiration Date" date={medicalRecord.rabies_expiration} />
-                                <VaccineRow label="Tetanus Expiration Date" date={medicalRecord.tetanus_expiration} />
-                                <VaccineRow label="West Nile Expiration Date" date={medicalRecord.west_nile_expiration} />
-                                <VaccineRow label="EEE/WEE Expiration Date" date={medicalRecord.eee_wee_expiration} />
-                                <VaccineRow label="Flu/Rhino Expiration Date" date={medicalRecord.flu_rhino_expiration} />
-                                <VaccineRow label="Coggins Expiration Date" date={medicalRecord.coggins_expiration} />
+                                <div className="recordHeader">
+                                    <div>Vaccine</div>
+                                    <div>Expiration</div>
+                                    <div>Status</div>
+                                </div>
+                                <VaccineRow label="Rabies" date={medicalRecord.rabies_expiration} />
+                                <VaccineRow label="Tetanus" date={medicalRecord.tetanus_expiration} />
+                                <VaccineRow label="West Nile" date={medicalRecord.west_nile_expiration} />
+                                <VaccineRow label="EEE/WEE" date={medicalRecord.eee_wee_expiration} />
+                                <VaccineRow label="Flu/Rhino" date={medicalRecord.flu_rhino_expiration} />
+                                <VaccineRow label="Coggins" date={medicalRecord.coggins_expiration} />
                             </div>
 
-                            <p><b>Deworm Record</b></p>
-                            <div className="recordsTable">
-                                <div className="recordRow">
-                                    <div className="recordLabel">Product</div>
-                                    <div className="recordLabel">Provider</div>
-                                    <div className="recordLabel">Date Given</div>
+                            <h4 className="subSectionHeader">
+                                <span className="material-symbols-rounded">science</span>
+                                Deworm Record
+                            </h4>
+                            <dl className="detailList">
+                                <div className={`detailRow ${dewormerName ? "" : "empty"}`}>
+                                    <dt>Product</dt>
+                                    <dd>{dewormerName || "Not on file"}</dd>
                                 </div>
-                                <div className="recordRow">
-                                    <div className="recordDate">{dewormerName || "Not on file"}</div>
-                                    <div className="recordStatus">{medicalRecord.deworm_provider || "Not on file"}</div>
-                                    <div className="recordDate">
-                                        {medicalRecord.deworm_date ? FormatDate(medicalRecord.deworm_date) : "Not recorded"}
-                                    </div>
+                                <div className={`detailRow ${medicalRecord.deworm_provider ? "" : "empty"}`}>
+                                    <dt>Provider</dt>
+                                    <dd>{medicalRecord.deworm_provider || "Not on file"}</dd>
                                 </div>
-                            </div>
+                                <div className={`detailRow ${medicalRecord.deworm_date ? "" : "empty"}`}>
+                                    <dt>Date Given</dt>
+                                    <dd>{medicalRecord.deworm_date ? FormatDate(medicalRecord.deworm_date) : "Not recorded"}</dd>
+                                </div>
+                            </dl>
                         </div>
 
                         {(hasHealthConditions || hasAllergies) && (
@@ -242,8 +281,11 @@ function MedicalRecordTab() {
                                 <h3>Health Conditions & Allergies</h3>
 
                                 {hasHealthConditions && (
-                                    <div className="recordGroup">
-                                        <p><b>Health Conditions</b></p>
+                                    <>
+                                        <h4 className="subSectionHeader">
+                                            <span className="material-symbols-rounded">medical_information</span>
+                                            Health Conditions
+                                        </h4>
                                         <div className="tagGroup">
                                             {medicalRecord.medical_conditions.map((condition) => (
                                                 <span key={condition} className="recordTag">
@@ -251,12 +293,15 @@ function MedicalRecordTab() {
                                                 </span>
                                             ))}
                                         </div>
-                                    </div>
+                                    </>
                                 )}
 
                                 {hasAllergies && (
-                                    <div className="recordGroup">
-                                        <p><b>Allergies</b></p>
+                                    <>
+                                        <h4 className="subSectionHeader">
+                                            <span className="material-symbols-rounded">coronavirus</span>
+                                            Allergies
+                                        </h4>
                                         <div className="tagGroup">
                                             {medicalRecord.allergies.map((allergy) => (
                                                 <span key={allergy} className="allergyTag">
@@ -264,7 +309,7 @@ function MedicalRecordTab() {
                                                 </span>
                                             ))}
                                         </div>
-                                    </div>
+                                    </>
                                 )}
                             </div>
                         )}
@@ -272,84 +317,97 @@ function MedicalRecordTab() {
                         <div className="formSection">
                             <h3>Preventative Care</h3>
 
-                            <p><b>Farrier Care Record</b></p>
-                            <div className="recordsTable">
-                                <div className="recordRow">
-                                    <div className="recordLabel">Shoeing Status</div>
-                                    <div className="recordDate">Current</div>
-                                    <div className="recordStatus">
+                            <h4 className="subSectionHeader">
+                                <span className="material-symbols-rounded">construction</span>
+                                Farrier Care
+                            </h4>
+                            <dl className="detailList">
+                                <div className="detailRow">
+                                    <dt>Shoeing Status</dt>
+                                    <dd>
                                         <span className={medicalRecord.has_shoes ? "statusCurrent" : "statusMissing"}>
                                             {medicalRecord.has_shoes ? "Shod" : "Barefoot"}
                                         </span>
-                                    </div>
+                                    </dd>
                                 </div>
-
-                                <div className="recordRow">
-                                    <div className="recordLabel">Last Farrier Visit</div>
-                                    <div className="recordDate">
-                                        {medicalRecord.farrier_date ? FormatDate(medicalRecord.farrier_date) : "Not recorded"}
-                                    </div>
-                                    <div className="recordStatus">
+                                <div className={`detailRow ${medicalRecord.farrier_date ? "" : "empty"}`}>
+                                    <dt>Last Farrier Visit</dt>
+                                    <dd>{medicalRecord.farrier_date ? FormatDate(medicalRecord.farrier_date) : "Not recorded"}</dd>
+                                </div>
+                                <div className="detailRow">
+                                    <dt>Next Visit Status</dt>
+                                    <dd>
                                         <span className={farrierStatus.className}>
                                             {nextFarrierDate ? `Due ${FormatDate(nextFarrierDate)}` : farrierStatus.text}
                                         </span>
-                                    </div>
+                                    </dd>
                                 </div>
+                                <div className={`detailRow ${medicalRecord.farrier_name ? "" : "empty"}`}>
+                                    <dt>Farrier Name</dt>
+                                    <dd>{medicalRecord.farrier_name || "Not on file"}</dd>
+                                </div>
+                                <div className={`detailRow ${medicalRecord.farrier_phone ? "" : "empty"}`}>
+                                    <dt>Farrier Phone</dt>
+                                    <dd>{medicalRecord.farrier_phone || "—"}</dd>
+                                </div>
+                            </dl>
 
-                                <div className="recordRow">
-                                    <div className="recordLabel">Farrier</div>
-                                    <div className="recordDate">{medicalRecord.farrier_name || "Not on file"}</div>
-                                    <div className="recordStatus">{medicalRecord.farrier_phone || "—"}</div>
+                            <h4 className="subSectionHeader">
+                                <span className="material-symbols-rounded">dentistry</span>
+                                Dental Care
+                            </h4>
+                            <dl className="detailList">
+                                <div className={`detailRow ${medicalRecord.dentist_name ? "" : "empty"}`}>
+                                    <dt>Name</dt>
+                                    <dd>{medicalRecord.dentist_name || "Not on file"}</dd>
                                 </div>
-                            </div>
+                                <div className={`detailRow ${medicalRecord.dentist_phone ? "" : "empty"}`}>
+                                    <dt>Phone Number</dt>
+                                    <dd>{medicalRecord.dentist_phone || "Not on file"}</dd>
+                                </div>
+                                <div className={`detailRow ${medicalRecord.dental_date ? "" : "empty"}`}>
+                                    <dt>Last Visit</dt>
+                                    <dd>{medicalRecord.dental_date ? FormatDate(medicalRecord.dental_date) : "Not recorded"}</dd>
+                                </div>
+                            </dl>
 
-                            <p><b>Dental Care Record</b></p>
-                            <div className="recordsTable">
-                                <div className="recordRow">
-                                    <div className="recordLabel">Name</div>
-                                    <div className="recordLabel">Phone Number</div>
-                                    <div className="recordLabel">Last Visit</div>
+                            <h4 className="subSectionHeader">
+                                <span className="material-symbols-rounded">accessibility_new</span>
+                                Chiropractor Care
+                            </h4>
+                            <dl className="detailList">
+                                <div className={`detailRow ${medicalRecord.chiropractor_name ? "" : "empty"}`}>
+                                    <dt>Name</dt>
+                                    <dd>{medicalRecord.chiropractor_name || "Not on file"}</dd>
                                 </div>
-                                <div className="recordRow">
-                                    <div className="recordDate">{medicalRecord.dentist_name || "Not on file"}</div>
-                                    <div className="recordStatus">{medicalRecord.dentist_phone || "Not on file"}</div>
-                                    <div className="recordDate">
-                                        {medicalRecord.dental_date ? FormatDate(medicalRecord.dental_date) : "Not recorded"}
-                                    </div>
+                                <div className={`detailRow ${medicalRecord.chiropractor_phone ? "" : "empty"}`}>
+                                    <dt>Phone Number</dt>
+                                    <dd>{medicalRecord.chiropractor_phone || "Not on file"}</dd>
                                 </div>
-                            </div>
+                                <div className={`detailRow ${medicalRecord.chiropractor_date ? "" : "empty"}`}>
+                                    <dt>Last Visit</dt>
+                                    <dd>{medicalRecord.chiropractor_date ? FormatDate(medicalRecord.chiropractor_date) : "Not recorded"}</dd>
+                                </div>
+                            </dl>
 
-                            <p><b>Chiropractor Care Record</b></p>
-                            <div className="recordsTable">
-                                <div className="recordRow">
-                                    <div className="recordLabel">Name</div>
-                                    <div className="recordLabel">Phone Number</div>
-                                    <div className="recordLabel">Last Visit</div>
+                            <h4 className="subSectionHeader">
+                                <span className="material-symbols-rounded">spa</span>
+                                Massage Therapy
+                            </h4>
+                            <dl className="detailList">
+                                <div className={`detailRow ${medicalRecord.massage_therapist ? "" : "empty"}`}>
+                                    <dt>Name</dt>
+                                    <dd>{medicalRecord.massage_therapist || "Not on file"}</dd>
                                 </div>
-                                <div className="recordRow">
-                                    <div className="recordDate">{medicalRecord.chiropractor_name || "Not on file"}</div>
-                                    <div className="recordStatus">{medicalRecord.chiropractor_phone || "Not on file"}</div>
-                                    <div className="recordDate">
-                                        {medicalRecord.chiropractor_date ? FormatDate(medicalRecord.chiropractor_date) : "Not recorded"}
-                                    </div>
+                                <div className={`detailRow ${medicalRecord.therapist_phone ? "" : "empty"}`}>
+                                    <dt>Phone Number</dt>
+                                    <dd>{medicalRecord.therapist_phone || "Not on file"}</dd>
                                 </div>
-                            </div>
-
-                            <p><b>Massage Therapy Record</b></p>
-                            <div className="recordsTable">
-                                <div className="recordRow">
-                                    <div className="recordLabel">Name</div>
-                                    <div className="recordLabel">Phone Number</div>
-                                    <div className="recordLabel">Last Visit</div>
+                                <div className={`detailRow ${medicalRecord.massage_date ? "" : "empty"}`}>
+                                    <dt>Last Visit</dt>
+                                    <dd>{medicalRecord.massage_date ? FormatDate(medicalRecord.massage_date) : "Not recorded"}</dd>
                                 </div>
-                                <div className="recordRow">
-                                    <div className="recordDate">{medicalRecord.massage_therapist || "Not on file"}</div>
-                                    <div className="recordStatus">{medicalRecord.therapist_phone || "Not on file"}</div>
-                                    <div className="recordDate">
-                                        {medicalRecord.massage_date ? FormatDate(medicalRecord.massage_date) : "Not recorded"}
-                                    </div>
-                                </div>
-                            </div>
+                            </dl>
                         </div>
 
                         {medicalRecord.medical_notes && (

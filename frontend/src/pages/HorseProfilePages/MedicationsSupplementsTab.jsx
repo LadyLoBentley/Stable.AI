@@ -93,10 +93,10 @@ function MedicationsAndSupplementsTab() {
                             <h3>Medications</h3>
 
                             {medications.length === 0 && (
-                                <p>No medications are on file.</p>
+                                <div className="emptyState">No medications are on file.</div>
                             )}
 
-                            {medications.map((medication, index) => {
+                            {medications.map((medication) => {
                                 const administrationTimes = formatAdministrationTimes(medication.administration_times);
                                 const scheduleDetails = formatScheduleDetails(
                                     medication.schedule_details,
@@ -109,36 +109,50 @@ function MedicationsAndSupplementsTab() {
 
                                 return (
                                     <div key={medication.horse_medication_id} className="recordCard">
-                                        {index > 0 && <div className="sectionDivider"></div>}
-
-                                        {medication.medication_name && (
-                                            <p><b>Name:</b> {medication.medication_name}</p>
-                                        )}
-
-                                        {dosage && (
-                                            <p><b>Dosage:</b> {dosage}</p>
-                                        )}
-
-                                        {medication.frequency_type && (
-                                            <p><b>Frequency:</b> {medication.frequency_type}</p>
-                                        )}
-
-                                        {administrationTimes && (
-                                            <p><b>Administration Times:</b> {administrationTimes}</p>
-                                        )}
-
-                                        {["Weekly", "Monthly", "Yearly"].includes(medication.frequency_type) &&
-                                            scheduleDetails && (
-                                                <p><b>Schedule Details:</b> {scheduleDetails}</p>
+                                        <div className="recordCardHeader">
+                                            <h4 className="recordCardTitle">
+                                                {medication.medication_name || "Untitled Medication"}
+                                            </h4>
+                                            {medication.frequency_type && (
+                                                <span className="recordCardSubtitle">
+                                                    {medication.frequency_type}
+                                                </span>
                                             )}
+                                        </div>
 
-                                        {medication.frequency_type === "One-Time Dose" &&
-                                            medication.single_dose_date && (
-                                                <p><b>Single Dose Date:</b> {medication.single_dose_date}</p>
+                                        <dl className="detailList">
+                                            {dosage && (
+                                                <div className="detailRow">
+                                                    <dt>Dosage</dt>
+                                                    <dd>{dosage}</dd>
+                                                </div>
                                             )}
+                                            {administrationTimes && (
+                                                <div className="detailRow">
+                                                    <dt>Administration Times</dt>
+                                                    <dd>{administrationTimes}</dd>
+                                                </div>
+                                            )}
+                                            {["Weekly", "Monthly", "Yearly"].includes(medication.frequency_type) &&
+                                                scheduleDetails && (
+                                                    <div className="detailRow wide">
+                                                        <dt>Schedule Details</dt>
+                                                        <dd>{scheduleDetails}</dd>
+                                                    </div>
+                                                )}
+                                            {medication.frequency_type === "One-Time Dose" &&
+                                                medication.single_dose_date && (
+                                                    <div className="detailRow">
+                                                        <dt>Single Dose Date</dt>
+                                                        <dd>{medication.single_dose_date}</dd>
+                                                    </div>
+                                                )}
+                                        </dl>
 
                                         {medication.notes && (
-                                            <p><b>Notes:</b> {medication.notes}</p>
+                                            <p className="recordCardNote">
+                                                <strong>Notes:</strong> {medication.notes}
+                                            </p>
                                         )}
                                     </div>
                                 );
@@ -149,10 +163,10 @@ function MedicationsAndSupplementsTab() {
                             <h3>Supplements</h3>
 
                             {supplements.length === 0 && (
-                                <p>No supplements are on file.</p>
+                                <div className="emptyState">No supplements are on file.</div>
                             )}
 
-                            {supplements.map((supplement, index) => {
+                            {supplements.map((supplement) => {
                                 const administrationTimes = formatAdministrationTimes(supplement.administration_times);
                                 const scheduleDetails = formatScheduleDetails(
                                     supplement.schedule_details,
@@ -165,36 +179,50 @@ function MedicationsAndSupplementsTab() {
 
                                 return (
                                     <div key={supplement.horse_supplements_id} className="recordCard">
-                                        {index > 0 && <div className="sectionDivider"></div>}
-
-                                        {supplement.supplement_name && (
-                                            <p><b>Name:</b> {supplement.supplement_name}</p>
-                                        )}
-
-                                        {dosage && (
-                                            <p><b>Dosage:</b> {dosage}</p>
-                                        )}
-
-                                        {supplement.frequency_type && (
-                                            <p><b>Frequency:</b> {supplement.frequency_type}</p>
-                                        )}
-
-                                        {administrationTimes && (
-                                            <p><b>Administration Times:</b> {administrationTimes}</p>
-                                        )}
-
-                                        {["Weekly", "Monthly", "Yearly"].includes(supplement.frequency_type) &&
-                                            scheduleDetails && (
-                                                <p><b>Schedule Details:</b> {scheduleDetails}</p>
+                                        <div className="recordCardHeader">
+                                            <h4 className="recordCardTitle">
+                                                {supplement.supplement_name || "Untitled Supplement"}
+                                            </h4>
+                                            {supplement.frequency_type && (
+                                                <span className="recordCardSubtitle">
+                                                    {supplement.frequency_type}
+                                                </span>
                                             )}
+                                        </div>
 
-                                        {supplement.frequency_type === "One-Time Dose" &&
-                                            supplement.single_dose_date && (
-                                                <p><b>Single Dose Date:</b> {supplement.single_dose_date}</p>
+                                        <dl className="detailList">
+                                            {dosage && (
+                                                <div className="detailRow">
+                                                    <dt>Dosage</dt>
+                                                    <dd>{dosage}</dd>
+                                                </div>
                                             )}
+                                            {administrationTimes && (
+                                                <div className="detailRow">
+                                                    <dt>Administration Times</dt>
+                                                    <dd>{administrationTimes}</dd>
+                                                </div>
+                                            )}
+                                            {["Weekly", "Monthly", "Yearly"].includes(supplement.frequency_type) &&
+                                                scheduleDetails && (
+                                                    <div className="detailRow wide">
+                                                        <dt>Schedule Details</dt>
+                                                        <dd>{scheduleDetails}</dd>
+                                                    </div>
+                                                )}
+                                            {supplement.frequency_type === "One-Time Dose" &&
+                                                supplement.single_dose_date && (
+                                                    <div className="detailRow">
+                                                        <dt>Single Dose Date</dt>
+                                                        <dd>{supplement.single_dose_date}</dd>
+                                                    </div>
+                                                )}
+                                        </dl>
 
                                         {supplement.notes && (
-                                            <p><b>Notes:</b> {supplement.notes}</p>
+                                            <p className="recordCardNote">
+                                                <strong>Notes:</strong> {supplement.notes}
+                                            </p>
                                         )}
                                     </div>
                                 );
@@ -204,7 +232,9 @@ function MedicationsAndSupplementsTab() {
                         {medications.length === 0 && supplements.length === 0 && (
                             <div className="formSection">
                                 <h3>Care Summary</h3>
-                                <p>No medications or supplements are currently on file for this horse.</p>
+                                <div className="emptyState">
+                                    No medications or supplements are currently on file for this horse.
+                                </div>
                             </div>
                         )}
                     </>

@@ -7,6 +7,10 @@ from models.owner import OwnerInfo
 from models.medical_records import MedicalRecords
 from models.barn import Barn
 from models.pasture import Pasture
+from models.feeding_regime import FeedingRegime
+from models.medication import HorseMedication
+from models.supplements import HorseSupplements
+from models.inventory_items import InventoryItems
 
 from rag.config import LLM_MODEL
 from rag.prompt_builder import build_rag_prompt
@@ -46,8 +50,7 @@ def detect_category(question: str) -> str:
     if any(name in q for name in known_horse_names):
         return "horse"
 
-    if any(word in q for word in [
-        "horse", "horses",
+    if any(word in q for word in ["horse", "horses",
         "feeding", "feed", "supplement", "supplements",
         "medication", "medications",
         "temperament", "turnout", "past injury", "injury", "injuries",
@@ -114,6 +117,61 @@ def detect_detail_level(question: str, category: str) -> str:
     return "summary"
 
 
+def build_comprehensive_horse_context(horse: Horse, session: Session) -> str:
+    owner = None
+    if horse.owner_id:
+        owner = session.exec(select(OwnerInfo).where(OwnerInfo.owner_id == horse.owner_id)).first()
+        
+    medical = session.exec(select(MedicalRecords).where(MedicalRecords.horse_id == horse.horse_id)).first()
+    
+    feed = session.exec(select(FeedingRegime).where(FeedingRegime.horse_id == horse.horse_id)).first()
+    feed_str = "None"
+    if feed:
+        items = []
+        if getattr(feed, 'hay_id', None):
+            inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == feed.hay_id)).first()
+            items.append(f"Hay: {inv.label if inv else 'Unknown'} (Instructions: {inv.instructions if inv else 'None'}) Amount: {feed.hay_amount} {feed.hay_unit}")
+        if getattr(feed, 'grain_id', None):
+            inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == feed.grain_id)).first()
+            items.append(f"Grain: {inv.label if inv else 'Unknown'} (Instructions: {inv.instructions if inv else 'None'}) Amount: {feed.grain_amount} {feed.grain_unit}")
+        if getattr(feed, 'food_additive_id', None):
+            inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == feed.food_additive_id)).first()
+            items.append(f"Additive: {inv.label if inv else 'Unknown'} (Instructions: {inv.instructions if inv else 'None'}) Amount: {feed.additive_amount} {feed.additive_unit}")
+        feed_str = "; ".join(items) + f" | Notes: {feed.feeding_instructions}"
+    
+    meds = session.exec(select(HorseMedication).where(HorseMedication.horse_id == horse.horse_id)).all()
+    meds_str = "None"
+    if meds:
+        m_list = []
+        for m in meds:
+            inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == m.item_id)).first()
+            m_list.append(f"{inv.label if inv else 'Unknown'} (Instructions: {inv.instructions if inv else 'None'}) - {m.dosage_amount} {m.dosage_unit} {m.frequency_type}")
+        meds_str = "; ".join(m_list)
+        
+    supps = session.exec(select(HorseSupplements).where(HorseSupplements.horse_id == horse.horse_id)).all()
+    supps_str = "None"
+    if supps:
+        s_list = []
+        for s in supps:
+            inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == s.item_id)).first()
+            s_list.append(f"{inv.label if inv else 'Unknown'} (Instructions: {inv.instructions if inv else 'None'}) - {s.dosage_amount} {s.dosage_unit} {s.frequency_type}")
+        supps_str = "; ".join(s_list)
+
+    full_text = (
+        f"Comprehensive Profile for {horse.horse_name}:\\n"
+        f"- Basic Info: sex={horse.sex}, birthdate={horse.birthdate}, height={horse.height}, weight={horse.weight}, location={horse.location_type}, turnout={horse.turnout_type}, stall_id={horse.stall_id}, temperament={horse.temperament}, notes={horse.notes}\\n"
+        f"- Behavior/Safety: bite={horse.may_bite}, kick={horse.may_kick}, difficult_to_catch={horse.difficult_to_catch}, herd_dominant={horse.herd_dominant}, sedation_required={horse.sedation_required}, food_aggressive={horse.food_aggressive}, needs_experienced_handler={horse.requires_experienced_handler}\\n"
+    )
+    if owner:
+        full_text += f"- Owner Info: {owner.owner_name}, phone={owner.owner_phone}, email={owner.owner_email}, emergency_contact={owner.emergency_contact_name} ({owner.emergency_contact_phone})\\n"
+    if medical:
+        full_text += f"- Medical Info: vet={medical.vet_name} ({medical.vet_phone}), farrier={medical.farrier_name}, coggins_exp={medical.coggins_expiration}, rabies_exp={medical.rabies_expiration}, notes={medical.medical_notes}\\n"
+    
+    full_text += f"- Feeding Regime: {feed_str}\\n"
+    full_text += f"- Medications: {meds_str}\\n"
+    full_text += f"- Supplements: {supps_str}"
+    return full_text
+
 def get_matching_horses(question: str, horses: list[Horse]) -> list[Horse]:
     q = question.lower()
     matches = [
@@ -154,28 +212,9 @@ def get_structured_context(question: str) -> list[dict]:
                     })
                 else:
                     structured_chunks.append({
-                        "text": (
-                            f"Horse record: "
-                            f"name={horse.horse_name}, "
-                            f"sex={horse.sex}, "
-                            f"birthdate={horse.birthdate}, "
-                            f"height={horse.height}, "
-                            f"weight={horse.weight}, "
-                            f"location_type={horse.location_type}, "
-                            f"turnout_type={horse.turnout_type}, "
-                            f"stall_id={horse.stall_id}, "
-                            f"temperament={horse.temperament}, "
-                            f"notes={horse.notes}, "
-                            f"may_bite={horse.may_bite}, "
-                            f"may_kick={horse.may_kick}, "
-                            f"difficult_to_catch={horse.difficult_to_catch}, "
-                            f"herd_dominant={horse.herd_dominant}, "
-                            f"sedation_required={horse.sedation_required}, "
-                            f"food_aggressive={horse.food_aggressive}, "
-                            f"requires_experienced_handler={horse.requires_experienced_handler}"
-                        ),
+                        "text": build_comprehensive_horse_context(horse, session),
                         "metadata": {
-                            "file_name": "database_horses",
+                            "file_name": "database_horses_comprehensive",
                             "source_type": "structured_db"
                         }
                     })

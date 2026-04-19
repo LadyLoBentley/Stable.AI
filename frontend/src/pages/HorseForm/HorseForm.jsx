@@ -614,7 +614,7 @@ function HorseForm() {
           <div className="formSection">
             <h3>Horse Characteristics & Safety Flags</h3>
 
-              <div className="inventory-form-row2">
+              <div className="checkboxGrid">
                   <CheckboxField
                     id="escapeRisk"
                     label="Escape Risk"
@@ -743,11 +743,12 @@ function HorseForm() {
                         onBlur={() => handleBlur("image", formData.image, setTouched, setErrors, validateField)}
                       />
                 </div>
-                <div className="formButton">
-                  <Button label="Cancel" variant="secondary" type="button" onClick={() => navigate(-1)} />
-                  <Button label="Next" type="submit" />
-                </div>
-              </div>
+            </div>
+
+            <div className="formButton">
+              <Button label="Cancel" variant="secondary" type="button" onClick={() => navigate(-1)} />
+              <Button label="Next" type="submit" />
+            </div>
         </div>
       </form>
     </div>

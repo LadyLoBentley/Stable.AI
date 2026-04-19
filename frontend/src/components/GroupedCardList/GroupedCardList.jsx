@@ -17,7 +17,8 @@ function GroupedCardList({
     getImageAlt,
     getTitle,
     getDetails,
-    onCardClick
+    onCardClick,
+    emptyMessage = ""
 }) {
     const groupedItems = useMemo(() => {
         return items.reduce((groups, item) => {
@@ -82,19 +83,31 @@ function GroupedCardList({
                     </div>
                 </div>
 
+                {sortedGroups.length === 0 && emptyMessage && (
+                    <div className="emptyState">{emptyMessage}</div>
+                )}
+
                 {sortedGroups.map((groupName) => {
                     const isOpen = openGroups[groupName] ?? false;
+                    const count = groupedItems[groupName].length;
 
                     return (
                         <section key={groupName} className={styles.groupSection}>
                             <button
                                 type="button"
-                                className={styles.groupHeader}
+                                className={`${styles.groupHeader} ${isOpen ? styles.groupHeaderOpen : ""}`}
                                 onClick={() => toggleGroup(groupName)}
+                                aria-expanded={isOpen}
                             >
-                                <span>{groupName} ({groupedItems[groupName].length})</span>
-                                <span className={styles.groupMeta}>
-                                    {isOpen ? "−" : "+"}
+                                <span className={styles.groupTitleWrap}>
+                                    <span className={styles.groupTitle}>{groupName}</span>
+                                    <span className={styles.groupCount}>{count}</span>
+                                </span>
+                                <span
+                                    className={`material-symbols-rounded ${styles.groupChevron} ${isOpen ? styles.groupChevronOpen : ""}`}
+                                    aria-hidden="true"
+                                >
+                                    expand_more
                                 </span>
                             </button>
 

@@ -45,21 +45,18 @@ function Documents() {
 
     if (!documents.length) {
         return (
-            <div className="formContainer">
-                <div className="profileActionRow">
-                    <button
-                        type="button"
-                        className="profileActionButton"
-                        onClick={() => navigate("/add-document")}
-                    >
-                        Upload Document
-                    </button>
-                </div>
-                <div className="formSection">
-                    <h3>Documents</h3>
-                    <p>No documents found.</p>
-                </div>
-            </div>
+            <GroupedCardList
+                title="Documents"
+                subtitle="Upload contracts, veterinary records, insurance papers, and other important files to keep them organized by category."
+                actionLabel="Upload Document"
+                actionTo="/add-document"
+                items={[]}
+                emptyMessage="No documents yet. Upload your first file to get started."
+                groupBy={() => ""}
+                getKey={() => ""}
+                getTitle={() => ""}
+                getDetails={() => []}
+            />
         );
     }
 

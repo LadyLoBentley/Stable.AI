@@ -74,63 +74,132 @@ function FeedingRegimeTab() {
                         {!regime ? (
                             <div className="formSection">
                                 <h3>Feeding Regime</h3>
-                                <p>No feeding regime found for this horse.</p>
+                                <div className="emptyState">No feeding regime found for this horse.</div>
                             </div>
                         ) : (
                             <>
                                 <div className="formSection">
                                     <h3>Forage</h3>
-                                    <p><b>Feeds Hay:</b> {regime.feed_hay ? "Yes" : "No"}</p>
+                                    <dl className="detailList">
+                                        <div className="detailRow">
+                                            <dt>Feeds Hay</dt>
+                                            <dd>
+                                                <span className={`detailBadge ${regime.feed_hay ? "" : "no"}`}>
+                                                    {regime.feed_hay ? "Yes" : "No"}
+                                                </span>
+                                            </dd>
+                                        </div>
 
-                                    {regime.feed_hay ? (
-                                        <>
-                                            <p><b>Hay Type:</b> {regime.hay_type || "Not on file"}</p>
-                                            <p><b>Hay Quantity:</b> {regime.hay_amount || "Not on file"}</p>
-                                            <p><b>Hay Unit:</b> {regime.hay_unit || "Not on file"}</p>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <p><b>Hay Replacement:</b> {regime.hay_replacement || "Not on file"}</p>
-                                            <p><b>Replacement Quantity:</b> {regime.replacement_amount || "Not on file"}</p>
-                                            <p><b>Replacement Unit:</b> {regime.replacement_unit || "Not on file"}</p>
-                                        </>
-                                    )}
+                                        {regime.feed_hay ? (
+                                            <>
+                                                <div className={`detailRow ${regime.hay_type ? "" : "empty"}`}>
+                                                    <dt>Hay Type</dt>
+                                                    <dd>{regime.hay_type || "Not on file"}</dd>
+                                                </div>
+                                                <div className={`detailRow ${regime.hay_amount ? "" : "empty"}`}>
+                                                    <dt>Hay Quantity</dt>
+                                                    <dd>{regime.hay_amount || "Not on file"}</dd>
+                                                </div>
+                                                <div className={`detailRow ${regime.hay_unit ? "" : "empty"}`}>
+                                                    <dt>Hay Unit</dt>
+                                                    <dd>{regime.hay_unit || "Not on file"}</dd>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className={`detailRow ${regime.hay_replacement ? "" : "empty"}`}>
+                                                    <dt>Hay Replacement</dt>
+                                                    <dd>{regime.hay_replacement || "Not on file"}</dd>
+                                                </div>
+                                                <div className={`detailRow ${regime.replacement_amount ? "" : "empty"}`}>
+                                                    <dt>Replacement Quantity</dt>
+                                                    <dd>{regime.replacement_amount || "Not on file"}</dd>
+                                                </div>
+                                                <div className={`detailRow ${regime.replacement_unit ? "" : "empty"}`}>
+                                                    <dt>Replacement Unit</dt>
+                                                    <dd>{regime.replacement_unit || "Not on file"}</dd>
+                                                </div>
+                                            </>
+                                        )}
+                                    </dl>
                                 </div>
 
                                 <div className="formSection">
                                     <h3>Grain and Additives</h3>
-                                    <p><b>Grain Type:</b> {regime.grain_type || "Not on file"}</p>
-                                    <p><b>Grain Amount:</b> {regime.grain_amount || "Not on file"}</p>
-                                    <p><b>Grain Unit:</b> {regime.grain_unit || "Not on file"}</p>
-                                    <p><b>Add Food Additive:</b> {regime.add_food_additive ? "Yes" : "No"}</p>
+                                    <dl className="detailList">
+                                        <div className={`detailRow ${regime.grain_type ? "" : "empty"}`}>
+                                            <dt>Grain Type</dt>
+                                            <dd>{regime.grain_type || "Not on file"}</dd>
+                                        </div>
+                                        <div className={`detailRow ${regime.grain_amount ? "" : "empty"}`}>
+                                            <dt>Grain Amount</dt>
+                                            <dd>{regime.grain_amount || "Not on file"}</dd>
+                                        </div>
+                                        <div className={`detailRow ${regime.grain_unit ? "" : "empty"}`}>
+                                            <dt>Grain Unit</dt>
+                                            <dd>{regime.grain_unit || "Not on file"}</dd>
+                                        </div>
+                                        <div className="detailRow">
+                                            <dt>Food Additive</dt>
+                                            <dd>
+                                                <span className={`detailBadge ${regime.add_food_additive ? "" : "no"}`}>
+                                                    {regime.add_food_additive ? "Yes" : "No"}
+                                                </span>
+                                            </dd>
+                                        </div>
 
-                                    {regime.add_food_additive && (
-                                        <>
-                                            <p><b>Food Additive:</b> {regime.food_additive || "Not on file"}</p>
-                                            <p><b>Food Additive Amount:</b> {regime.food_additive_amount || "Not on file"}</p>
-                                            <p><b>Additive Unit:</b> {regime.additive_unit || "Not on file"}</p>
-                                        </>
-                                    )}
+                                        {regime.add_food_additive && (
+                                            <>
+                                                <div className={`detailRow ${regime.food_additive ? "" : "empty"}`}>
+                                                    <dt>Additive</dt>
+                                                    <dd>{regime.food_additive || "Not on file"}</dd>
+                                                </div>
+                                                <div className={`detailRow ${regime.food_additive_amount ? "" : "empty"}`}>
+                                                    <dt>Additive Amount</dt>
+                                                    <dd>{regime.food_additive_amount || "Not on file"}</dd>
+                                                </div>
+                                                <div className={`detailRow ${regime.additive_unit ? "" : "empty"}`}>
+                                                    <dt>Additive Unit</dt>
+                                                    <dd>{regime.additive_unit || "Not on file"}</dd>
+                                                </div>
+                                            </>
+                                        )}
+                                    </dl>
                                 </div>
 
                                 <div className="formSection">
                                     <h3>Feeding Requirements</h3>
 
-                                    {regime.must_separate && (
-                                        <p>• Horse must be separated during feeding</p>
-                                    )}
+                                    {(() => {
+                                        const reqs = [
+                                            { on: regime.must_separate, icon: "fence", label: "Must be separated during feeding" },
+                                            { on: regime.soak_feed, icon: "water_drop", label: "Feed must be soaked before serving" },
+                                            { on: regime.hay_net, icon: "grid_view", label: "Hay net required" }
+                                        ];
+                                        const active = reqs.filter((r) => r.on);
 
-                                    {regime.soak_feed && (
-                                        <p>• Feed must be soaked before serving</p>
-                                    )}
+                                        if (active.length === 0) {
+                                            return (
+                                                <div className="safetyChipGroup">
+                                                    <span className="safetyChip calm">
+                                                        <span className="material-symbols-rounded">check_circle</span>
+                                                        No special feeding requirements
+                                                    </span>
+                                                </div>
+                                            );
+                                        }
 
-                                    {regime.hay_net && (
-                                        <p>• Hay net is required</p>
-                                    )}
-
-                                    {!regime.must_separate && !regime.soak_feed && !regime.hay_net && (
-                                        <p>• No special feeding requirements.</p>
-                                    )}
+                                        return (
+                                            <div className="safetyChipGroup">
+                                                {active.map((req) => (
+                                                    <span key={req.label} className="safetyChip">
+                                                        <span className="material-symbols-rounded">{req.icon}</span>
+                                                        {req.label}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
 
                                 <div className="formSection">

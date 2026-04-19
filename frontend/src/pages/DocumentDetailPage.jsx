@@ -209,17 +209,38 @@ function DocumentDetailPage() {
                 <form onSubmit={handleSave}>
                     <div className="formSection">
                         <h3>Selected Document</h3>
-                        <p><b>File Name:</b> {document.document_name}</p>
-                        <p><b>Uploaded:</b> {FormatDate(document.created_at)}</p>
-                        <p><b>Updated:</b> {FormatDate(document.updated_at)}</p>
-                        {document.file_url && (
-                            <p>
-                                <b>Current File:</b>{" "}
-                                <a href={document.file_url} target="_blank" rel="noreferrer">
-                                    Open document
-                                </a>
-                            </p>
-                        )}
+                        <dl className="detailList">
+                            <div className="detailRow wide">
+                                <dt>File Name</dt>
+                                <dd>{document.document_name}</dd>
+                            </div>
+                            <div className="detailRow">
+                                <dt>Uploaded</dt>
+                                <dd>{FormatDate(document.created_at)}</dd>
+                            </div>
+                            <div className="detailRow">
+                                <dt>Updated</dt>
+                                <dd>{FormatDate(document.updated_at)}</dd>
+                            </div>
+                            {document.category && (
+                                <div className="detailRow">
+                                    <dt>Category</dt>
+                                    <dd>
+                                        <span className="detailBadge">{document.category}</span>
+                                    </dd>
+                                </div>
+                            )}
+                            {document.file_url && (
+                                <div className="detailRow wide">
+                                    <dt>Current File</dt>
+                                    <dd>
+                                        <a href={document.file_url} target="_blank" rel="noreferrer">
+                                            Open document in a new tab
+                                        </a>
+                                    </dd>
+                                </div>
+                            )}
+                        </dl>
 
                         {document.file_url?.match(/\.(jpg|jpeg|png|webp)$/i) && (
                             <div className="existingAssetPreview">

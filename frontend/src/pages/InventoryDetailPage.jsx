@@ -287,12 +287,47 @@ function InventoryDetailPage() {
 
                         <div className="formSection">
                             <h3>Details</h3>
-                            <p><b>Quantity:</b> {item.quantity} {item.unit}</p>
-                            <p><b>Category:</b> {item.category}</p>
-                            <p><b>Grade:</b> {item.grade}</p>
-                            <p><b>Stock Status:</b> {item.stock_status}</p>
-                            <p><b>Date Added:</b> {FormatDate(item.created_at)}</p>
-                            <p><b>Last Updated:</b> {FormatDate(item.updated_at)}</p>
+                            <dl className="detailList">
+                                <div className="detailRow">
+                                    <dt>Quantity</dt>
+                                    <dd>{item.quantity} {item.unit}</dd>
+                                </div>
+                                <div className="detailRow">
+                                    <dt>Category</dt>
+                                    <dd>{item.category}</dd>
+                                </div>
+                                <div className="detailRow">
+                                    <dt>Grade</dt>
+                                    <dd>{item.grade}</dd>
+                                </div>
+                                <div className="detailRow">
+                                    <dt>Stock Status</dt>
+                                    <dd>
+                                        {(() => {
+                                            const status = (item.stock_status || "").toLowerCase();
+                                            const badgeClass =
+                                                status.includes("out") || status.includes("low")
+                                                    ? "warn"
+                                                    : status.includes("in stock") || status.includes("ok")
+                                                        ? ""
+                                                        : "no";
+                                            return (
+                                                <span className={`detailBadge ${badgeClass}`}>
+                                                    {item.stock_status}
+                                                </span>
+                                            );
+                                        })()}
+                                    </dd>
+                                </div>
+                                <div className="detailRow">
+                                    <dt>Date Added</dt>
+                                    <dd>{FormatDate(item.created_at)}</dd>
+                                </div>
+                                <div className="detailRow">
+                                    <dt>Last Updated</dt>
+                                    <dd>{FormatDate(item.updated_at)}</dd>
+                                </div>
+                            </dl>
                         </div>
 
                         <div className="formSection">

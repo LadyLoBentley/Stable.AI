@@ -337,7 +337,7 @@ export function AddInventoryForm() {
                     </div>
 
                     <div className="formSection">
-                        <h3>Upoad Image</h3>
+                        <h3>Upload Image</h3>
                         <div className="inventory-form-row4">
                             <UploadImage
                                 id="item-image"
@@ -353,9 +353,10 @@ export function AddInventoryForm() {
                                 onBlur={() => handleBlur("imageFile", imageFile, setTouched, setErrors, validateField)}
                             />
                         </div>
-                        <div className="formButton">
-                            <Button type="submit" label="Add Item" />
-                        </div>
+                    </div>
+
+                    <div className="formButton">
+                        <Button type="submit" label="Add Item" />
                     </div>
                 </div>
             </form>

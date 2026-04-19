@@ -65,7 +65,7 @@ function Chatbot() {
 
         return updated;
       });
-    } catch (error) {
+    } catch {
       setChatHistory((prev) => {
         const updated = [...prev];
         const thinkingIndex = updated.findIndex(

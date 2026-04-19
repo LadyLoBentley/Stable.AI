@@ -392,7 +392,7 @@ function HorseDetailEditForm({ horse, onSaved, onCancel }) {
 
             <div className="formSection">
                 <h3>Edit Safety Flags</h3>
-                <div className="inventory-form-row2">
+                <div className="checkboxGrid">
                     <CheckboxField
                         id="edit-escapeRisk"
                         label="Escape Risk"

@@ -47,10 +47,6 @@ function HorseDashboard() {
         return <p className="pageMessage errorMessage">{error}</p>;
     }
 
-    if (horses.length === 0) {
-        return <p className="pageMessage">No horses found.</p>;
-    }
-
     return (
         <GroupedCardList
             title="Horse Dashboard"
@@ -59,6 +55,7 @@ function HorseDashboard() {
             actionTo="/add-horse"
             categoryOrder={barnOrder}
             items={horses}
+            emptyMessage="No horses yet. Add your first horse to begin building profiles."
             groupBy={(horse) => horse.barn || horse.pasture_name || "Other"}
             getKey={(horse) => horse.horse_id}
             getImage={(horse) => horse.image}

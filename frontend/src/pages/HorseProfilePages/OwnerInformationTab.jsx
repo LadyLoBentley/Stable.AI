@@ -67,46 +67,74 @@ function OwnerInformationTab() {
 
                         <div className="formSection">
                             <h3>Owner Information</h3>
-                            <div className="recordsTable">
-                                <div className="recordRow">
-                                    <div className="recordLabel">Name</div>
-                                    <div className="recordLabel">Phone Number</div>
-                                    <div className="recordLabel">Email Address</div>
+                            <dl className="detailList">
+                                <div className="detailRow">
+                                    <dt>Name</dt>
+                                    <dd>{owner.owner_name}</dd>
                                 </div>
-                                <div className="recordRow">
-                                    <p>{owner.owner_name}</p>
-                                    <p>{owner.owner_phone}</p>
-                                    <p>{owner.owner_email}</p>
+                                <div className="detailRow">
+                                    <dt>Phone Number</dt>
+                                    <dd>{owner.owner_phone}</dd>
                                 </div>
-                            </div>
+                                <div className="detailRow">
+                                    <dt>Email Address</dt>
+                                    <dd>{owner.owner_email}</dd>
+                                </div>
+                            </dl>
                         </div>
 
                         <div className="formSection">
                             <h3>Address</h3>
-                            <p><b>Street:</b> {owner.street_address}</p>
-                            {owner.apt_no && (
-                                <p><b>Apt. No:</b> {owner.apt_no}</p>
-                            )}
-                            <p><b>City:</b> {owner.city}</p>
-                            <p><b>State:</b> {owner.state}</p>
-                            <p><b>Zipcode:</b> {owner.zip}</p>
-                            <p><b>Signed Waiver:</b> {owner.signed_waiver ? "Yes" : "No"}</p>
+                            <dl className="detailList">
+                                <div className={`detailRow wide ${owner.street_address ? "" : "empty"}`}>
+                                    <dt>Street</dt>
+                                    <dd>{owner.street_address || "Not on file"}</dd>
+                                </div>
+                                {owner.apt_no && (
+                                    <div className="detailRow">
+                                        <dt>Apt. No.</dt>
+                                        <dd>{owner.apt_no}</dd>
+                                    </div>
+                                )}
+                                <div className={`detailRow ${owner.city ? "" : "empty"}`}>
+                                    <dt>City</dt>
+                                    <dd>{owner.city || "Not on file"}</dd>
+                                </div>
+                                <div className={`detailRow ${owner.state ? "" : "empty"}`}>
+                                    <dt>State</dt>
+                                    <dd>{owner.state || "Not on file"}</dd>
+                                </div>
+                                <div className={`detailRow ${owner.zip ? "" : "empty"}`}>
+                                    <dt>Zipcode</dt>
+                                    <dd>{owner.zip || "Not on file"}</dd>
+                                </div>
+                                <div className="detailRow">
+                                    <dt>Signed Waiver</dt>
+                                    <dd>
+                                        <span className={`detailBadge ${owner.signed_waiver ? "" : "warn"}`}>
+                                            {owner.signed_waiver ? "Yes" : "Not signed"}
+                                        </span>
+                                    </dd>
+                                </div>
+                            </dl>
                         </div>
 
                         <div className="formSection">
                             <h3>Emergency Contact</h3>
-                            <div className="recordsTable">
-                                <div className="recordRow">
-                                    <div className="recordLabel">Name</div>
-                                    <div className="recordLabel">Relation</div>
-                                    <div className="recordLabel">Phone Number</div>
+                            <dl className="detailList">
+                                <div className={`detailRow ${owner.emergency_contact_name ? "" : "empty"}`}>
+                                    <dt>Name</dt>
+                                    <dd>{owner.emergency_contact_name || "Not on file"}</dd>
                                 </div>
-                                <div className="recordRow">
-                                    <p>{owner.emergency_contact_name}</p>
-                                    <p>{owner.emergency_contact_relation}</p>
-                                    <p>{owner.emergency_contact_phone}</p>
+                                <div className={`detailRow ${owner.emergency_contact_relation ? "" : "empty"}`}>
+                                    <dt>Relation</dt>
+                                    <dd>{owner.emergency_contact_relation || "Not on file"}</dd>
                                 </div>
-                            </div>
+                                <div className={`detailRow ${owner.emergency_contact_phone ? "" : "empty"}`}>
+                                    <dt>Phone Number</dt>
+                                    <dd>{owner.emergency_contact_phone || "Not on file"}</dd>
+                                </div>
+                            </dl>
                         </div>
                     </>
                 )}

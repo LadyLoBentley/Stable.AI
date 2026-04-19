@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import InfoTip from '../InfoTip/InfoTip.jsx';
 import Button from "../Button/Button.jsx";
 
@@ -16,20 +16,16 @@ function UploadImage({
                          error = ""
 }) {
     const inputRef = useRef(null);
-    const [previewUrl, setPreviewUrl] = useState("");
     const [localError, setLocalError] = useState("");
+    const previewUrl = useMemo(() => (value ? URL.createObjectURL(value) : ""), [value]);
 
     useEffect(() => {
-        if (!value) {
-            setPreviewUrl("");
-            return;
-        }
-
-        const localUrl = URL.createObjectURL(value);
-        setPreviewUrl(localUrl);
-
-        return () => URL.revokeObjectURL(localUrl);
-    }, [value]);
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
 
     function handleFileSelect(e) {
         const file = e.target.files?.[0];

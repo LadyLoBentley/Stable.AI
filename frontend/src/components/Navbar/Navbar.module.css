@@ -1,43 +1,52 @@
 .sidenav {
     width: 0;
     overflow: hidden;
-    background: linear-gradient(180deg, #f8f8f4 0%, #f1f2ec 100%);
+    background: linear-gradient(180deg,
+        rgba(253, 251, 244, 0.94) 0%,
+        rgba(244, 239, 225, 0.82) 60%,
+        rgba(238, 241, 231, 0.72) 100%);
     padding: 24px 0;
     box-shadow: none;
     transition: width 0.3s ease, padding 0.3s ease;
     flex-shrink: 0;
+    border-right: 1px solid transparent;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
 .open {
     width: 280px;
     padding: 18px 16px 14px;
-    box-shadow: 8px 0 22px rgba(34, 54, 40, 0.06);
+    box-shadow: 12px 0 32px rgba(31, 58, 42, 0.06);
+    border-right-color: var(--stone-300);
 }
 
 .closeBtn {
-    background: #eef4ef;
-    border: 1px solid #d8e4d9;
+    background: var(--cream-50);
+    border: 1px solid var(--stone-300);
     cursor: pointer;
     margin-bottom: 18px;
-    border-radius: 12px;
-    color: #2a8f58;
+    border-radius: var(--radius-md);
+    color: var(--pine-700);
     width: 38px;
     height: 38px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     transition: all 0.18s ease;
+    box-shadow: var(--shadow-xs);
 }
 
 .closeBtn:hover {
-    background: #e1ede2;
-    color: #206d43;
+    background: var(--sage-50);
+    color: var(--pine-900);
+    border-color: var(--sage-200);
 }
 
 .navLayout {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 18px;
 }
 
 .navBlock {
@@ -45,56 +54,64 @@
 }
 
 .navTitle {
-    margin: 0 10px 8px;
-    font-size: 0.74rem;
-    letter-spacing: 0.06em;
+    margin: 0 12px 10px;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     font-weight: 700;
-    color: #6e8579;
+    color: var(--sage-600);
+    font-family: "Inter", sans-serif;
 }
 
 .navList {
     padding: 0;
     margin: 0;
     list-style: none;
-    font-family: "Georgia", serif;
-    font-weight: 700;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
 }
 
 .navList li {
-    margin: 6px 0;
+    margin: 4px 0;
 }
 
 .navLink {
     display: block;
     padding: 11px 14px;
-    color: #315240;
+    color: var(--ink-700);
     text-decoration: none;
-    border-radius: 10px;
-    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    border-radius: var(--radius-md);
+    transition: background-color 0.15s ease, color 0.15s ease,
+                transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     border: 1px solid transparent;
+    font-size: 0.96rem;
+    letter-spacing: -0.005em;
 }
 
 .navLink:hover {
-    background-color: rgba(231, 240, 233, 0.8);
-    color: #1f7f4d;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 12px rgba(36, 79, 53, 0.08);
+    background-color: rgba(238, 241, 231, 0.85);
+    color: var(--pine-900);
+    transform: translateX(2px);
+    box-shadow: var(--shadow-xs);
+    border-color: var(--sage-200);
 }
 
 .navAction {
-    color: #2d4e40;
+    color: var(--pine-900);
 }
 
 .activeLink {
-    background: linear-gradient(160deg, #2ba65f 0%, #21884f 100%);
-    color: #ffffff;
-    border-color: #1f7a48;
-    box-shadow: 0 8px 14px rgba(35, 120, 72, 0.2);
+    background: linear-gradient(160deg, var(--pine-600) 0%, var(--pine-700) 55%, var(--pine-800) 100%);
+    color: var(--cream-50);
+    border-color: var(--pine-800);
+    box-shadow: 0 10px 20px rgba(31, 58, 42, 0.22),
+                inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    font-weight: 600;
 }
 
 .activeLink:hover {
-    color: #ffffff;
-    background: linear-gradient(160deg, #2aa15c 0%, #207f4b 100%);
-    box-shadow: 0 10px 16px rgba(35, 120, 72, 0.24);
+    color: var(--cream-50);
+    background: linear-gradient(160deg, var(--pine-700) 0%, var(--pine-800) 100%);
+    box-shadow: 0 14px 24px rgba(31, 58, 42, 0.26);
+    transform: translateX(2px);
 }

@@ -390,7 +390,7 @@ function FeedingRegimeEditForm({ horse, regime, onSaved, onCancel }) {
 
             <div className="formSection">
                 <h3>Edit Feeding Requirements</h3>
-                <div className="inventory-form-row4">
+                <div className="checkboxGrid">
                     <CheckboxField
                         id="edit-mustSeparate"
                         label={<b>Horse must be separated during feeding</b>}
@@ -411,7 +411,9 @@ function FeedingRegimeEditForm({ horse, regime, onSaved, onCancel }) {
                         checked={formData.hayNet}
                         onChange={(value) => updateField("hayNet", value)}
                     />
+                </div>
 
+                <div className="inventory-form-row3">
                     <TextAreaField
                         id="edit-feedingInstructions"
                         label={<b>Feeding Instructions and Notes: </b>}

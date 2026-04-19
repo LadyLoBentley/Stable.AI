@@ -44,65 +44,114 @@ function HorseDetailTab() {
 
                         <div className="formSection">
                             <h3>Details</h3>
-                            <p><b>Breed:</b> {horse.breed}</p>
-                            <p><b>Sex:</b> {horse.sex}</p>
-                            <p><b>Birthday:</b> {horse.birthdate}</p>
-                            <p><b>Height:</b> {horse.height} hands</p>
-                            <p><b>Weight:</b> {horse.weight} lbs</p>
-                            <p><b>Date Added:</b> {FormatDate(horse.created_at)}</p>
-                            <p><b>Date Updated:</b> {FormatDate(horse.updated_at)}</p>
+                            <dl className="detailList">
+                                <div className={`detailRow ${horse.breed ? "" : "empty"}`}>
+                                    <dt>Breed</dt>
+                                    <dd>{horse.breed || "Not on file"}</dd>
+                                </div>
+                                <div className={`detailRow ${horse.sex ? "" : "empty"}`}>
+                                    <dt>Sex</dt>
+                                    <dd>{horse.sex || "Not on file"}</dd>
+                                </div>
+                                <div className={`detailRow ${horse.birthdate ? "" : "empty"}`}>
+                                    <dt>Birthday</dt>
+                                    <dd>{horse.birthdate || "Not on file"}</dd>
+                                </div>
+                                <div className={`detailRow ${horse.height ? "" : "empty"}`}>
+                                    <dt>Height</dt>
+                                    <dd>{horse.height ? `${horse.height} hands` : "Not on file"}</dd>
+                                </div>
+                                <div className={`detailRow ${horse.weight ? "" : "empty"}`}>
+                                    <dt>Weight</dt>
+                                    <dd>{horse.weight ? `${horse.weight} lbs` : "Not on file"}</dd>
+                                </div>
+                                <div className="detailRow">
+                                    <dt>Date Added</dt>
+                                    <dd>{FormatDate(horse.created_at)}</dd>
+                                </div>
+                                <div className="detailRow">
+                                    <dt>Date Updated</dt>
+                                    <dd>{FormatDate(horse.updated_at)}</dd>
+                                </div>
+                            </dl>
                         </div>
 
                         <div className="formSection">
                             <h3>Location</h3>
 
                             {horse.barn ? (
-                                <>
-                                    <p><b>Barn Name:</b> {horse.barn}</p>
-                                    <p><b>Stall ID:</b> {horse.stall_id}</p>
-                                    <p><b>Turnout Category:</b> {horse.turnout_type}</p>
+                                <dl className="detailList">
+                                    <div className="detailRow">
+                                        <dt>Barn Name</dt>
+                                        <dd>{horse.barn}</dd>
+                                    </div>
+                                    <div className="detailRow">
+                                        <dt>Stall ID</dt>
+                                        <dd>{horse.stall_id}</dd>
+                                    </div>
+                                    <div className="detailRow">
+                                        <dt>Turnout Category</dt>
+                                        <dd>{horse.turnout_type}</dd>
+                                    </div>
                                     {horse.pasture_name && (
-                                        <p><b>Turnout Pasture:</b> {horse.pasture_name}</p>
+                                        <div className="detailRow">
+                                            <dt>Turnout Pasture</dt>
+                                            <dd>{horse.pasture_name}</dd>
+                                        </div>
                                     )}
-                                </>
+                                </dl>
                             ) : (
-                                <>
-                                    <p><b>Pasture Name:</b> {horse.pasture_name}</p>
-                                    <p><b>Pasture Compatibility:</b> {horse.turnout_type}</p>
-                                </>
+                                <dl className="detailList">
+                                    <div className="detailRow">
+                                        <dt>Pasture Name</dt>
+                                        <dd>{horse.pasture_name}</dd>
+                                    </div>
+                                    <div className="detailRow">
+                                        <dt>Pasture Compatibility</dt>
+                                        <dd>{horse.turnout_type}</dd>
+                                    </div>
+                                </dl>
                             )}
                         </div>
 
                         <div className="formSection">
                             <h3>Horse Safety Flags</h3>
 
-                            {horse.escape_risk && <p>• Horse is an escape risk</p>}
-                            {horse.may_bite && <p>• Horse has history of biting</p>}
-                            {horse.may_kick && <p>• Horse has history of kicking</p>}
-                            {horse.difficult_to_catch && (
-                                <p>• Horse is difficult to catch in the pasture</p>
-                            )}
-                            {horse.herd_dominant && <p>• Horse is herd dominant</p>}
-                            {horse.sedation_required && (
-                                <p>• Horse requires sedation for vet visits and/or farrier appointments</p>
-                            )}
-                            {horse.food_aggressive && (
-                                <p>• Horse exhibits food aggression</p>
-                            )}
-                            {horse.requires_experienced_handler && (
-                                <p>• Horse requires an experienced handler</p>
-                            )}
+                            {(() => {
+                                const flags = [
+                                    { on: horse.escape_risk, icon: "sprint", label: "Escape risk" },
+                                    { on: horse.may_bite, icon: "warning", label: "History of biting" },
+                                    { on: horse.may_kick, icon: "warning", label: "History of kicking" },
+                                    { on: horse.difficult_to_catch, icon: "pets", label: "Difficult to catch in the pasture" },
+                                    { on: horse.herd_dominant, icon: "groups", label: "Herd dominant" },
+                                    { on: horse.sedation_required, icon: "vaccines", label: "Requires sedation for vet / farrier" },
+                                    { on: horse.food_aggressive, icon: "restaurant", label: "Food aggression" },
+                                    { on: horse.requires_experienced_handler, icon: "shield_person", label: "Requires experienced handler" }
+                                ];
+                                const active = flags.filter((f) => f.on);
 
-                            {!horse.escape_risk &&
-                                !horse.may_bite &&
-                                !horse.may_kick &&
-                                !horse.difficult_to_catch &&
-                                !horse.herd_dominant &&
-                                !horse.sedation_required &&
-                                !horse.food_aggressive &&
-                                !horse.requires_experienced_handler && (
-                                    <p>• Horse has no safety concerns.</p>
-                                )}
+                                if (active.length === 0) {
+                                    return (
+                                        <div className="safetyChipGroup">
+                                            <span className="safetyChip calm">
+                                                <span className="material-symbols-rounded">check_circle</span>
+                                                No safety concerns on file
+                                            </span>
+                                        </div>
+                                    );
+                                }
+
+                                return (
+                                    <div className="safetyChipGroup">
+                                        {active.map((flag) => (
+                                            <span key={flag.label} className="safetyChip warn">
+                                                <span className="material-symbols-rounded">{flag.icon}</span>
+                                                {flag.label}
+                                            </span>
+                                        ))}
+                                    </div>
+                                );
+                            })()}
                         </div>
 
                         <div className="formSection">
