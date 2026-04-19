@@ -6,6 +6,14 @@ from models.breed import Breed
 from models.barn import Barn
 from models.pasture import Pasture
 from models.owner import OwnerInfo
+from models.medical_records import MedicalRecords
+from models.horse_allergy_records import HorseAllergyRecords
+from models.custom_allergies import HorseCustomAllergy
+from models.horse_health_conditions import HorseHealthConditions
+from models.custom_health_conditions import HorseCustomHealthCondition
+from models.medication import HorseMedication
+from models.supplements import HorseSupplements
+from models.feeding_regime import FeedingRegime
 
 from schemas.horse_request import HorseRequest
 
@@ -215,3 +223,37 @@ def update_horse(
     session.refresh(horse)
 
     return horse
+
+
+def delete_horse(
+    session: Session,
+    horse_id: str,
+) -> None:
+    horse = session.exec(
+        select(Horse).where(Horse.horse_id == horse_id)
+    ).first()
+
+    if not horse:
+        raise HTTPException(status_code=404, detail="Horse not found")
+
+    related_models = [
+        MedicalRecords,
+        HorseAllergyRecords,
+        HorseCustomAllergy,
+        HorseHealthConditions,
+        HorseCustomHealthCondition,
+        HorseMedication,
+        HorseSupplements,
+        FeedingRegime,
+    ]
+
+    for model in related_models:
+        rows = session.exec(
+            select(model).where(model.horse_id == horse_id)
+        ).all()
+
+        for row in rows:
+            session.delete(row)
+
+    session.delete(horse)
+    session.commit()

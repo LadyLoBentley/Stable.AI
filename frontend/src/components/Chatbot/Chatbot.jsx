@@ -54,12 +54,14 @@ function Chatbot() {
             role: "bot",
             text: result.answer,
             sources: result.sources || [],
+            horse_links: result.horse_links || [],
           };
         } else {
           updated.push({
             role: "bot",
             text: result.answer,
             sources: result.sources || [],
+            horse_links: result.horse_links || [],
           });
         }
 

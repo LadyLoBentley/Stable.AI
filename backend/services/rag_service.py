@@ -4,13 +4,13 @@ from sqlmodel import Session, select
 from db.database import engine
 from models.horse import Horse
 from models.owner import OwnerInfo
-from models.medical_records import MedicalRecords
 from models.barn import Barn
 from models.pasture import Pasture
 from models.feeding_regime import FeedingRegime
 from models.medication import HorseMedication
 from models.supplements import HorseSupplements
 from models.inventory_items import InventoryItems
+from services.medical_record_service import get_latest_medical_record, get_latest_medical_records
 
 from rag.config import LLM_MODEL
 from rag.prompt_builder import build_rag_prompt
@@ -121,8 +121,8 @@ def build_comprehensive_horse_context(horse: Horse, session: Session) -> str:
     owner = None
     if horse.owner_id:
         owner = session.exec(select(OwnerInfo).where(OwnerInfo.owner_id == horse.owner_id)).first()
-        
-    medical = session.exec(select(MedicalRecords).where(MedicalRecords.horse_id == horse.horse_id)).first()
+
+    medical = get_latest_medical_record(session, horse.horse_id)
     
     feed = session.exec(select(FeedingRegime).where(FeedingRegime.horse_id == horse.horse_id)).first()
     feed_str = "None"
@@ -272,15 +272,19 @@ def get_structured_context(question: str) -> list[dict]:
                     })
 
         elif category == "medical":
-            records = session.exec(select(MedicalRecords)).all()
+            records = get_latest_medical_records(session)
             horses = session.exec(select(Horse)).all()
 
             horse_lookup = {horse.horse_id: horse for horse in horses}
+            record_lookup = {record.horse_id: record for record in records}
             matching_horses = get_matching_horses(question, horses)
 
             if matching_horses:
-                horse_ids = {horse.horse_id for horse in matching_horses}
-                records_to_use = [record for record in records if record.horse_id in horse_ids][:3]
+                records_to_use = [
+                    record_lookup[horse.horse_id]
+                    for horse in matching_horses
+                    if horse.horse_id in record_lookup
+                ][:3]
                 medical_detail_level = "detailed"
             else:
                 records_to_use = records[:3]
@@ -383,6 +387,22 @@ def get_structured_context(question: str) -> list[dict]:
     return structured_chunks
 
 
+def _get_horse_links(question: str) -> list[dict]:
+    """
+    If the question mentions a horse by name, return a list of
+    {name, horse_id} dicts so the frontend can render profile links.
+    Returns an empty list when no horse name is detected.
+    """
+    with Session(engine) as session:
+        horses = session.exec(select(Horse)).all()
+        matched = get_matching_horses(question, horses)
+        return [
+            {"name": h.horse_name, "horse_id": str(h.horse_id)}
+            for h in matched
+            if h.horse_name and h.horse_id
+        ]
+
+
 def generate_rag_answer(question: str, top_k: int = 5) -> dict:
     category = detect_category(question)
 
@@ -394,7 +414,8 @@ def generate_rag_answer(question: str, top_k: int = 5) -> dict:
                 "medical records, feeding or barn rules, or ask about a specific horse by name. "
                 "For medical, treatment, or legal decisions, please confirm with Ava, barn management, or the veterinarian."
             ),
-            "sources": []
+            "sources": [],
+            "horse_links": [],
         }
 
     structured_matches = get_structured_context(question)
@@ -404,6 +425,29 @@ def generate_rag_answer(question: str, top_k: int = 5) -> dict:
         vector_matches = search_documents(question, top_k=top_k)
 
     all_context = structured_matches + vector_matches
+
+    # Hard stop: if no context was retrieved from either the database or the
+    # vector store, return a canned "not found" response immediately.
+    # Never call the LLM with an empty context — that is the root cause of
+    # hallucinated answers like calculated ages or invented facts.
+    # Horse profile links are ONLY included in this fallback path so they
+    # never appear alongside a successful answer.
+    if not all_context:
+        horse_links = _get_horse_links(question)
+        return {
+            "question": question,
+            "answer": (
+                "I'm sorry, I was not able to retrieve such information. "
+                + (
+                    "Information may be found in the display page — I've included a link below."
+                    if horse_links else
+                    "Please make sure the information has been entered into the system."
+                )
+            ),
+            "sources": [],
+            "horse_links": horse_links,
+        }
+
     prompt = build_rag_prompt(question, all_context)
 
     response = ollama.chat(
@@ -439,5 +483,6 @@ def generate_rag_answer(question: str, top_k: int = 5) -> dict:
     return {
         "question": question,
         "answer": answer,
-        "sources": unique_sources
+        "sources": unique_sources,
+        "horse_links": [],
     }

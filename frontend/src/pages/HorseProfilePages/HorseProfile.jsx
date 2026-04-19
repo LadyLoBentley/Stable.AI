@@ -1,4 +1,4 @@
-import { useParams, NavLink, Outlet } from "react-router-dom";
+import { useParams, NavLink, Outlet, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 function HorseProfile() {
@@ -6,6 +6,7 @@ function HorseProfile() {
     const [horse, setHorse] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [headerAction, setHeaderAction] = useState(null);
 
     async function refreshHorse() {
         try {
@@ -31,14 +32,54 @@ function HorseProfile() {
         refreshHorse();
     }, [horse_id]);
 
-    if (loading) return <p>Loading horse...</p>;
-    if (error) return <p>{error}</p>;
-    if (!horse) return <p>Horse not found.</p>;
+    if (loading) return <p className="pageMessage">Loading horse...</p>;
+    if (error) return <p className="pageMessage errorMessage">{error}</p>;
+    if (!horse) return <p className="pageMessage">Horse not found.</p>;
+
+    const headerActions = headerAction
+        ? (Array.isArray(headerAction) ? headerAction : [headerAction])
+        : [];
 
     return (
         <div className="formInputs">
             <div className="formContainer">
-                <h2>{horse.horse_name}</h2>
+                <div className="horseProfileHeader">
+                    <h2 className="mainTitle">{horse.horse_name}</h2>
+                    {headerActions.length > 0 && (
+                        <div className="horseProfileHeaderActions">
+                            {headerActions.map((action) => {
+                                const actionClassName = [
+                                    "profileActionButton",
+                                    "horseHeaderAction",
+                                    action.variant || ""
+                                ].filter(Boolean).join(" ");
+
+                                if (action.to) {
+                                    return (
+                                        <Link
+                                            key={action.key || action.label}
+                                            to={action.to}
+                                            className={actionClassName}
+                                        >
+                                            {action.label}
+                                        </Link>
+                                    );
+                                }
+
+                                return (
+                                    <button
+                                        key={action.key || action.label}
+                                        type="button"
+                                        className={actionClassName}
+                                        onClick={action.onClick}
+                                    >
+                                        {action.label}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
                 <div className="horseTabRow">
                     <NavLink
                         to={`/horses/${horse_id}`}
@@ -87,7 +128,9 @@ function HorseProfile() {
                     </NavLink>
                 </div>
 
-                <Outlet context={{ horse, setHorse, refreshHorse }} />
+                <div className="horseProfileContent">
+                    <Outlet context={{ horse, setHorse, refreshHorse, setHeaderAction }} />
+                </div>
             </div>
         </div>
     );

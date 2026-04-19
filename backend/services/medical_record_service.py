@@ -3,7 +3,6 @@ from sqlmodel import Session, select
 from sqlalchemy import func
 from typing import List, Optional
 
-from models.horse import Horse
 from models.medical_records import MedicalRecords
 from models.allergies import Allergies
 from models.horse_allergy_records import HorseAllergyRecords
@@ -318,6 +317,7 @@ def build_medical_record_response(
     medical_conditions = get_horse_health_condition_names(session, medical_record.horse_id)
 
     return MedicalRecordResponse(
+        medical_record_id=medical_record.medical_record_id,
         horse_id=medical_record.horse_id,
 
         vet_clinic=medical_record.vet_clinic,
@@ -364,6 +364,46 @@ def build_medical_record_response(
         updated_at=medical_record.updated_at
     )
 
+
+def get_latest_medical_record(
+    session: Session,
+    horse_id: str
+) -> Optional[MedicalRecords]:
+    return session.exec(
+        select(MedicalRecords)
+        .where(MedicalRecords.horse_id == horse_id)
+        .order_by(MedicalRecords.updated_at.desc(), MedicalRecords.created_at.desc())
+    ).first()
+
+
+def get_latest_medical_records(session: Session) -> List[MedicalRecords]:
+    records = session.exec(
+        select(MedicalRecords)
+        .order_by(
+            MedicalRecords.horse_id,
+            MedicalRecords.updated_at.desc(),
+            MedicalRecords.created_at.desc()
+        )
+    ).all()
+
+    latest_by_horse = {}
+
+    for record in records:
+        latest_by_horse.setdefault(record.horse_id, record)
+
+    return list(latest_by_horse.values())
+
+
+def get_medical_record_history(
+    session: Session,
+    horse_id: str
+) -> List[MedicalRecords]:
+    return session.exec(
+        select(MedicalRecords)
+        .where(MedicalRecords.horse_id == horse_id)
+        .order_by(MedicalRecords.updated_at.desc(), MedicalRecords.created_at.desc())
+    ).all()
+
 def add_health_record(
         session: Session,
         submission: MedicalRecordRequest,
@@ -379,92 +419,46 @@ def add_health_record(
             raise HTTPException(status_code=404, detail=f"Dewormer not found")
 
         dewormer_id = item.item_id
+    medical_record = MedicalRecords(
+        horse_id=submission.horse_id,
+        item_id=dewormer_id,
 
-    medical_record = session.exec(
-        select(MedicalRecords).where(MedicalRecords.horse_id == submission.horse_id)
-    ).first()
+        vet_clinic=submission.vetClinic,
+        vet_name=submission.vetName,
+        vet_phone=submission.vetPhone,
 
-    if medical_record:
-        medical_record.horse_id = submission.horse_id
-        medical_record.item_id = dewormer_id
+        is_same_vet=submission.isSameVet,
+        emergency_clinic=submission.emergencyClinic,
+        emergency_vet_name=submission.emergencyVetName,
+        emergency_vet_phone=submission.emergencyVetPhone,
+        emergency_authorization=submission.emergencyAuthorization,
+        emergency_instructions=submission.emergencyInstructions,
 
-        medical_record.vet_clinic = submission.vetClinic
-        medical_record.vet_name = submission.vetName
-        medical_record.vet_phone = submission.vetPhone
+        rabies_expiration=submission.rabiesExpiration,
+        tetanus_expiration=submission.tetanusExpiration,
+        west_nile_expiration=submission.westNileExpiration,
+        eee_wee_expiration=submission.eeeWeeExpiration,
+        flu_rhino_expiration=submission.fluRhinoExpiration,
+        coggins_expiration=submission.cogginsExpiration,
 
-        medical_record.is_same_vet = submission.isSameVet
-        medical_record.emergency_clinic = submission.emergencyClinic
-        medical_record.emergency_vet_name = submission.emergencyVetName
-        medical_record.emergency_vet_phone = submission.emergencyVetPhone
-        medical_record.emergency_authorization = submission.emergencyAuthorization
-        medical_record.emergency_instructions = submission.emergencyInstructions
+        has_shoes=submission.hasShoes,
+        farrier_name=submission.farrierName,
+        farrier_phone=submission.farrierPhone,
+        farrier_date=submission.farrierDate,
+        dentist_name=submission.dentistName,
+        dentist_phone=submission.dentistPhone,
+        dental_date=submission.dentalDate,
+        chiropractor_name=submission.chiropractorName,
+        chiropractor_phone=submission.chiropractorPhone,
+        chiropractor_date=submission.chiropractorDate,
+        massage_therapist=submission.massageTherapist,
+        therapist_phone=submission.therapistPhone,
+        massage_date=submission.massageDate,
+        deworm_provider=submission.dewormProvider,
+        deworm_date=submission.dewormDate,
 
-        medical_record.rabies_expiration = submission.rabiesExpiration
-        medical_record.tetanus_expiration = submission.tetanusExpiration
-        medical_record.west_nile_expiration = submission.westNileExpiration
-        medical_record.eee_wee_expiration = submission.eeeWeeExpiration
-        medical_record.flu_rhino_expiration = submission.fluRhinoExpiration
-        medical_record.coggins_expiration = submission.cogginsExpiration
-
-        medical_record.has_shoes = submission.hasShoes
-        medical_record.farrier_name = submission.farrierName
-        medical_record.farrier_phone = submission.farrierPhone
-        medical_record.farrier_date = submission.farrierDate
-        medical_record.dentist_name = submission.dentistName
-        medical_record.dentist_phone = submission.dentistPhone
-        medical_record.dental_date = submission.dentalDate
-        medical_record.chiropractor_name = submission.chiropractorName
-        medical_record.chiropractor_phone = submission.chiropractorPhone
-        medical_record.chiropractor_date = submission.chiropractorDate
-        medical_record.massage_therapist = submission.massageTherapist
-        medical_record.therapist_phone = submission.therapistPhone
-        medical_record.massage_date = submission.massageDate
-        medical_record.deworm_provider = submission.dewormProvider
-        medical_record.deworm_date = submission.dewormDate
-
-        medical_record.medical_notes = submission.medicalNotes
-
-    else:
-        medical_record = MedicalRecords(
-            horse_id=submission.horse_id,
-            item_id=dewormer_id,
-
-            vet_clinic=submission.vetClinic,
-            vet_name=submission.vetName,
-            vet_phone=submission.vetPhone,
-
-            is_same_vet=submission.isSameVet,
-            emergency_clinic=submission.emergencyClinic,
-            emergency_vet_name=submission.emergencyVetName,
-            emergency_vet_phone=submission.emergencyVetPhone,
-            emergency_authorization=submission.emergencyAuthorization,
-            emergency_instructions=submission.emergencyInstructions,
-
-            rabies_expiration=submission.rabiesExpiration,
-            tetanus_expiration=submission.tetanusExpiration,
-            west_nile_expiration=submission.westNileExpiration,
-            eee_wee_expiration=submission.eeeWeeExpiration,
-            flu_rhino_expiration=submission.fluRhinoExpiration,
-            coggins_expiration=submission.cogginsExpiration,
-
-            has_shoes=submission.hasShoes,
-            farrier_name=submission.farrierName,
-            farrier_phone=submission.farrierPhone,
-            farrier_date=submission.farrierDate,
-            dentist_name=submission.dentistName,
-            dentist_phone=submission.dentistPhone,
-            dental_date=submission.dentalDate,
-            chiropractor_name=submission.chiropractorName,
-            chiropractor_phone=submission.chiropractorPhone,
-            chiropractor_date=submission.chiropractorDate,
-            massage_therapist=submission.massageTherapist,
-            therapist_phone=submission.therapistPhone,
-            massage_date=submission.massageDate,
-            deworm_provider=submission.dewormProvider,
-            deworm_date=submission.dewormDate,
-
-            medical_notes=submission.medicalNotes
-        )
+        medical_notes=submission.medicalNotes
+    )
 
     session.add(medical_record)
     sync_horse_allergies(session, submission.horse_id, submission.allergies)

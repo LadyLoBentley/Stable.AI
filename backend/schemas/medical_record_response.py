@@ -4,6 +4,7 @@ from sqlmodel import SQLModel, Field
 
 
 class MedicalRecordResponse(SQLModel):
+    medical_record_id: str
 
     horse_id: str
 

@@ -5,6 +5,7 @@ import TagSearchField from "../../components/Form/TagSearchField.jsx";
 import TextAreaField from "../../components/Form/TextAreaField.jsx";
 import CheckboxField from "../../components/Form/Checkbox.jsx";
 import DropdownField from "../../components/Form/DropdownField.jsx";
+import Button from "../../components/Button/Button.jsx";
 
 import { mapCareResponseToEntry, sanitizeCareEntries } from "./careScheduleUtils.js";
 import { readErrorMessage, toDateInputValue } from "./profileFormUtils.js";
@@ -153,6 +154,23 @@ function MedicalRecordEditForm({
             ...prev,
             [fieldName]: value
         }));
+
+        if (fieldName === "emergencyAuthorization" && value) {
+            setErrors((prev) => ({
+                ...prev,
+                emergencyInstructions: ""
+            }));
+        }
+
+        if (fieldName === "emergencyInstructions") {
+            setErrors((prev) => ({
+                ...prev,
+                emergencyInstructions:
+                    formData.emergencyAuthorization || value.trim()
+                        ? ""
+                        : prev.emergencyInstructions
+            }));
+        }
     }
 
     function validateForm() {
@@ -185,7 +203,7 @@ function MedicalRecordEditForm({
         }
 
         if (!formData.emergencyAuthorization && !formData.emergencyInstructions.trim()) {
-            nextErrors.emergencyInstructions = "Emergency instructions are required when emergency treatment is not authorized.";
+            nextErrors.emergencyInstructions = "Emergency instructions are required when emergency treatment is not fully authorized.";
         }
 
         return nextErrors;
@@ -284,8 +302,13 @@ function MedicalRecordEditForm({
 
             {loadingOptions && <div className="formAlert">Loading medical form options...</div>}
 
-            <div className="formSection">
-                <h3>Edit Primary Veterinarian</h3>
+            <div className="formNote">
+                Saving changes creates a new medical record snapshot so prior health records stay on file.
+            </div>
+
+            <div className="formInputs">
+                <div className="formSection">
+                <h3>Primary Veterinarian</h3>
                 <div className="inventory-form-row1">
                     <TextField
                         id="edit-vetClinic"
@@ -317,7 +340,7 @@ function MedicalRecordEditForm({
             </div>
 
             <div className="formSection">
-                <h3>Edit Emergency Care</h3>
+                <h3>Emergency Care</h3>
                 <div className="inventory-form-row3">
                     <CheckboxField
                         id="edit-isSameVet"
@@ -370,17 +393,30 @@ function MedicalRecordEditForm({
                 <div className="inventory-form-row4">
                     <TextAreaField
                         id="edit-emergencyInstructions"
-                        label={<b>Emergency Instructions: </b>}
+                        label={
+                            <b>
+                                {formData.emergencyAuthorization
+                                    ? "Emergency Care Instructions (Optional): "
+                                    : "Emergency Instructions (Required): "}
+                            </b>
+                        }
                         value={formData.emergencyInstructions}
                         onChange={(value) => updateField("emergencyInstructions", value)}
                         maxLength={1000}
+                        title="Emergency instructions"
+                        body={
+                            formData.emergencyAuthorization
+                                ? "Emergency treatment is fully authorized, so instructions are optional. Add notes only if there are special preferences or limits."
+                                : "Since emergency care is not fully authorized, explain what staff should do if the owner cannot be reached."
+                        }
+                        isRequired={!formData.emergencyAuthorization}
                         error={errors.emergencyInstructions || ""}
                     />
                 </div>
             </div>
 
             <div className="formSection">
-                <h3>Edit Vaccination & Health Records</h3>
+                <h3>Vaccination & Health Records</h3>
                 <div className="inventory-form-row2">
                     <TextField
                         id="edit-rabiesExpiration"
@@ -433,7 +469,7 @@ function MedicalRecordEditForm({
             </div>
 
             <div className="formSection">
-                <h3>Edit Preventative Care</h3>
+                <h3>Preventative Care</h3>
 
                 <h4 className="subSectionHeader">
                     <span className="material-symbols-rounded" aria-hidden="true">construction</span>
@@ -578,7 +614,7 @@ function MedicalRecordEditForm({
             </div>
 
             <div className="formSection">
-                <h3>Edit Conditions & Allergies</h3>
+                <h3>Medical History</h3>
 
                 <h4 className="subSectionHeader">
                     <span className="material-symbols-rounded" aria-hidden="true">medical_information</span>
@@ -617,15 +653,12 @@ function MedicalRecordEditForm({
                         maxLength={1000}
                     />
                 </div>
-            </div>
+                </div>
 
-            <div className="profileActionRow">
-                <button type="button" className="profileActionButton secondary" onClick={onCancel}>
-                    Cancel
-                </button>
-                <button type="submit" className="profileActionButton">
-                    Save Medical Record
-                </button>
+                <div className="formButton">
+                    <Button label="Cancel" variant="secondary" type="button" onClick={onCancel} />
+                    <Button label="Save Medical Record" type="submit" />
+                </div>
             </div>
         </form>
     );

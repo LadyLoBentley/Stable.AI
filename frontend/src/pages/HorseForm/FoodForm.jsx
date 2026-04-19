@@ -51,6 +51,10 @@ function FoodForm() {
 
             case "hayAmount":
                 if (formData.feedHay && !value) return "Hay serving size is required.";
+                if (formData.feedHay && Number(value) <= 0) return "Hay serving size must be greater than 0.";
+                if (formData.feedHay && !Number.isInteger(Number(value))) {
+                    return "Hay serving size must be a whole number of flakes.";
+                }
                 return "";
 
             case "hayReplacement":
@@ -425,6 +429,8 @@ function FoodForm() {
                                     label={<b>Serving Amount (Flakes): </b>}
                                     value={formData.hayAmount}
                                     onChange={(value) =>updateField("hayAmount", value)}
+                                    step="1"
+                                    min={1}
                                     isRequired={true}
                                     error={touched.hayAmount ? errors.hayAmount : ""}
                                     onBlur={() => handleBlur("hayAmount", formData.hayAmount, setTouched, setErrors, validateField)}

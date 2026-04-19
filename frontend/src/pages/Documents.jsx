@@ -48,8 +48,10 @@ function Documents() {
             <GroupedCardList
                 title="Documents"
                 subtitle="Upload contracts, veterinary records, insurance papers, and other important files to keep them organized by category."
+                countLabel="documents"
                 actionLabel="Upload Document"
                 actionTo="/add-document"
+                searchPlaceholder="Search by document name, category, or notes"
                 items={[]}
                 emptyMessage="No documents yet. Upload your first file to get started."
                 groupBy={() => ""}
@@ -65,8 +67,10 @@ function Documents() {
             <GroupedCardList
                 title="Documents"
                 subtitle="Open any card to view file details, edit metadata, replace uploads, or remove the document."
+                countLabel={documents.length === 1 ? "document" : "documents"}
                 actionLabel="Upload Document"
                 actionTo="/add-document"
+                searchPlaceholder="Search by document name, category, or notes"
                 categoryOrder={DOCUMENT_CATEGORIES}
                 items={documents}
                 groupBy={(document) => document.category || "Other"}

@@ -61,8 +61,10 @@ function Inventory() {
             <GroupedCardList
                 title="Inventory"
                 subtitle="Open an item to adjust quantity, replace images, and keep barn stock instructions up to date."
+                countLabel={inventoryItems.length === 1 ? "item" : "items"}
                 actionLabel="Add Inventory Item"
                 actionTo="/add-item"
+                searchPlaceholder="Search by item name, category, stock status, or grade"
                 categoryOrder={categoryOrder}
                 items={inventoryItems}
                 emptyMessage="No items in inventory yet. Add your first item to get started."

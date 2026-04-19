@@ -7,6 +7,7 @@ import TextAreaField from "../../components/Form/TextAreaField.jsx";
 import UploadImage from "../../components/Form/UploadImage.jsx";
 import NumberField from "../../components/Form/NumberField.jsx";
 import CheckboxField from "../../components/Form/Checkbox.jsx";
+import Button from "../../components/Button/Button.jsx";
 
 import { toDateInputValue, readErrorMessage } from "./profileFormUtils.js";
 
@@ -247,8 +248,9 @@ function HorseDetailEditForm({ horse, onSaved, onCancel }) {
 
             {loadingOptions && <div className="formAlert">Loading horse form options...</div>}
 
+            <div className="formInputs">
             <div className="formSection">
-                <h3>Edit Horse Details</h3>
+                <h3>Horse Details</h3>
                 <div className="inventory-form-row2">
                     <TextField
                         id="edit-horseName"
@@ -312,7 +314,7 @@ function HorseDetailEditForm({ horse, onSaved, onCancel }) {
             </div>
 
             <div className="formSection">
-                <h3>Edit Location</h3>
+                <h3>Location Assignment</h3>
                 <div className="inventory-form-row3">
                     <Toggle
                         value={formData.locationType}
@@ -391,7 +393,7 @@ function HorseDetailEditForm({ horse, onSaved, onCancel }) {
             </div>
 
             <div className="formSection">
-                <h3>Edit Safety Flags</h3>
+                <h3>Horse Characteristics & Safety Flags</h3>
                 <div className="checkboxGrid">
                     <CheckboxField
                         id="edit-escapeRisk"
@@ -445,7 +447,7 @@ function HorseDetailEditForm({ horse, onSaved, onCancel }) {
             </div>
 
             <div className="formSection">
-                <h3>Edit Notes</h3>
+                <h3>Additional Information</h3>
                 <div className="inventory-form-row3">
                     <TextAreaField
                         id="edit-temperament"
@@ -466,7 +468,7 @@ function HorseDetailEditForm({ horse, onSaved, onCancel }) {
             </div>
 
             <div className="formSection">
-                <h3>Replace Image</h3>
+                <h3>Upload Image</h3>
 
                 {horse.image && (
                     <div className="existingAssetPreview">
@@ -480,18 +482,18 @@ function HorseDetailEditForm({ horse, onSaved, onCancel }) {
                         label={<b>New Image (Optional): </b>}
                         value={imageFile}
                         onChange={setImageFile}
+                        icon_label="Item image help"
+                        title="Replace Image"
+                        body="Upload a replacement photo to swap in a clearer or more recent image. Leave empty to keep the current picture."
                         maxSizeMB={5}
                     />
                 </div>
             </div>
 
-            <div className="profileActionRow">
-                <button type="button" className="profileActionButton secondary" onClick={onCancel}>
-                    Cancel
-                </button>
-                <button type="submit" className="profileActionButton">
-                    Save Horse Details
-                </button>
+            <div className="formButton">
+                <Button label="Cancel" variant="secondary" type="button" onClick={onCancel} />
+                <Button label="Save Horse Details" type="submit" />
+            </div>
             </div>
         </form>
     );

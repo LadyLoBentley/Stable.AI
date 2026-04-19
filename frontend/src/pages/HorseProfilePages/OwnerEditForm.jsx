@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import TextField from "../../components/Form/TextField.jsx";
 import DropdownField from "../../components/Form/DropdownField.jsx";
 import CheckboxField from "../../components/Form/Checkbox.jsx";
+import Button from "../../components/Button/Button.jsx";
 
 import { readErrorMessage } from "./profileFormUtils.js";
 
@@ -212,140 +213,154 @@ function OwnerEditForm({ owner, onSaved, onCancel }) {
                 </div>
             )}
 
-            <div className="formSection">
-                <h3>Edit Owner Information</h3>
-                <div className="inventory-form-row1">
-                    <TextField
-                        id="edit-ownerName"
-                        label={<b>Name: </b>}
-                        value={formData.ownerName}
-                        onChange={(value) => updateField("ownerName", value)}
-                        isRequired={true}
-                        error={errors.ownerName || ""}
-                    />
+            <div className="formInputs">
+                <div className="formSection">
+                    <h3>Owner Details</h3>
+                    <div className="inventory-form-row1">
+                        <TextField
+                            id="edit-ownerName"
+                            label={<b>Name: </b>}
+                            placeholder="John Doe"
+                            value={formData.ownerName}
+                            onChange={(value) => updateField("ownerName", value)}
+                            isRequired={true}
+                            error={errors.ownerName || ""}
+                        />
 
-                    <TextField
-                        id="edit-ownerPhone"
-                        label={<b>Phone Number: </b>}
-                        value={formData.ownerPhone}
-                        onChange={(value) => updateField("ownerPhone", value)}
-                        isRequired={true}
-                        error={errors.ownerPhone || ""}
-                    />
+                        <TextField
+                            id="edit-ownerPhone"
+                            label={<b>Phone Number: </b>}
+                            placeholder="Format: (555) 555-5555"
+                            value={formData.ownerPhone}
+                            onChange={(value) => updateField("ownerPhone", value)}
+                            isRequired={true}
+                            title="Phone Number"
+                            body="Please enter phone number in format: (843) 456-7890. Do not forget the area code."
+                            error={errors.ownerPhone || ""}
+                        />
 
-                    <TextField
-                        id="edit-ownerEmail"
-                        label={<b>Email Address: </b>}
-                        value={formData.ownerEmail}
-                        onChange={(value) => updateField("ownerEmail", value)}
-                        isRequired={true}
-                        error={errors.ownerEmail || ""}
-                    />
-                </div>
-            </div>
+                        <TextField
+                            id="edit-ownerEmail"
+                            label={<b>Email Address: </b>}
+                            placeholder="Format: youremail@gmail.com"
+                            value={formData.ownerEmail}
+                            onChange={(value) => updateField("ownerEmail", value)}
+                            isRequired={true}
+                            error={errors.ownerEmail || ""}
+                        />
+                    </div>
 
-            <div className="formSection">
-                <h3>Edit Address</h3>
-                <div className="inventory-form-row2">
-                    <TextField
-                        id="edit-streetAddress"
-                        label={<b>Street Address: </b>}
-                        value={formData.streetAddress}
-                        onChange={(value) => updateField("streetAddress", value)}
-                        isRequired={true}
-                        error={errors.streetAddress || ""}
-                    />
+                    <div className="inventory-form-row2">
+                        <TextField
+                            id="edit-streetAddress"
+                            label={<b>Street Address: </b>}
+                            placeholder="123 Main Street"
+                            value={formData.streetAddress}
+                            onChange={(value) => updateField("streetAddress", value)}
+                            isRequired={true}
+                            error={errors.streetAddress || ""}
+                        />
 
-                    <TextField
-                        id="edit-aptNo"
-                        label={<b>Apt. No: </b>}
-                        value={formData.aptNo}
-                        onChange={(value) => updateField("aptNo", value)}
-                    />
-                </div>
+                        <TextField
+                            id="edit-aptNo"
+                            label={<b>Apartment Number: </b>}
+                            placeholder="Enter apartment number if applicable"
+                            value={formData.aptNo}
+                            onChange={(value) => updateField("aptNo", value)}
+                            isRequired={false}
+                        />
+                    </div>
 
-                <div className="inventory-form-row1">
-                    <TextField
-                        id="edit-city"
-                        label={<b>City: </b>}
-                        value={formData.city}
-                        onChange={(value) => updateField("city", value)}
-                        isRequired={true}
-                        error={errors.city || ""}
-                    />
+                    <div className="inventory-form-row1">
+                        <TextField
+                            id="edit-city"
+                            label={<b>City: </b>}
+                            placeholder="Enter City"
+                            value={formData.city}
+                            onChange={(value) => updateField("city", value)}
+                            isRequired={true}
+                            error={errors.city || ""}
+                        />
 
-                    <DropdownField
-                        id="edit-state"
-                        label={<b>State: </b>}
-                        options={US_STATES}
-                        value={formData.state}
-                        onChange={(value) => updateField("state", value)}
-                        allowCustom={false}
-                        isRequired={true}
-                        error={errors.state || ""}
-                    />
+                        <DropdownField
+                            id="edit-state"
+                            label={<b>State: </b>}
+                            options={US_STATES}
+                            value={formData.state}
+                            onChange={(value) => updateField("state", value)}
+                            allowCustom={false}
+                            isRequired={true}
+                            error={errors.state || ""}
+                        />
 
-                    <TextField
-                        id="edit-zip"
-                        label={<b>Zipcode: </b>}
-                        value={formData.zip}
-                        onChange={(value) => updateField("zip", value)}
-                        isRequired={true}
-                        error={errors.zip || ""}
-                    />
-                </div>
-            </div>
-
-            <div className="formSection">
-                <h3>Edit Emergency Contact</h3>
-                <div className="inventory-form-row1">
-                    <TextField
-                        id="edit-emergencyContactName"
-                        label={<b>Name: </b>}
-                        value={formData.emergencyContactName}
-                        onChange={(value) => updateField("emergencyContactName", value)}
-                        isRequired={true}
-                        error={errors.emergencyContactName || ""}
-                    />
-
-                    <DropdownField
-                        id="edit-emergencyContactRelations"
-                        label={<b>Relation: </b>}
-                        options={RELATIONS}
-                        value={formData.emergencyContactRelations}
-                        onChange={(value) => updateField("emergencyContactRelations", value)}
-                        allowCustom={false}
-                        isRequired={true}
-                        error={errors.emergencyContactRelations || ""}
-                    />
-
-                    <TextField
-                        id="edit-emergencyContactPhone"
-                        label={<b>Phone Number: </b>}
-                        value={formData.emergencyContactPhone}
-                        onChange={(value) => updateField("emergencyContactPhone", value)}
-                        isRequired={true}
-                        error={errors.emergencyContactPhone || ""}
-                    />
+                        <TextField
+                            id="edit-zip"
+                            label={<b>Zip code: </b>}
+                            placeholder="Enter zip code"
+                            value={formData.zip}
+                            onChange={(value) => updateField("zip", value)}
+                            isRequired={true}
+                            error={errors.zip || ""}
+                        />
+                    </div>
                 </div>
 
-                <div className="inventory-form-row3">
-                    <CheckboxField
-                        id="edit-signedWaiver"
-                        label="Signed liability waiver on file"
-                        checked={formData.signedWaiver}
-                        onChange={(value) => updateField("signedWaiver", value)}
-                    />
-                </div>
-            </div>
+                <div className="formSection">
+                    <h3>Emergency Contact</h3>
+                    <div className="inventory-form-row1">
+                        <TextField
+                            id="edit-emergencyContactName"
+                            label={<b>Name: </b>}
+                            placeholder="Enter name of emergency contact"
+                            value={formData.emergencyContactName}
+                            onChange={(value) => updateField("emergencyContactName", value)}
+                            isRequired={true}
+                            error={errors.emergencyContactName || ""}
+                        />
 
-            <div className="profileActionRow">
-                <button type="button" className="profileActionButton secondary" onClick={onCancel}>
-                    Cancel
-                </button>
-                <button type="submit" className="profileActionButton">
-                    Save Owner Information
-                </button>
+                        <DropdownField
+                            id="edit-emergencyContactRelations"
+                            label={<b>Relation: </b>}
+                            options={RELATIONS}
+                            value={formData.emergencyContactRelations}
+                            onChange={(value) => updateField("emergencyContactRelations", value)}
+                            allowCustom={false}
+                            isRequired={true}
+                            error={errors.emergencyContactRelations || ""}
+                        />
+
+                        <TextField
+                            id="edit-emergencyContactPhone"
+                            label={<b>Phone Number: </b>}
+                            placeholder="Format: (555) 555-5555"
+                            value={formData.emergencyContactPhone}
+                            onChange={(value) => updateField("emergencyContactPhone", value)}
+                            isRequired={true}
+                            title="Emergency Contact's Phone Number"
+                            body="Please enter phone number in format: (843) 456-7890. Do not forget the area code."
+                            error={errors.emergencyContactPhone || ""}
+                        />
+                    </div>
+                </div>
+
+                <div className="formSection">
+                    <h3>Liability Waiver</h3>
+                    <div className="inventory-form-row4">
+                        <CheckboxField
+                            id="edit-signedWaiver"
+                            label="I acknowledge and agree to the Stable.AI liability waiver and equine risk notice."
+                            checked={formData.signedWaiver}
+                            onChange={(value) => updateField("signedWaiver", value)}
+                            title="Liability Waiver"
+                            body="I understand that horse boarding, handling, riding, and related equine activities involve inherent risks that may result in injury, illness, property damage, or death. I acknowledge these risks and understand that Stable.AI is a management platform only and does not provide veterinary, legal, medical, or emergency services."
+                        />
+                    </div>
+                </div>
+
+                <div className="formButton">
+                    <Button label="Cancel" variant="secondary" type="button" onClick={onCancel} />
+                    <Button label="Save Owner Information" type="submit" />
+                </div>
             </div>
         </form>
     );

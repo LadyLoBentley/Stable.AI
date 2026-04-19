@@ -6,7 +6,7 @@ from db.database import get_session
 from schemas.item_request import ItemRequest
 from schemas.item_response import ItemResponse
 
-from services.item_service import create_item, update_item
+from services.item_service import create_item, update_item, delete_item
 from services.inventory_storage_service import upload_inventory_image
 
 from models.inventory_items import InventoryItems
@@ -100,3 +100,9 @@ def get_item(item_id: str, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Item not found")
 
     return build_item_response(item)
+
+
+@router.delete("/{item_id}")
+def remove_item(item_id: str, session: Session = Depends(get_session)):
+    delete_item(session=session, item_id=item_id)
+    return {"detail": "Inventory item removed"}

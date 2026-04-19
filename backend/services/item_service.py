@@ -2,8 +2,13 @@ from typing import Optional
 
 from fastapi import HTTPException
 from sqlmodel import Session, select
+from sqlalchemy import or_
 
 from models.inventory_items import InventoryItems
+from models.medication import HorseMedication
+from models.supplements import HorseSupplements
+from models.medical_records import MedicalRecords
+from models.feeding_regime import FeedingRegime
 
 from schemas.item_request import ItemRequest
 
@@ -105,3 +110,64 @@ def update_item(
     session.refresh(item)
 
     return item
+
+
+def delete_item(
+        session: Session,
+        item_id: str,
+) -> None:
+    item = session.get(InventoryItems, item_id)
+
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    medication_count = len(session.exec(
+        select(HorseMedication).where(HorseMedication.item_id == item_id)
+    ).all())
+    supplement_count = len(session.exec(
+        select(HorseSupplements).where(HorseSupplements.item_id == item_id)
+    ).all())
+    medical_record_count = len(session.exec(
+        select(MedicalRecords).where(MedicalRecords.item_id == item_id)
+    ).all())
+    feed_plan_count = len(session.exec(
+        select(FeedingRegime).where(
+            or_(
+                FeedingRegime.hay_id == item_id,
+                FeedingRegime.hay_replacement_id == item_id,
+                FeedingRegime.grain_id == item_id,
+                FeedingRegime.food_additive_id == item_id,
+            )
+        )
+    ).all())
+
+    usage_messages = []
+
+    if medication_count:
+        usage_messages.append(
+            f"used in {medication_count} medication schedule{'s' if medication_count != 1 else ''}"
+        )
+
+    if supplement_count:
+        usage_messages.append(
+            f"used in {supplement_count} supplement schedule{'s' if supplement_count != 1 else ''}"
+        )
+
+    if medical_record_count:
+        usage_messages.append(
+            f"referenced in {medical_record_count} medical record{'s' if medical_record_count != 1 else ''}"
+        )
+
+    if feed_plan_count:
+        usage_messages.append(
+            f"referenced in {feed_plan_count} feed plan{'s' if feed_plan_count != 1 else ''}"
+        )
+
+    if usage_messages:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot delete this inventory item because it is {', '.join(usage_messages)}."
+        )
+
+    session.delete(item)
+    session.commit()

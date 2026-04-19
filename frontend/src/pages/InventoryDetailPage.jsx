@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import FormatDate from "../utils/FormatDate";
@@ -59,6 +59,7 @@ function buildInitialState(item) {
 
 function InventoryDetailPage() {
     const { item_id } = useParams();
+    const navigate = useNavigate();
     const [item, setItem] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -162,21 +163,49 @@ function InventoryDetailPage() {
         }
     }
 
-    if (loading) return <p>Loading item...</p>;
-    if (error) return <p>{error}</p>;
-    if (!item) return <p>Item not found.</p>;
+    async function handleRemove() {
+        if (!item) {
+            return;
+        }
+
+        const confirmed = window.confirm(`Delete "${item.label}" from inventory?`);
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://127.0.0.1:8002/api/inventory/${item_id}`, {
+                method: "DELETE"
+            });
+
+            if (!response.ok) {
+                throw new Error(await readErrorMessage(response, "Failed to remove inventory item."));
+            }
+
+            navigate("/inventory", { replace: true });
+        } catch (removeError) {
+            setSubmitStatus({
+                type: "error",
+                message: removeError.message || "Failed to remove inventory item."
+            });
+        }
+    }
+
+    if (loading) return <p className="pageMessage">Loading item...</p>;
+    if (error) return <p className="pageMessage errorMessage">{error}</p>;
+    if (!item) return <p className="pageMessage">Item not found.</p>;
 
     return (
         <div className="formInputs">
             <div className="formContainer">
+                {submitStatus.message && (
+                    <div className={submitStatus.type === "error" ? "formAlert error" : "formAlert success"}>
+                        {submitStatus.message}
+                    </div>
+                )}
+
                 {isEditing ? (
                     <form onSubmit={handleSubmit}>
-                        {submitStatus.message && (
-                            <div className={submitStatus.type === "error" ? "formAlert error" : "formAlert success"}>
-                                {submitStatus.message}
-                            </div>
-                        )}
-
                         <div className="formSection">
                             <h3>Edit Item Details</h3>
                             <div className="inventory-form-row2">
@@ -267,6 +296,13 @@ function InventoryDetailPage() {
                 ) : (
                     <>
                         <div className="profileSectionActions">
+                            <button
+                                type="button"
+                                className="profileActionButton danger"
+                                onClick={handleRemove}
+                            >
+                                Delete Inventory Item
+                            </button>
                             <button
                                 type="button"
                                 className="profileActionButton"

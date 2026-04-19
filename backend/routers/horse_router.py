@@ -10,7 +10,7 @@ from schemas.horse_request import HorseRequest
 from schemas.horse_response import HorseResponse
 
 from services.horse_storage_service import upload_horse_image
-from services.horse_service import create_horse, update_horse
+from services.horse_service import create_horse, update_horse, delete_horse
 
 from models.horse import Horse
 from models.breed import Breed
@@ -214,3 +214,12 @@ def get_horse(horse_id: str, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Horse not found")
 
     return build_horse_response(session, horse)
+
+
+@router.delete("/{horse_id}")
+def remove_horse(
+    horse_id: str,
+    session: Session = Depends(get_session)
+):
+    delete_horse(session=session, horse_id=horse_id)
+    return {"detail": "Horse removed"}

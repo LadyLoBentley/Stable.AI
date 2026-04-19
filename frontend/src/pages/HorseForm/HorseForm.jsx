@@ -361,13 +361,17 @@ function HorseForm() {
 
   return (
     <div className="formContainer">
-      <h2>Horse Form</h2>
+      <h2>Add a Horse</h2>
 
       {submitStatus.message && (
         <div className={submitStatus.type === "success" ? "formAlert success" : "formAlert error"}>
           {submitStatus.message}
         </div>
       )}
+
+      <div className="formNote">
+        Start with the horse's identifying details, housing, and safety flags. You'll complete medical, feeding, and owner information on the next steps.
+      </div>
 
       {breedsLoading && <div className="formAlert">Loading breeds...</div>}
       {breedsError && <div className="formAlert error">{breedsError}</div>}
@@ -731,11 +735,11 @@ function HorseForm() {
                 <div className="inventory-form-row4">
                       <UploadImage
                         id="image"
-                        label={<b>Select Image: </b>}
+                        label={<b>Horse Image: </b>}
                         value={formData.image}
                         onChange={(value) => updateField("image", value)}
-                        icon_label="Item image help"
-                        title="Item Image"
+                        icon_label="Horse image help"
+                        title="Horse Image"
                         body="Upload one clear image of the horse for quick identification. Only one image is allowed."
                         maxSizeMB={5}
                         isRequired={true}

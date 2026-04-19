@@ -81,7 +81,7 @@ function getFarrierStatus(dueDate) {
 }
 
 function MedicalRecordTab() {
-    const { horse } = useOutletContext();
+    const { horse, setHeaderAction } = useOutletContext();
     const [medicalRecord, setMedicalRecord] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -129,193 +129,207 @@ function MedicalRecordTab() {
         fetchMedicalRecord();
     }, [horse.horse_id]);
 
+    useEffect(() => {
+        if (loading || error || !medicalRecord || isEditing) {
+            setHeaderAction(null);
+            return;
+        }
+
+        setHeaderAction([
+            {
+                key: "medical-history",
+                label: "View Medical History",
+                to: `/horses/${horse.horse_id}/medical/history`,
+                variant: "secondary"
+            },
+            {
+                key: "edit-medical-record",
+                label: "Edit Medical Record",
+                onClick: () => setIsEditing(true)
+            }
+        ]);
+
+        return () => setHeaderAction(null);
+    }, [error, horse.horse_id, isEditing, loading, medicalRecord, setHeaderAction]);
+
     function handleSaved(updatedRecord, updatedDewormerName) {
         setMedicalRecord(updatedRecord);
         setDewormerName(updatedDewormerName || "");
         setIsEditing(false);
     }
 
-    if (loading) return <p>Loading medical record...</p>;
-    if (error) return <p>{error}</p>;
-    if (!medicalRecord) return <p>No Medical Record Found.</p>;
+    if (loading) return <p className="pageMessage">Loading medical record...</p>;
+    if (error) return <p className="pageMessage errorMessage">{error}</p>;
+    if (!medicalRecord) return <p className="pageMessage">No Medical Record Found.</p>;
 
     const nextFarrierDate = getNextFarrierDate(medicalRecord.farrier_date);
     const farrierStatus = getFarrierStatus(nextFarrierDate);
     const hasHealthConditions = medicalRecord.medical_conditions?.length > 0;
     const hasAllergies = medicalRecord.allergies?.length > 0;
 
+    if (isEditing) {
+        return (
+            <MedicalRecordEditForm
+                horseId={horse.horse_id}
+                medicalRecord={medicalRecord}
+                currentDewormerName={dewormerName}
+                onSaved={handleSaved}
+                onCancel={() => setIsEditing(false)}
+            />
+        );
+    }
+
     return (
-        <div className="formInputs">
-            <div className="formContainer">
-                {isEditing ? (
-                    <MedicalRecordEditForm
-                        horseId={horse.horse_id}
-                        medicalRecord={medicalRecord}
-                        currentDewormerName={dewormerName}
-                        onSaved={handleSaved}
-                        onCancel={() => setIsEditing(false)}
-                    />
+        <>
+            <div className="formSection">
+                <h3>Primary Vet</h3>
+                <dl className="detailList">
+                    <div className={`detailRow ${medicalRecord.vet_clinic ? "" : "empty"}`}>
+                        <dt>Vet Clinic</dt>
+                        <dd>{medicalRecord.vet_clinic || "Not on file"}</dd>
+                    </div>
+                    <div className={`detailRow ${medicalRecord.vet_name ? "" : "empty"}`}>
+                        <dt>Veterinarian</dt>
+                        <dd>{medicalRecord.vet_name || "Not on file"}</dd>
+                    </div>
+                    <div className={`detailRow ${medicalRecord.vet_phone ? "" : "empty"}`}>
+                        <dt>Phone Number</dt>
+                        <dd>{medicalRecord.vet_phone || "Not on file"}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div className="formSection">
+                <h3>Emergency Information</h3>
+                {medicalRecord.is_same_vet ? (
+                    <div className="safetyChipGroup">
+                        <span className="safetyChip calm">
+                            <span className="material-symbols-rounded">verified</span>
+                            Primary veterinarian also handles emergencies
+                        </span>
+                    </div>
                 ) : (
+                    <dl className="detailList">
+                        <div className={`detailRow ${medicalRecord.emergency_clinic ? "" : "empty"}`}>
+                            <dt>Emergency Clinic</dt>
+                            <dd>{medicalRecord.emergency_clinic || "Not on file"}</dd>
+                        </div>
+                        <div className={`detailRow ${medicalRecord.emergency_vet_name ? "" : "empty"}`}>
+                            <dt>Veterinarian</dt>
+                            <dd>{medicalRecord.emergency_vet_name || "Not on file"}</dd>
+                        </div>
+                        <div className={`detailRow ${medicalRecord.emergency_vet_phone ? "" : "empty"}`}>
+                            <dt>Phone Number</dt>
+                            <dd>{medicalRecord.emergency_vet_phone || "Not on file"}</dd>
+                        </div>
+                    </dl>
+                )}
+
+                <h4 className="subSectionHeader">
+                    <span className="material-symbols-rounded">gavel</span>
+                    Emergency Treatment Authorization
+                </h4>
+                <div className="safetyChipGroup">
+                    <span className={`safetyChip ${medicalRecord.emergency_authorization ? "calm" : "warn"}`}>
+                        <span className="material-symbols-rounded">
+                            {medicalRecord.emergency_authorization ? "check_circle" : "cancel"}
+                        </span>
+                        {medicalRecord.emergency_authorization ? "Authorized" : "Not Authorized"}
+                    </span>
+                </div>
+
+                {medicalRecord.emergency_instructions && (
                     <>
-                        <div className="profileSectionActions">
-                            <button
-                                type="button"
-                                className="profileActionButton"
-                                onClick={() => setIsEditing(true)}
-                            >
-                                Edit Medical Record
-                            </button>
-                        </div>
+                        <h4 className="subSectionHeader">
+                            <span className="material-symbols-rounded">description</span>
+                            Emergency Instructions
+                        </h4>
+                        <p className="instructionsText">{medicalRecord.emergency_instructions}</p>
+                    </>
+                )}
+            </div>
 
-                        <div className="formSection">
-                            <h3>Primary Vet</h3>
-                            <dl className="detailList">
-                                <div className={`detailRow ${medicalRecord.vet_clinic ? "" : "empty"}`}>
-                                    <dt>Vet Clinic</dt>
-                                    <dd>{medicalRecord.vet_clinic || "Not on file"}</dd>
-                                </div>
-                                <div className={`detailRow ${medicalRecord.vet_name ? "" : "empty"}`}>
-                                    <dt>Veterinarian</dt>
-                                    <dd>{medicalRecord.vet_name || "Not on file"}</dd>
-                                </div>
-                                <div className={`detailRow ${medicalRecord.vet_phone ? "" : "empty"}`}>
-                                    <dt>Phone Number</dt>
-                                    <dd>{medicalRecord.vet_phone || "Not on file"}</dd>
-                                </div>
-                            </dl>
-                        </div>
+            <div className="formSection">
+                <h3>Health Records</h3>
 
-                        <div className="formSection">
-                            <h3>Emergency Information</h3>
-                            {medicalRecord.is_same_vet ? (
-                                <div className="safetyChipGroup">
-                                    <span className="safetyChip calm">
-                                        <span className="material-symbols-rounded">verified</span>
-                                        Primary veterinarian also handles emergencies
+                <h4 className="subSectionHeader">
+                    <span className="material-symbols-rounded">vaccines</span>
+                    Vaccination & Health Records
+                </h4>
+                <div className="recordsTable">
+                    <div className="recordHeader">
+                        <div>Vaccine</div>
+                        <div>Expiration</div>
+                        <div>Status</div>
+                    </div>
+                    <VaccineRow label="Rabies" date={medicalRecord.rabies_expiration} />
+                    <VaccineRow label="Tetanus" date={medicalRecord.tetanus_expiration} />
+                    <VaccineRow label="West Nile" date={medicalRecord.west_nile_expiration} />
+                    <VaccineRow label="EEE/WEE" date={medicalRecord.eee_wee_expiration} />
+                    <VaccineRow label="Flu/Rhino" date={medicalRecord.flu_rhino_expiration} />
+                    <VaccineRow label="Coggins" date={medicalRecord.coggins_expiration} />
+                </div>
+
+                <h4 className="subSectionHeader">
+                    <span className="material-symbols-rounded">science</span>
+                    Deworm Record
+                </h4>
+                <dl className="detailList">
+                    <div className={`detailRow ${dewormerName ? "" : "empty"}`}>
+                        <dt>Product</dt>
+                        <dd>{dewormerName || "Not on file"}</dd>
+                    </div>
+                    <div className={`detailRow ${medicalRecord.deworm_provider ? "" : "empty"}`}>
+                        <dt>Provider</dt>
+                        <dd>{medicalRecord.deworm_provider || "Not on file"}</dd>
+                    </div>
+                    <div className={`detailRow ${medicalRecord.deworm_date ? "" : "empty"}`}>
+                        <dt>Date Given</dt>
+                        <dd>{medicalRecord.deworm_date ? FormatDate(medicalRecord.deworm_date) : "Not recorded"}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            {(hasHealthConditions || hasAllergies) && (
+                <div className="formSection">
+                    <h3>Health Conditions & Allergies</h3>
+
+                    {hasHealthConditions && (
+                        <>
+                            <h4 className="subSectionHeader">
+                                <span className="material-symbols-rounded">medical_information</span>
+                                Health Conditions
+                            </h4>
+                            <div className="tagGroup">
+                                {medicalRecord.medical_conditions.map((condition) => (
+                                    <span key={condition} className="recordTag">
+                                        {condition}
                                     </span>
-                                </div>
-                            ) : (
-                                <dl className="detailList">
-                                    <div className={`detailRow ${medicalRecord.emergency_clinic ? "" : "empty"}`}>
-                                        <dt>Emergency Clinic</dt>
-                                        <dd>{medicalRecord.emergency_clinic || "Not on file"}</dd>
-                                    </div>
-                                    <div className={`detailRow ${medicalRecord.emergency_vet_name ? "" : "empty"}`}>
-                                        <dt>Veterinarian</dt>
-                                        <dd>{medicalRecord.emergency_vet_name || "Not on file"}</dd>
-                                    </div>
-                                    <div className={`detailRow ${medicalRecord.emergency_vet_phone ? "" : "empty"}`}>
-                                        <dt>Phone Number</dt>
-                                        <dd>{medicalRecord.emergency_vet_phone || "Not on file"}</dd>
-                                    </div>
-                                </dl>
-                            )}
+                                ))}
+                            </div>
+                        </>
+                    )}
 
+                    {hasAllergies && (
+                        <>
                             <h4 className="subSectionHeader">
-                                <span className="material-symbols-rounded">gavel</span>
-                                Emergency Treatment Authorization
+                                <span className="material-symbols-rounded">coronavirus</span>
+                                Allergies
                             </h4>
-                            <div className="safetyChipGroup">
-                                <span className={`safetyChip ${medicalRecord.emergency_authorization ? "calm" : "warn"}`}>
-                                    <span className="material-symbols-rounded">
-                                        {medicalRecord.emergency_authorization ? "check_circle" : "cancel"}
+                            <div className="tagGroup">
+                                {medicalRecord.allergies.map((allergy) => (
+                                    <span key={allergy} className="allergyTag">
+                                        {allergy}
                                     </span>
-                                    {medicalRecord.emergency_authorization ? "Authorized" : "Not Authorized"}
-                                </span>
+                                ))}
                             </div>
+                        </>
+                    )}
+                </div>
+            )}
 
-                            {medicalRecord.emergency_instructions && (
-                                <>
-                                    <h4 className="subSectionHeader">
-                                        <span className="material-symbols-rounded">description</span>
-                                        Emergency Instructions
-                                    </h4>
-                                    <p className="instructionsText">{medicalRecord.emergency_instructions}</p>
-                                </>
-                            )}
-                        </div>
-
-                        <div className="formSection">
-                            <h3>Health Records</h3>
-
-                            <h4 className="subSectionHeader">
-                                <span className="material-symbols-rounded">vaccines</span>
-                                Vaccination & Health Records
-                            </h4>
-                            <div className="recordsTable">
-                                <div className="recordHeader">
-                                    <div>Vaccine</div>
-                                    <div>Expiration</div>
-                                    <div>Status</div>
-                                </div>
-                                <VaccineRow label="Rabies" date={medicalRecord.rabies_expiration} />
-                                <VaccineRow label="Tetanus" date={medicalRecord.tetanus_expiration} />
-                                <VaccineRow label="West Nile" date={medicalRecord.west_nile_expiration} />
-                                <VaccineRow label="EEE/WEE" date={medicalRecord.eee_wee_expiration} />
-                                <VaccineRow label="Flu/Rhino" date={medicalRecord.flu_rhino_expiration} />
-                                <VaccineRow label="Coggins" date={medicalRecord.coggins_expiration} />
-                            </div>
-
-                            <h4 className="subSectionHeader">
-                                <span className="material-symbols-rounded">science</span>
-                                Deworm Record
-                            </h4>
-                            <dl className="detailList">
-                                <div className={`detailRow ${dewormerName ? "" : "empty"}`}>
-                                    <dt>Product</dt>
-                                    <dd>{dewormerName || "Not on file"}</dd>
-                                </div>
-                                <div className={`detailRow ${medicalRecord.deworm_provider ? "" : "empty"}`}>
-                                    <dt>Provider</dt>
-                                    <dd>{medicalRecord.deworm_provider || "Not on file"}</dd>
-                                </div>
-                                <div className={`detailRow ${medicalRecord.deworm_date ? "" : "empty"}`}>
-                                    <dt>Date Given</dt>
-                                    <dd>{medicalRecord.deworm_date ? FormatDate(medicalRecord.deworm_date) : "Not recorded"}</dd>
-                                </div>
-                            </dl>
-                        </div>
-
-                        {(hasHealthConditions || hasAllergies) && (
-                            <div className="formSection">
-                                <h3>Health Conditions & Allergies</h3>
-
-                                {hasHealthConditions && (
-                                    <>
-                                        <h4 className="subSectionHeader">
-                                            <span className="material-symbols-rounded">medical_information</span>
-                                            Health Conditions
-                                        </h4>
-                                        <div className="tagGroup">
-                                            {medicalRecord.medical_conditions.map((condition) => (
-                                                <span key={condition} className="recordTag">
-                                                    {condition}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </>
-                                )}
-
-                                {hasAllergies && (
-                                    <>
-                                        <h4 className="subSectionHeader">
-                                            <span className="material-symbols-rounded">coronavirus</span>
-                                            Allergies
-                                        </h4>
-                                        <div className="tagGroup">
-                                            {medicalRecord.allergies.map((allergy) => (
-                                                <span key={allergy} className="allergyTag">
-                                                    {allergy}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        )}
-
-                        <div className="formSection">
-                            <h3>Preventative Care</h3>
+            <div className="formSection">
+                <h3>Preventative Care</h3>
 
                             <h4 className="subSectionHeader">
                                 <span className="material-symbols-rounded">construction</span>
@@ -408,18 +422,15 @@ function MedicalRecordTab() {
                                     <dd>{medicalRecord.massage_date ? FormatDate(medicalRecord.massage_date) : "Not recorded"}</dd>
                                 </div>
                             </dl>
-                        </div>
-
-                        {medicalRecord.medical_notes && (
-                            <div className="formSection">
-                                <h3>Medical Notes</h3>
-                                <p className="instructionsText">{medicalRecord.medical_notes}</p>
-                            </div>
-                        )}
-                    </>
-                )}
             </div>
-        </div>
+
+            {medicalRecord.medical_notes && (
+                <div className="formSection">
+                    <h3>Medical Notes</h3>
+                    <p className="instructionsText">{medicalRecord.medical_notes}</p>
+                </div>
+            )}
+        </>
     );
 }
 

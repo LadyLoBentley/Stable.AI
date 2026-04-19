@@ -4,6 +4,7 @@ import CheckboxField from "../../components/Form/Checkbox.jsx";
 import DropdownField from "../../components/Form/DropdownField.jsx";
 import NumberField from "../../components/Form/NumberField.jsx";
 import TextAreaField from "../../components/Form/TextAreaField.jsx";
+import Button from "../../components/Button/Button.jsx";
 
 import { readErrorMessage, toDateInputValue } from "./profileFormUtils.js";
 
@@ -239,8 +240,13 @@ function FeedingRegimeEditForm({ horse, regime, onSaved, onCancel }) {
 
             {loadingOptions && <div className="formAlert">Loading feed options...</div>}
 
+            <div className="formInputs">
+                <div className="formNote">
+                    Feeding decisions must be made based on current horse conditions. If horse is prone to colics and/or choking, please opt in to soaking feed.
+                </div>
+
             <div className="formSection">
-                <h3>Edit Primary Feed</h3>
+                <h3>Select Primary Feed</h3>
                 <div className="inventory-form-row3">
                     <CheckboxField
                         id="edit-feedHay"
@@ -309,7 +315,7 @@ function FeedingRegimeEditForm({ horse, regime, onSaved, onCancel }) {
             </div>
 
             <div className="formSection">
-                <h3>Edit Grain</h3>
+                <h3>Select Grain</h3>
                 <div className="inventory-form-row1">
                     <DropdownField
                         id="edit-grainType"
@@ -389,25 +395,25 @@ function FeedingRegimeEditForm({ horse, regime, onSaved, onCancel }) {
             </div>
 
             <div className="formSection">
-                <h3>Edit Feeding Requirements</h3>
+                <h3>Additional Information</h3>
                 <div className="checkboxGrid">
                     <CheckboxField
                         id="edit-mustSeparate"
-                        label={<b>Horse must be separated during feeding</b>}
+                        label={<b>Horse must be separated from other horses during feeding time</b>}
                         checked={formData.mustSeparate}
                         onChange={(value) => updateField("mustSeparate", value)}
                     />
 
                     <CheckboxField
                         id="edit-soakFeed"
-                        label={<b>All feed must be soaked for 30 minutes</b>}
+                        label={<b>All feed must be soaked for 30 minutes prior to serving</b>}
                         checked={formData.soakFeed}
                         onChange={(value) => updateField("soakFeed", value)}
                     />
 
                     <CheckboxField
                         id="edit-hayNet"
-                        label={<b>Slow feeding hay nets must be used</b>}
+                        label={<b>If horse eats hay, then slow feeding nets must be used</b>}
                         checked={formData.hayNet}
                         onChange={(value) => updateField("hayNet", value)}
                     />
@@ -418,19 +424,17 @@ function FeedingRegimeEditForm({ horse, regime, onSaved, onCancel }) {
                         id="edit-feedingInstructions"
                         label={<b>Feeding Instructions and Notes: </b>}
                         value={formData.feedingInstructions}
+                        placeholder="Enter any specific feeding instructions to meet horse care requirements. Add notes on horse disposition around food. Example: Horse tends to be alpha in pasture, please feed first."
                         onChange={(value) => updateField("feedingInstructions", value)}
                         maxLength={1000}
                     />
                 </div>
             </div>
 
-            <div className="profileActionRow">
-                <button type="button" className="profileActionButton secondary" onClick={onCancel}>
-                    Cancel
-                </button>
-                <button type="submit" className="profileActionButton">
-                    Save Feeding Regime
-                </button>
+            <div className="formButton">
+                <Button label="Cancel" variant="secondary" type="button" onClick={onCancel} />
+                <Button label="Save Feeding Regime" type="submit" />
+            </div>
             </div>
         </form>
     );

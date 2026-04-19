@@ -1,4 +1,6 @@
 
+import { Link } from "react-router-dom";
+
 
 function Header(props){
 
@@ -13,12 +15,12 @@ function Header(props){
                     <span className="material-symbols-rounded">menu</span>
                 </button>
 
-                <div className="logo">
+                <Link to="/" className="logo logoLink" aria-label="Go to horse dashboard">
                     <span className="logoIcon">
-                        <img src="/stableai-icon.png" />
+                        <img src="/stableai-icon.png" alt="Stable.AI" />
                     </span>
                     Stable.<span>AI</span>
-                </div>
+                </Link>
             </div>
         </header>
     );

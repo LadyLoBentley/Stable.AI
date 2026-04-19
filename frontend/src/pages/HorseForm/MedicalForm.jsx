@@ -92,7 +92,9 @@ function MedicalForm() {
                 return "";
 
             case "emergencyInstructions":
-                if (!value?.trim()) return "Emergency instructions are required.";
+                if (!formData.emergencyAuthorization && !value?.trim()) {
+                    return "Emergency instructions are required when emergency treatment is not fully authorized.";
+                }
                 return "";
 
             default:
@@ -288,6 +290,15 @@ function MedicalForm() {
             ...prev,
             [fieldName]: value
         }));
+
+        if (fieldName === "emergencyAuthorization") {
+            setErrors((prev) => ({
+                ...prev,
+                emergencyInstructions: value
+                    ? ""
+                    : prev.emergencyInstructions
+            }));
+        }
 
         if (touched[fieldName]) {
             setErrors((prev) => ({
@@ -632,7 +643,7 @@ function MedicalForm() {
                                 title="Emergency instructions"
                                 body={
                                     formData.emergencyAuthorization
-                                        ? "Provide any limits or preferences for emergency treatment."
+                                        ? "Emergency treatment is fully authorized, so instructions are optional. Add notes only if there are special preferences or limits."
                                         : "Since emergency care is not authorized, explain what staff should do if the owner cannot be reached."
                                 }
                                 isRequired={!formData.emergencyAuthorization}
@@ -747,6 +758,11 @@ function MedicalForm() {
 
                     <div className="formSection">
                         <h3>Preventative Care</h3>
+
+                        <h4 className="subSectionHeader">
+                            <span className="material-symbols-rounded" aria-hidden="true">construction</span>
+                            Farrier
+                        </h4>
                         <div className="inventory-form-row3">
                             <CheckboxField
                                 id="hasShoes"
@@ -802,7 +818,13 @@ function MedicalForm() {
                                 error={touched.farrierDate ? errors.farrierDate : ""}
                                 onBlur={() => handleBlur("farrierDate", formData.farrierDate, setTouched, setErrors, validateField)}
                             />
+                        </div>
 
+                        <h4 className="subSectionHeader">
+                            <span className="material-symbols-rounded" aria-hidden="true">dentistry</span>
+                            Dental
+                        </h4>
+                        <div className="inventory-form-row1">
                             <TextField
                                 id="dentistName"
                                 label={<b>Dental Provider Name: </b>}
@@ -843,7 +865,13 @@ function MedicalForm() {
                                 error={touched.dentalDate ? errors.dentalDate : ""}
                                 onBlur={() => handleBlur("dentalDate", formData.dentalDate, setTouched, setErrors, validateField)}
                             />
+                        </div>
 
+                        <h4 className="subSectionHeader">
+                            <span className="material-symbols-rounded" aria-hidden="true">accessibility_new</span>
+                            Chiropractor
+                        </h4>
+                        <div className="inventory-form-row1">
                             <TextField
                                 id="chiropractorName"
                                 label={<b>Chiropractor Name: </b>}
@@ -884,7 +912,13 @@ function MedicalForm() {
                                 error={touched.chiropractorDate ? errors.chiropractorDate : ""}
                                 onBlur={() => handleBlur("chiropractorDate", formData.chiropractorDate, setTouched, setErrors, validateField)}
                             />
+                        </div>
 
+                        <h4 className="subSectionHeader">
+                            <span className="material-symbols-rounded" aria-hidden="true">spa</span>
+                            Massage
+                        </h4>
+                        <div className="inventory-form-row1">
                             <TextField
                                 id="massageTherapist"
                                 label={<b>Massage Therapist: </b>}
@@ -925,7 +959,13 @@ function MedicalForm() {
                                 error={touched.massageDate ? errors.massageDate : ""}
                                 onBlur={() => handleBlur("massageDate", formData.massageDate, setTouched, setErrors, validateField)}
                             />
+                        </div>
 
+                        <h4 className="subSectionHeader">
+                            <span className="material-symbols-rounded" aria-hidden="true">science</span>
+                            Deworming
+                        </h4>
+                        <div className="inventory-form-row1">
                             <DropdownField
                                 id="lastDewormer"
                                 label={<b>Last Dewormer Given: </b>}
@@ -939,7 +979,6 @@ function MedicalForm() {
                                     handleBlur("lastDewormer", formData.lastDewormer, setTouched, setErrors, validateField)
                                 }
                             />
-
 
                             <TextField
                                 id="dewormProvider"
@@ -973,7 +1012,12 @@ function MedicalForm() {
 
                     <div className="formSection">
                         <h3>Medical History</h3>
-                        <div className="inventory-form-row4">
+
+                        <h4 className="subSectionHeader">
+                            <span className="material-symbols-rounded" aria-hidden="true">medical_information</span>
+                            Health Conditions
+                        </h4>
+                        <div className="inventory-form-row3">
                             <TagSearchField
                                 label="Medical Conditions"
                                 value={formData.medicalConditions}
@@ -985,7 +1029,13 @@ function MedicalForm() {
                                 tipTitle="Medical Conditions"
                                 tipBody="Search for an existing medical condition first. If you do not find a match, type a custom condition name and press Enter to add it."
                             />
+                        </div>
 
+                        <h4 className="subSectionHeader">
+                            <span className="material-symbols-rounded" aria-hidden="true">coronavirus</span>
+                            Allergies
+                        </h4>
+                        <div className="inventory-form-row3">
                             <TagSearchField
                                 label="Allergies"
                                 value={formData.allergies}
@@ -997,7 +1047,9 @@ function MedicalForm() {
                                 tipTitle="Allergies"
                                 tipBody="Search for an existing allergy first. If you do not find a match, type a custom allergy name and press Enter to add it."
                             />
+                        </div>
 
+                        <div className="inventory-form-row4">
                             <TextAreaField
                                 id="medicalNotes"
                                 label={<b>Additional Notes: </b>}
@@ -1017,7 +1069,12 @@ function MedicalForm() {
                     </div>
 
                     <div className="formSection">
+                        <h3>Ongoing Care</h3>
 
+                        <h4 className="subSectionHeader">
+                            <span className="material-symbols-rounded" aria-hidden="true">pill</span>
+                            Medications
+                        </h4>
                         <CareScheduleField
                             label="Medications"
                             value={formData.medications}
@@ -1037,30 +1094,30 @@ function MedicalForm() {
                             tipNotesTitle="Medication Notes"
                             tipNotesBody="Add any additional notes that may be helpful to give the best care tailored to the horse."
                         />
-                    </div>
 
-                    <div className="formSection">
-                        <div className="inventory-form-row4">
-                            <CareScheduleField
-                                label="Supplements"
-                                value={formData.supplements}
-                                onChange={(value) => updateField("supplements", value)}
-                                itemOptions={supplements}
-                                conditionOptions={supplements}
-                                itemTipTitle="Item"
-                                itemTipBody="Add the supplement assigned to the horse to the list. If not listed, add to inventory, and then update horse profile."
-                                tipDosageTitle="Dosage"
-                                tipDosageBody="Enter the required dosage recommended by the vet and/or product instructions. Do not exceed dosage Recommendations."
-                                tipFrequencyTitle ="Frequency"
-                                tipFrequencyBody="Enter How often to give the supplement: daily, weekly, monthly, or yearly."
-                                tipAmTitle="AM Checkbox"
-                                tipAmBody="Check if supplement is given in the morning."
-                                tipPmTitle="PM Checkbox"
-                                tipPmBody="Check if supplement is given in the evening."
-                                tipNotesTitle="Medication Notes"
-                                tipNotesBody="Add any additional notes that may be helpful to give the best care tailored to the horse."
-                            />
-                        </div>
+                        <h4 className="subSectionHeader">
+                            <span className="material-symbols-rounded" aria-hidden="true">nutrition</span>
+                            Supplements
+                        </h4>
+                        <CareScheduleField
+                            label="Supplements"
+                            value={formData.supplements}
+                            onChange={(value) => updateField("supplements", value)}
+                            itemOptions={supplements}
+                            conditionOptions={supplements}
+                            itemTipTitle="Item"
+                            itemTipBody="Add the supplement assigned to the horse to the list. If not listed, add to inventory, and then update horse profile."
+                            tipDosageTitle="Dosage"
+                            tipDosageBody="Enter the required dosage recommended by the vet and/or product instructions. Do not exceed dosage Recommendations."
+                            tipFrequencyTitle ="Frequency"
+                            tipFrequencyBody="Enter How often to give the supplement: daily, weekly, monthly, or yearly."
+                            tipAmTitle="AM Checkbox"
+                            tipAmBody="Check if supplement is given in the morning."
+                            tipPmTitle="PM Checkbox"
+                            tipPmBody="Check if supplement is given in the evening."
+                            tipNotesTitle="Medication Notes"
+                            tipNotesBody="Add any additional notes that may be helpful to give the best care tailored to the horse."
+                        />
                     </div>
 
                     <div className="formButton">

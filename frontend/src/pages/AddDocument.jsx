@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { handleBlur, updateField } from "./../utils/formUtil.js";
 
 // Form components
@@ -9,6 +10,7 @@ import UploadDocument from "../components/Form/UploadDocument.jsx";
 import Button from "../components/Button/Button.jsx";
 
 export function AddDocument() {
+    const navigate = useNavigate();
     const documentCategories = [
         "Barn Information",
         "Blank Templates",
@@ -169,6 +171,10 @@ export function AddDocument() {
                 </div>
             )}
 
+            <div className="formNote">
+                Upload PDF or Word files so staff can reference them directly from the Documents page. Give each upload a clear name and category so it stays easy to find.
+            </div>
+
             <form onSubmit={handleSubmit}>
                 <div className="formInputs">
                     <div className="formSection">
@@ -183,6 +189,9 @@ export function AddDocument() {
                                 onChange={(value) =>
                                     updateField("documentName", value, setDocumentName, touched, setErrors, validateField)
                                 }
+                                icon_label="File name help"
+                                title="File Name"
+                                body="Use a short, descriptive name so staff can identify the document quickly. Avoid including file extensions or version numbers."
                                 isRequired={true}
                                 error={touched.documentName ? errors.documentName : ""}
                                 onBlur={() =>
@@ -268,7 +277,8 @@ export function AddDocument() {
                     </div>
 
                     <div className="formButton">
-                        <Button type="submit" label="Upload Document" />
+                        <Button label="Cancel" variant="secondary" type="button" onClick={() => navigate(-1)} />
+                        <Button label="Upload Document" type="submit" />
                     </div>
                 </div>
             </form>

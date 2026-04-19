@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import CareScheduleField from "../../components/Form/CareScheduleField.jsx";
+import Button from "../../components/Button/Button.jsx";
 
 import { mapCareResponseToEntry, sanitizeCareEntries } from "./careScheduleUtils.js";
 import { readErrorMessage } from "./profileFormUtils.js";
@@ -129,47 +130,45 @@ function MedicationsSupplementsEditForm({
 
             {loadingOptions && <div className="formAlert">Loading care schedule options...</div>}
 
-            <div className="formSection">
-                <CareScheduleField
-                    label="Medications"
-                    value={medicationEntries}
-                    onChange={setMedicationEntries}
-                    itemOptions={medicationOptions}
-                    itemTipTitle="Medications"
-                    itemTipBody="Add the medications currently assigned to this horse."
-                    tipDosageTitle="Dosage"
-                    tipDosageBody="Enter the amount given per administration."
-                    tipFrequencyTitle="Frequency"
-                    tipFrequencyBody="Choose how often the medication is given."
-                    tipNotesTitle="Medication Notes"
-                    tipNotesBody="Include administration instructions or monitoring notes."
-                />
-            </div>
+            <div className="formInputs">
+                <div className="formSection">
+                    <CareScheduleField
+                        label="Medications"
+                        value={medicationEntries}
+                        onChange={setMedicationEntries}
+                        itemOptions={medicationOptions}
+                        itemTipTitle="Medications"
+                        itemTipBody="Add the medications currently assigned to this horse."
+                        tipDosageTitle="Dosage"
+                        tipDosageBody="Enter the amount given per administration."
+                        tipFrequencyTitle="Frequency"
+                        tipFrequencyBody="Choose how often the medication is given."
+                        tipNotesTitle="Medication Notes"
+                        tipNotesBody="Include administration instructions or monitoring notes."
+                    />
+                </div>
 
-            <div className="formSection">
-                <CareScheduleField
-                    label="Supplements"
-                    value={supplementEntries}
-                    onChange={setSupplementEntries}
-                    itemOptions={supplementOptions}
-                    itemTipTitle="Supplements"
-                    itemTipBody="Add the supplements currently assigned to this horse."
-                    tipDosageTitle="Dosage"
-                    tipDosageBody="Enter the amount given per administration."
-                    tipFrequencyTitle="Frequency"
-                    tipFrequencyBody="Choose how often the supplement is given."
-                    tipNotesTitle="Supplement Notes"
-                    tipNotesBody="Include mixing, feeding, or observation notes."
-                />
-            </div>
+                <div className="formSection">
+                    <CareScheduleField
+                        label="Supplements"
+                        value={supplementEntries}
+                        onChange={setSupplementEntries}
+                        itemOptions={supplementOptions}
+                        itemTipTitle="Supplements"
+                        itemTipBody="Add the supplements currently assigned to this horse."
+                        tipDosageTitle="Dosage"
+                        tipDosageBody="Enter the amount given per administration."
+                        tipFrequencyTitle="Frequency"
+                        tipFrequencyBody="Choose how often the supplement is given."
+                        tipNotesTitle="Supplement Notes"
+                        tipNotesBody="Include mixing, feeding, or observation notes."
+                    />
+                </div>
 
-            <div className="profileActionRow">
-                <button type="button" className="profileActionButton secondary" onClick={onCancel}>
-                    Cancel
-                </button>
-                <button type="submit" className="profileActionButton">
-                    Save Medications & Supplements
-                </button>
+                <div className="formButton">
+                    <Button label="Cancel" variant="secondary" type="button" onClick={onCancel} />
+                    <Button label="Save Medications & Supplements" type="submit" />
+                </div>
             </div>
         </form>
     );

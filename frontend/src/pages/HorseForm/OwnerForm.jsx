@@ -70,6 +70,52 @@ const relations = [
     "Other"
 ]
 
+function formatApiError(errorData, fallbackMessage) {
+    const detail = errorData?.detail;
+
+    if (!detail) {
+        return fallbackMessage;
+    }
+
+    if (typeof detail === "string") {
+        return detail;
+    }
+
+    if (Array.isArray(detail)) {
+        const messages = detail.map((item) => {
+            if (typeof item === "string") {
+                return item;
+            }
+
+            if (item?.msg && Array.isArray(item?.loc)) {
+                const location = item.loc
+                    .filter((part) => part !== "body")
+                    .join(".");
+
+                return location ? `${location}: ${item.msg}` : item.msg;
+            }
+
+            if (item?.msg) {
+                return item.msg;
+            }
+
+            return JSON.stringify(item);
+        });
+
+        return messages.join("; ");
+    }
+
+    if (typeof detail === "object") {
+        if (typeof detail.message === "string") {
+            return detail.message;
+        }
+
+        return JSON.stringify(detail);
+    }
+
+    return fallbackMessage;
+}
+
 function OwnerForm() {
     const { formData, setFormData, resetFormData } = useOutletContext();
     const navigate = useNavigate();
@@ -262,7 +308,7 @@ function OwnerForm() {
 
             if (!ownerResponse.ok) {
                 const errorData = await ownerResponse.json().catch(() => ({}));
-                throw new Error(errorData.detail || "Failed to save owner information.");
+                throw new Error(formatApiError(errorData, "Failed to save owner information."));
             }
 
             // 2. HORSE
@@ -301,13 +347,19 @@ function OwnerForm() {
 
             if (!horseResponse.ok) {
                 const errorData = await horseResponse.json().catch(() => ({}));
-                throw new Error(errorData.detail || "Failed to save horse information.");
+                throw new Error(formatApiError(errorData, "Failed to save horse information."));
+            }
+
+            const createdHorse = await horseResponse.json();
+            const horseId = createdHorse?.horse_id;
+
+            if (!horseId) {
+                throw new Error("Horse was created, but no horse_id was returned.");
             }
 
             // 3. MEDICAL
             const medicalPayload = {
-                horseName: formData.horseName,
-                birthdate: formData.birthdate,
+                horse_id: horseId,
 
                 vetClinic: formData.vetClinic,
                 vetName: formData.vetName,
@@ -364,11 +416,7 @@ function OwnerForm() {
             if (!medicalResponse.ok) {
                 const errorData = await medicalResponse.json().catch(() => ({}));
                 console.error("Medical API error:", errorData);
-                throw new Error(
-                    errorData.detail
-                        ? JSON.stringify(errorData.detail, null, 2)
-                        : "Failed to save medical information."
-                );
+                throw new Error(formatApiError(errorData, "Failed to save medical information."));
             }
 
             // 4. FEED
@@ -407,7 +455,7 @@ function OwnerForm() {
 
             if (!feedResponse.ok) {
                 const errorData = await feedResponse.json().catch(() => ({}));
-                throw new Error(errorData.detail || "Failed to save feeding information.");
+                throw new Error(formatApiError(errorData, "Failed to save feeding information."));
             }
 
             setSubmitStatus({

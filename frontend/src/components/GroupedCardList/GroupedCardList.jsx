@@ -6,8 +6,10 @@ import styles from "./GroupedCardList.module.css";
 function GroupedCardList({
     title,
     subtitle = "",
+    countLabel = "",
     actionLabel = "",
     actionTo = "",
+    searchPlaceholder = "",
     categoryOrder = [],
     items = [],
     groupBy,
@@ -20,8 +22,37 @@ function GroupedCardList({
     onCardClick,
     emptyMessage = ""
 }) {
+    const totalCount = items.length;
+    const resolvedCountLabel = countLabel
+        ? `${totalCount} ${countLabel}`
+        : String(totalCount);
+    const [searchQuery, setSearchQuery] = useState("");
+    const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+    const isSearching = normalizedSearchQuery.length > 0;
+    const filteredItems = useMemo(() => {
+        if (!isSearching) {
+            return items;
+        }
+
+        return items.filter((item) => {
+            const details = getDetails?.(item) || [];
+            const detailText = details
+                .map((detail) => `${detail?.label || ""} ${detail?.value || ""}`.trim())
+                .join(" ");
+            const searchableText = [
+                groupBy(item),
+                getTitle(item),
+                detailText
+            ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+            return searchableText.includes(normalizedSearchQuery);
+        });
+    }, [getDetails, getTitle, groupBy, isSearching, items, normalizedSearchQuery]);
     const groupedItems = useMemo(() => {
-        return items.reduce((groups, item) => {
+        return filteredItems.reduce((groups, item) => {
             const groupName = groupBy(item)?.trim() || "Other";
 
             if (!groups[groupName]) {
@@ -31,7 +62,7 @@ function GroupedCardList({
             groups[groupName].push(item);
             return groups;
         }, {});
-    }, [items, groupBy]);
+    }, [filteredItems, groupBy]);
 
     const [openGroups, setOpenGroups] = useState(() => {
         if (categoryOrder.length > 0) {
@@ -68,11 +99,15 @@ function GroupedCardList({
     return (
         <div className={styles.groupedList}>
             <div className={styles.contentWrap}>
-                <div className="listingPageHeader">
-                    <div className={styles.headerRow}>
-                        <div>
-                            <h2 className="mainTitle">{title}</h2>
-                            {subtitle && <p className={styles.headerSubtitle}>{subtitle}</p>}
+                <div className={`listingPageHeader ${styles.listingPageHeader}`}>
+                    <div className={styles.headerTopRow}>
+                        <div className={styles.headerTitleBlock}>
+                            <div className={styles.headerTitleWrap}>
+                                <h2 className="mainTitle">{title}</h2>
+                                {totalCount > 0 && (
+                                    <span className={styles.headerCount}>{resolvedCountLabel}</span>
+                                )}
+                            </div>
                         </div>
 
                         {actionLabel && actionTo && (
@@ -81,14 +116,61 @@ function GroupedCardList({
                             </Link>
                         )}
                     </div>
+
+                    {subtitle && <p className={styles.headerSubtitle}>{subtitle}</p>}
+
+                    {totalCount > 0 && (
+                        <div className={styles.searchWrap}>
+                            <label className={styles.searchField}>
+                                <input
+                                    type="search"
+                                    className={styles.searchInput}
+                                    value={searchQuery}
+                                    onChange={(event) => setSearchQuery(event.target.value)}
+                                    placeholder={searchPlaceholder || `Search ${title.toLowerCase()}`}
+                                    aria-label={`Search ${title}`}
+                                />
+                                {isSearching && (
+                                    <button
+                                        type="button"
+                                        className={styles.searchClear}
+                                        onClick={() => setSearchQuery("")}
+                                        aria-label={`Clear ${title} search`}
+                                    >
+                                        <span className="material-symbols-rounded" aria-hidden="true">
+                                            close
+                                        </span>
+                                    </button>
+                                )}
+                                <span
+                                    className={`material-symbols-rounded ${styles.searchIcon}`}
+                                    aria-hidden="true"
+                                >
+                                    search
+                                </span>
+                            </label>
+
+                            {isSearching && (
+                                <p className={styles.searchMeta}>
+                                    {filteredItems.length === 0
+                                        ? `No matches found for "${searchQuery.trim()}".`
+                                        : `Showing ${filteredItems.length} matching ${filteredItems.length === 1 ? "result" : "results"}.`}
+                                </p>
+                            )}
+                        </div>
+                    )}
                 </div>
 
-                {sortedGroups.length === 0 && emptyMessage && (
-                    <div className="emptyState">{emptyMessage}</div>
+                {sortedGroups.length === 0 && (
+                    <div className="emptyState">
+                        {totalCount === 0
+                            ? emptyMessage
+                            : `No matching ${countLabel || "items"} found. Try a different search.`}
+                    </div>
                 )}
 
                 {sortedGroups.map((groupName) => {
-                    const isOpen = openGroups[groupName] ?? false;
+                    const isOpen = isSearching ? true : openGroups[groupName] ?? false;
                     const count = groupedItems[groupName].length;
 
                     return (

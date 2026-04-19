@@ -17,6 +17,7 @@ import InventoryDetailPage from "./pages/InventoryDetailPage.jsx";
 import HorseProfile from "./pages/HorseProfilePages/HorseProfile.jsx";
 import HorseDetailTab from "./pages/HorseProfilePages/HorseDetailTab.jsx";
 import MedicalRecordTab from "./pages/HorseProfilePages/MedicalRecordTab.jsx";
+import MedicalRecordHistoryPage from "./pages/HorseProfilePages/MedicalRecordHistoryPage.jsx";
 import MedicationsSupplementsTab from "./pages/HorseProfilePages/MedicationsSupplementsTab.jsx";
 import FeedingRegimeTab from "./pages/HorseProfilePages/FeedingRegimeTab.jsx";
 import OwnerInformationTab from "./pages/HorseProfilePages/OwnerInformationTab.jsx";
@@ -56,6 +57,7 @@ function App() {
                         <Route path="/horses/:horse_id" element={<HorseProfile />}>
                             <Route index element={<HorseDetailTab />} />
                             <Route path="medical" element={<MedicalRecordTab />} />
+                            <Route path="medical/history" element={<MedicalRecordHistoryPage />} />
                             <Route path="meds-supplements" element={<MedicationsSupplementsTab />} />
                             <Route path="feed" element={<FeedingRegimeTab />} />
                             <Route path="owner" element={<OwnerInformationTab />} />

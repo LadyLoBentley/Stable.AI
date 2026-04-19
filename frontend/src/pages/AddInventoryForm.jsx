@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { handleBlur, updateField } from "./../utils/formUtil.js"
 
 // Form components
@@ -10,6 +11,7 @@ import UploadImage from "../components/Form/UploadImage.jsx";
 import Button from '../components/Button/Button.jsx';
 
 export function AddInventoryForm() {
+    const navigate = useNavigate();
     //----------------------Hard-Coded Lists----------------------//
     const categoryOptions = [
         "Hay",
@@ -210,7 +212,7 @@ export function AddInventoryForm() {
 
     return (
         <div className="formContainer">
-            <h2>Inventory Form</h2>
+            <h2>Add Inventory Item</h2>
 
             {submitStatus.message && (
                     <div
@@ -356,7 +358,8 @@ export function AddInventoryForm() {
                     </div>
 
                     <div className="formButton">
-                        <Button type="submit" label="Add Item" />
+                        <Button label="Cancel" variant="secondary" type="button" onClick={() => navigate(-1)} />
+                        <Button label="Add Item" type="submit" />
                     </div>
                 </div>
             </form>

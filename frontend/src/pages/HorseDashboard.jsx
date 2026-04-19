@@ -51,8 +51,10 @@ function HorseDashboard() {
         <GroupedCardList
             title="Horse Dashboard"
             subtitle="Select a horse card to open the full profile with health, feeding, medication, and owner details."
+            countLabel={horses.length === 1 ? "horse" : "horses"}
             actionLabel="Add Horse"
             actionTo="/add-horse"
+            searchPlaceholder="Search by horse name, breed, barn, pasture, or stall"
             categoryOrder={barnOrder}
             items={horses}
             emptyMessage="No horses yet. Add your first horse to begin building profiles."

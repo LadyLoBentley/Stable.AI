@@ -10,6 +10,8 @@ const ChatMessage = ({ chat }) => {
     ).values()
   );
 
+  const horseLinks = chat.horse_links || [];
+
   return (
     <div
       className={
@@ -22,6 +24,23 @@ const ChatMessage = ({ chat }) => {
 
       <div className={styles.messageContent}>
         <p>{chat.text}</p>
+
+        {chat.role === "bot" && horseLinks.length > 0 && (
+          <div className={styles.horseLinkList}>
+            {horseLinks.map((link, index) => (
+              <a
+                key={index}
+                href={`${window.location.origin}/horses/${link.horse_id}`}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.horseProfileLink}
+              >
+                <span className="material-symbols-rounded">pets</span>
+                View {link.name}&apos;s full profile
+              </a>
+            ))}
+          </div>
+        )}
 
         {chat.role === "bot" && uniqueSources.length > 0 && (
           <div className={styles.sourceList}>
