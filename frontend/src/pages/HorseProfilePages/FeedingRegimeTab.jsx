@@ -1,103 +1,151 @@
 import { useOutletContext } from "react-router-dom";
-import FormatDate from "../../utils/FormatDate";
+import { useEffect, useState } from "react";
+
+import FeedingRegimeEditForm from "./FeedingRegimeEditForm.jsx";
 
 function FeedingRegimeTab() {
     const { horse } = useOutletContext();
+    const [regime, setRegime] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [isEditing, setIsEditing] = useState(false);
+
+    async function fetchRegime() {
+        try {
+            setLoading(true);
+            setError("");
+
+            const response = await fetch(`http://127.0.0.1:8002/api/feed/${horse.horse_id}`);
+
+            if (response.status === 404) {
+                setRegime(null);
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("Failed to load feeding regime");
+            }
+
+            const data = await response.json();
+            setRegime(data);
+        } catch (fetchError) {
+            setError(fetchError.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        if (horse?.horse_id) {
+            fetchRegime();
+        }
+    }, [horse?.horse_id]);
+
+    function handleSaved(updatedRegime) {
+        setRegime(updatedRegime);
+        setIsEditing(false);
+    }
+
+    if (loading) return <p>Loading feeding regime information...</p>;
+    if (error) return <p>{error}</p>;
 
     return (
         <div className="formInputs">
             <div className="formContainer">
+                {isEditing ? (
+                    <FeedingRegimeEditForm
+                        horse={horse}
+                        regime={regime}
+                        onSaved={handleSaved}
+                        onCancel={() => setIsEditing(false)}
+                    />
+                ) : (
+                    <>
+                        <div className="profileSectionActions">
+                            <button
+                                type="button"
+                                className="profileActionButton"
+                                onClick={() => setIsEditing(true)}
+                            >
+                                {regime ? "Edit Feeding Regime" : "Add Feeding Regime"}
+                            </button>
+                        </div>
 
-                <div className="formSection">
-                    <h3>Details</h3>
-                    <p><b>Breed:</b> {horse.breed}</p>
-                    <p><b>Sex:</b> {horse.sex}</p>
-                    <p><b>Birthday:</b> {horse.birthdate}</p>
-                    <p><b>Height:</b> {horse.height} hands</p>
-                    <p><b>Weight:</b> {horse.weight} lbs</p>
-                    <p><b>Date Added:</b> {FormatDate(horse.created_at)}</p>
-                    <p><b>Date Updated:</b> {FormatDate(horse.updated_at)}</p>
-                </div>
+                        {!regime ? (
+                            <div className="formSection">
+                                <h3>Feeding Regime</h3>
+                                <p>No feeding regime found for this horse.</p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="formSection">
+                                    <h3>Forage</h3>
+                                    <p><b>Feeds Hay:</b> {regime.feed_hay ? "Yes" : "No"}</p>
 
-                <div className="formSection">
-                    <h3>Location</h3>
-                    {horse.barn && (
-                        <>
-                            <p><b>Barn Name:</b> {horse.barn}</p>
-                            <p><b>Stall ID:</b> {horse.stall_id}</p>
-                            <p><b>Turnout Category:</b> {horse.turnout_type}</p>
+                                    {regime.feed_hay ? (
+                                        <>
+                                            <p><b>Hay Type:</b> {regime.hay_type || "Not on file"}</p>
+                                            <p><b>Hay Quantity:</b> {regime.hay_amount || "Not on file"}</p>
+                                            <p><b>Hay Unit:</b> {regime.hay_unit || "Not on file"}</p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p><b>Hay Replacement:</b> {regime.hay_replacement || "Not on file"}</p>
+                                            <p><b>Replacement Quantity:</b> {regime.replacement_amount || "Not on file"}</p>
+                                            <p><b>Replacement Unit:</b> {regime.replacement_unit || "Not on file"}</p>
+                                        </>
+                                    )}
+                                </div>
 
-                            {horse.pasture_name && (
-                                <p><b>Turnout Pasture:</b> {horse.pasture_name}</p>
-                            )}
-                        </>
-                    )}
+                                <div className="formSection">
+                                    <h3>Grain and Additives</h3>
+                                    <p><b>Grain Type:</b> {regime.grain_type || "Not on file"}</p>
+                                    <p><b>Grain Amount:</b> {regime.grain_amount || "Not on file"}</p>
+                                    <p><b>Grain Unit:</b> {regime.grain_unit || "Not on file"}</p>
+                                    <p><b>Add Food Additive:</b> {regime.add_food_additive ? "Yes" : "No"}</p>
 
-                    {!horse.barn && (
-                        <>
-                            <p><b>Pasture Name:</b> {horse.pasture_name}</p>
-                            <p><b>Pasture Compatibility:</b> {horse.turnout_type}</p>
-                        </>
-                    )}
-                </div>
+                                    {regime.add_food_additive && (
+                                        <>
+                                            <p><b>Food Additive:</b> {regime.food_additive || "Not on file"}</p>
+                                            <p><b>Food Additive Amount:</b> {regime.food_additive_amount || "Not on file"}</p>
+                                            <p><b>Additive Unit:</b> {regime.additive_unit || "Not on file"}</p>
+                                        </>
+                                    )}
+                                </div>
 
-                <div className="formSection">
-                    <h3>Horse Safety Flags</h3>
-                    {horse.escape_risk && (
-                        <p>• Horse is an escape risk</p>
-                    )}
+                                <div className="formSection">
+                                    <h3>Feeding Requirements</h3>
 
-                    {horse.may_bite && (
-                        <p>• Horse has history of biting</p>
-                    )}
+                                    {regime.must_separate && (
+                                        <p>• Horse must be separated during feeding</p>
+                                    )}
 
-                    {horse.may_kick && (
-                        <p>• Horse has history of kicking</p>
-                    )}
+                                    {regime.soak_feed && (
+                                        <p>• Feed must be soaked before serving</p>
+                                    )}
 
-                    {horse.difficult_to_catch && (
-                        <p>• Horse is difficult to catch in the pasture</p>
-                    )}
+                                    {regime.hay_net && (
+                                        <p>• Hay net is required</p>
+                                    )}
 
-                    {horse.herd_dominant && (
-                        <p>• Horse is herd dominant</p>
-                    )}
+                                    {!regime.must_separate && !regime.soak_feed && !regime.hay_net && (
+                                        <p>• No special feeding requirements.</p>
+                                    )}
+                                </div>
 
-                    {horse.sedation_required && (
-                        <p>• Horse requires sedation for vet visits and/or farrier appointments</p>
-                    )}
-
-                    {horse.food_aggression && (
-                        <p>• Horse exhibits food aggression</p>
-                    )}
-
-                    {horse.requires_experienced_handler && (
-                        <p>• Horse requires an experienced handler</p>
-                    )}
-
-                    {!horse.escape_risk && !horse.may_bite && !horse.may_kick &&
-                        !horse.difficult_to_catch && !horse.herd_dominant &&
-                        !horse.sedation_required && !horse.food_aggressive &&
-                        !horse.requires_experienced_handler && (
-                            <p>• Horse has no safety concerns.</p>
-                        )
-                    }
-                </div>
-
-                <div className="formSection">
-                    <h3>Temperament</h3>
-                    <p className="instructionsText">{horse.temperament}</p>
-                </div>
-
-                {horse.notes && (
-                    <div className="formSection">
-                        <h3>Notes</h3>
-                        <p className="Additional Information">{horse.notes}</p>
-                    </div>
+                                <div className="formSection">
+                                    <h3>Instructions</h3>
+                                    <p className="instructionsText">
+                                        {regime.feeding_instructions || "No additional feeding instructions on file."}
+                                    </p>
+                                </div>
+                            </>
+                        )}
+                    </>
                 )}
             </div>
         </div>
-    )
+    );
 }
 
 export default FeedingRegimeTab;

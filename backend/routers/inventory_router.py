@@ -6,12 +6,28 @@ from db.database import get_session
 from schemas.item_request import ItemRequest
 from schemas.item_response import ItemResponse
 
-from services.item_service import create_item
+from services.item_service import create_item, update_item
 from services.inventory_storage_service import upload_inventory_image
 
 from models.inventory_items import InventoryItems
 
 router = APIRouter(prefix="/inventory", tags=["inventory"])
+
+
+def build_item_response(item: InventoryItems) -> ItemResponse:
+    return ItemResponse(
+        item_id=item.item_id,
+        label=item.label,
+        quantity=item.quantity,
+        category=item.category,
+        grade=item.grade,
+        unit=item.unit,
+        instructions=item.instructions,
+        image_url=item.image_url,
+        stock_status=item.stock_status.label,
+        created_at=item.created_at,
+        updated_at=item.updated_at
+    )
 
 @router.post("/", response_model=ItemResponse)
 async def add_inventory(
@@ -33,29 +49,48 @@ async def add_inventory(
 
     image_url = await upload_inventory_image(image)
 
-    return create_item(session=session, submission=submission, image_url=image_url)
+    item = create_item(session=session, submission=submission, image_url=image_url)
+    return build_item_response(item)
+
+
+@router.put("/{item_id}", response_model=ItemResponse)
+async def edit_inventory(
+        item_id: str,
+        label: str = Form(...),
+        quantity: int = Form(0),
+        category: str = Form(...),
+        grade: str = Form(...),
+        instructions: str = Form(...),
+        image: UploadFile = File(None),
+        session: Session = Depends(get_session),
+):
+    submission = ItemRequest(
+        label=label,
+        quantity=quantity,
+        category=category,
+        grade=grade,
+        instructions=instructions
+    )
+
+    image_url = None
+    if image and image.filename:
+        image_url = await upload_inventory_image(image)
+
+    item = update_item(
+        session=session,
+        item_id=item_id,
+        submission=submission,
+        image_url=image_url
+    )
+
+    return build_item_response(item)
 
 
 @router.get("/", response_model=list[ItemResponse])
 def get_inventory(session: Session = Depends(get_session)):
     inventory = session.exec(select(InventoryItems)).all()
 
-    return [
-        ItemResponse(
-            item_id = item.item_id,
-            label = item.label,
-            quantity = item.quantity,
-            category = item.category,
-            grade = item.grade,
-            unit = item.unit,
-            instructions = item.instructions,
-            image_url = item.image_url,
-            stock_status = item.stock_status.label,
-            created_at = item.created_at,
-            updated_at = item.updated_at
-        )
-        for item in inventory
-    ]
+    return [build_item_response(item) for item in inventory]
 
 @router.get("/{item_id}", response_model=ItemResponse)
 def get_item(item_id: str, session: Session = Depends(get_session)):
@@ -64,4 +99,4 @@ def get_item(item_id: str, session: Session = Depends(get_session)):
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    return item
+    return build_item_response(item)

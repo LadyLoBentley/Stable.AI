@@ -54,6 +54,9 @@ function HorseDashboard() {
     return (
         <GroupedCardList
             title="Horse Dashboard"
+            subtitle="Select a horse card to open the full profile with health, feeding, medication, and owner details."
+            actionLabel="Add Horse"
+            actionTo="/add-horse"
             categoryOrder={barnOrder}
             items={horses}
             groupBy={(horse) => horse.barn || horse.pasture_name || "Other"}

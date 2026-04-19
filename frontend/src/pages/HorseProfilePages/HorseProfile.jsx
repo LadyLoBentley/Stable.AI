@@ -4,18 +4,36 @@ import { useEffect, useState } from "react";
 function HorseProfile() {
     const { horse_id } = useParams();
     const [horse, setHorse] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
-    useEffect(() => {
-        async function fetchHorse() {
+    async function refreshHorse() {
+        try {
+            setLoading(true);
+            setError("");
+
             const response = await fetch(`http://127.0.0.1:8002/api/horses/${horse_id}`);
+
+            if (!response.ok) {
+                throw new Error("Failed to load horse profile.");
+            }
+
             const data = await response.json();
             setHorse(data);
+        } catch (fetchError) {
+            setError(fetchError.message || "Failed to load horse profile.");
+        } finally {
+            setLoading(false);
         }
+    }
 
-        fetchHorse();
+    useEffect(() => {
+        refreshHorse();
     }, [horse_id]);
 
-    if (!horse) return <p>Loading horse...</p>;
+    if (loading) return <p>Loading horse...</p>;
+    if (error) return <p>{error}</p>;
+    if (!horse) return <p>Horse not found.</p>;
 
     return (
         <div className="formInputs">
@@ -42,6 +60,15 @@ function HorseProfile() {
                     </NavLink>
 
                     <NavLink
+                        to={`/horses/${horse_id}/meds-supplements`}
+                        className={({ isActive }) =>
+                            isActive ? "horseTab activeTab" : "horseTab"
+                        }
+                    >
+                        Medications & Supplements
+                    </NavLink>
+
+                    <NavLink
                         to={`/horses/${horse_id}/feed`}
                         className={({ isActive }) =>
                             isActive ? "horseTab activeTab" : "horseTab"
@@ -60,7 +87,7 @@ function HorseProfile() {
                     </NavLink>
                 </div>
 
-                <Outlet context={{ horse }} />
+                <Outlet context={{ horse, setHorse, refreshHorse }} />
             </div>
         </div>
     );

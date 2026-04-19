@@ -12,12 +12,15 @@ import Inventory from "./pages/Inventory.jsx";
 import AddInventoryForm from "./pages/AddInventoryForm.jsx";
 import Documents from "./pages/Documents.jsx";
 import AddDocument from "./pages/AddDocument.jsx";
+import DocumentDetailPage from "./pages/DocumentDetailPage.jsx";
 import InventoryDetailPage from "./pages/InventoryDetailPage.jsx";
 import HorseProfile from "./pages/HorseProfilePages/HorseProfile.jsx";
 import HorseDetailTab from "./pages/HorseProfilePages/HorseDetailTab.jsx";
 import MedicalRecordTab from "./pages/HorseProfilePages/MedicalRecordTab.jsx";
+import MedicationsSupplementsTab from "./pages/HorseProfilePages/MedicationsSupplementsTab.jsx";
 import FeedingRegimeTab from "./pages/HorseProfilePages/FeedingRegimeTab.jsx";
 import OwnerInformationTab from "./pages/HorseProfilePages/OwnerInformationTab.jsx";
+
 
 // Components
 import Header from "./components/Header.jsx"
@@ -53,6 +56,7 @@ function App() {
                         <Route path="/horses/:horse_id" element={<HorseProfile />}>
                             <Route index element={<HorseDetailTab />} />
                             <Route path="medical" element={<MedicalRecordTab />} />
+                            <Route path="meds-supplements" element={<MedicationsSupplementsTab />} />
                             <Route path="feed" element={<FeedingRegimeTab />} />
                             <Route path="owner" element={<OwnerInformationTab />} />
                         </Route>
@@ -69,6 +73,7 @@ function App() {
                         <Route path="/add-item" element={<AddInventoryForm />} />
 
                         <Route path="/documents" element={<Documents />} />
+                        <Route path="/documents/:document_id" element={<DocumentDetailPage />} />
                         <Route path="/add-document" element={<AddDocument />} />
                     </Routes>
                 </main>

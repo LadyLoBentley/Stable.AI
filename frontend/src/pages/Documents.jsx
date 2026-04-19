@@ -1,26 +1,15 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import GroupedCardList from "../components/GroupedCardList/GroupedCardList.jsx";
-import FormatDate from "../utils/FormatDate.jsx"
+import FormatDate from "../utils/FormatDate.jsx";
+import { DOCUMENT_CATEGORIES } from "./documentUtils.js";
 
 function Documents() {
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
-    const categoryOrder = [
-        "Barn Information",
-        "Blank Templates",
-        "Boarding Agreements",
-        "Care Instructions",
-        "Competition Records",
-        "Invoice & Billing",
-        "Lesson Agreements",
-        "Liability Waivers",
-        "Medical Records",
-        "Policy & Rules",
-        "Training Programs",
-        "Other"
-    ];
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchDocuments() {
@@ -35,11 +24,9 @@ function Documents() {
                 }
 
                 const data = await response.json();
-                console.log("document data:", data);
-                setDocuments(data);
-            } catch (err) {
-                console.error("document fetch failed:", err);
-                setError("Could not load documents.");
+                setDocuments(Array.isArray(data) ? data : []);
+            } catch (fetchError) {
+                setError(fetchError.message || "Could not load documents.");
             } finally {
                 setLoading(false);
             }
@@ -56,29 +43,47 @@ function Documents() {
         return <p className="pageMessage errorMessage">{error}</p>;
     }
 
-    if (documents.length === 0) {
-        return <p className="pageMessage">No documents found.</p>;
+    if (!documents.length) {
+        return (
+            <div className="formContainer">
+                <div className="profileActionRow">
+                    <button
+                        type="button"
+                        className="profileActionButton"
+                        onClick={() => navigate("/add-document")}
+                    >
+                        Upload Document
+                    </button>
+                </div>
+                <div className="formSection">
+                    <h3>Documents</h3>
+                    <p>No documents found.</p>
+                </div>
+            </div>
+        );
     }
 
     return (
         <div className="inventory-page">
             <GroupedCardList
                 title="Documents"
-                categoryOrder={categoryOrder}
+                subtitle="Open any card to view file details, edit metadata, replace uploads, or remove the document."
+                actionLabel="Upload Document"
+                actionTo="/add-document"
+                categoryOrder={DOCUMENT_CATEGORIES}
                 items={documents}
                 groupBy={(document) => document.category || "Other"}
                 getKey={(document) => document.document_id}
                 getImage={(document) =>
-                document.file_url?.match(/\.(jpg|jpeg|png|webp)$/i)
-                    ? document.file_url
-                    : ""
-            }
-
-            getPdfUrl={(document) =>
-                document.file_url?.match(/\.pdf$/i)
-                    ? document.file_url
-                    : ""
-            }
+                    document.file_url?.match(/\.(jpg|jpeg|png|webp)$/i)
+                        ? document.file_url
+                        : ""
+                }
+                getPdfUrl={(document) =>
+                    document.file_url?.match(/\.pdf$/i)
+                        ? document.file_url
+                        : ""
+                }
                 getImageAlt={(document) => document.document_name || "document"}
                 getTitle={(document) => document.document_name}
                 getDetails={(document) => [
@@ -86,6 +91,7 @@ function Documents() {
                     { label: "Uploaded", value: FormatDate(document.created_at) },
                     { label: "Updated", value: FormatDate(document.updated_at) }
                 ]}
+                onCardClick={(document) => navigate(`/documents/${document.document_id}`)}
             />
         </div>
     );

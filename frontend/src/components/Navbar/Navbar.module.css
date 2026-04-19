@@ -1,23 +1,56 @@
 .sidenav {
     width: 0;
     overflow: hidden;
-    background: white;
-    padding: 24px 0 24px 0;
+    background: linear-gradient(180deg, #f8f8f4 0%, #f1f2ec 100%);
+    padding: 24px 0;
     box-shadow: none;
     transition: width 0.3s ease, padding 0.3s ease;
     flex-shrink: 0;
 }
 
 .open {
-    width: 260px;
-    padding: 24px 20px;
+    width: 280px;
+    padding: 18px 16px 14px;
+    box-shadow: 8px 0 22px rgba(34, 54, 40, 0.06);
 }
 
 .closeBtn {
-    background: none;
-    border: none;
+    background: #eef4ef;
+    border: 1px solid #d8e4d9;
     cursor: pointer;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    color: #2a8f58;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s ease;
+}
+
+.closeBtn:hover {
+    background: #e1ede2;
+    color: #206d43;
+}
+
+.navLayout {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.navBlock {
+    padding: 0 2px;
+}
+
+.navTitle {
+    margin: 0 10px 8px;
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #6e8579;
 }
 
 .navList {
@@ -29,68 +62,39 @@
 }
 
 .navList li {
-    margin: 8px 0;
+    margin: 6px 0;
 }
 
-.sectionHeader {
-    display: flex;
-    align-items: stretch;
-    gap: 6px;
-}
-
-.sectionHeader a {
+.navLink {
     display: block;
-    flex: 1;
-    padding: 10px 16px;
-    color: #2e8b57;
+    padding: 11px 14px;
+    color: #315240;
     text-decoration: none;
-    border-radius: 8px;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    border-radius: 10px;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    border: 1px solid transparent;
 }
 
-.sectionHeader a:hover {
-    background-color: #22a559;
-    color: white;
+.navLink:hover {
+    background-color: rgba(231, 240, 233, 0.8);
+    color: #1f7f4d;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(36, 79, 53, 0.08);
 }
 
-.arrowBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    border: none;
-    cursor: pointer;
-    padding: 10px 12px;
-    color: #2e8b57;
-    border-radius: 8px;
-    transition: background-color 0.15s ease, color 0.15s ease;
+.navAction {
+    color: #2d4e40;
 }
 
-.arrowBtn:hover {
-    background-color: #22a559;
-    color: white;
+.activeLink {
+    background: linear-gradient(160deg, #2ba65f 0%, #21884f 100%);
+    color: #ffffff;
+    border-color: #1f7a48;
+    box-shadow: 0 8px 14px rgba(35, 120, 72, 0.2);
 }
 
-.subList {
-    list-style: none;
-    padding-left: 18px;
-    margin: 6px 0 0 0;
-}
-
-.subList li {
-    margin: 6px 0 0 0;
-}
-
-.subList a {
-    display: block;
-    padding: 10px 16px;
-    color: #2e8b57;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.subList a:hover {
-    background-color: #22a559;
-    color: white;
+.activeLink:hover {
+    color: #ffffff;
+    background: linear-gradient(160deg, #2aa15c 0%, #207f4b 100%);
+    box-shadow: 0 10px 16px rgba(35, 120, 72, 0.24);
 }
