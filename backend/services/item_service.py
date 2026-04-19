@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import HTTPException
 from sqlmodel import Session, select
 
@@ -53,3 +55,53 @@ def create_item(
     session.refresh(db_submission)
 
     return db_submission
+
+
+def update_item(
+        session: Session,
+        item_id: str,
+        submission: ItemRequest,
+        image_url: Optional[str] = None
+) -> InventoryItems:
+    item = session.get(InventoryItems, item_id)
+
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    cleaned_label = clean_label(submission.label)
+    normalized_label = normalize_label(submission.label)
+
+    if not normalized_label:
+        raise HTTPException(
+            status_code=400,
+            detail="Item label cannot be empty"
+        )
+
+    existing_item = session.exec(
+        select(InventoryItems).where(
+            InventoryItems.normalized_label == normalized_label,
+            InventoryItems.item_id != item_id
+        )
+    ).first()
+
+    if existing_item:
+        raise HTTPException(
+            status_code=400,
+            detail="An inventory item with this label already exists."
+        )
+
+    item.label = cleaned_label
+    item.normalized_label = normalized_label
+    item.quantity = submission.quantity
+    item.category = submission.category.strip()
+    item.grade = submission.grade
+    item.instructions = submission.instructions
+
+    if image_url:
+        item.image_url = image_url
+
+    session.add(item)
+    session.commit()
+    session.refresh(item)
+
+    return item

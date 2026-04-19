@@ -1,7 +1,6 @@
 from contextlib import asynccontextmanager
-
-from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
 
 from db.database import create_db_and_tables
 
@@ -15,6 +14,9 @@ from routers.horse_router import router as horse_router
 from routers.owner_router import router as owner_router
 from routers.medical_records_router import router as medical_records_router
 from routers.feed_router import router as feed_router
+from routers.document_router import router as document_router
+from routers.medication_router import router as medication_router
+from routers.supplement_router import router as supplement_router
 from routers.rag_router import router as rag_router
 
 
@@ -22,25 +24,18 @@ from routers.rag_router import router as rag_router
 async def lifespan(app: FastAPI):
     create_db_and_tables()
     yield
-
-
 app = FastAPI(lifespan=lifespan)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
+        "http://localhost:5173"
     ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 @app.get("/")
 def health():
     return {"status": "ok"}
-
 
 app.include_router(inventory_router, prefix="/api")
 app.include_router(breed_router, prefix="/api")
@@ -52,4 +47,7 @@ app.include_router(horse_router, prefix="/api")
 app.include_router(owner_router, prefix="/api")
 app.include_router(medical_records_router, prefix="/api")
 app.include_router(feed_router, prefix="/api")
+app.include_router(document_router, prefix="/api")
+app.include_router(medication_router, prefix="/api")
+app.include_router(supplement_router, prefix="/api")
 app.include_router(rag_router, prefix="/api")

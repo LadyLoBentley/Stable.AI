@@ -1,13 +1,19 @@
-import styles from './Navbar.module.css';
-import { useState } from "react";
+import { NavLink } from "react-router-dom";
+import styles from "./Navbar.module.css";
 
-const Navbar = ({ isOpen, closeNav }) => {
-    const [openSection, setOpenSection] = useState(null);
+const browseLinks = [
+    { to: "/", label: "Horse Dashboard" },
+    { to: "/inventory", label: "Inventory" },
+    { to: "/documents", label: "Documents" }
+];
 
-    const toggleSection = (section) => {
-        setOpenSection(openSection === section ? null : section);
-    };
+const createLinks = [
+    { to: "/add-horse", label: "Add Horse" },
+    { to: "/add-item", label: "Add Inventory Item" },
+    { to: "/add-document", label: "Upload Document" }
+];
 
+function Navbar({ isOpen, closeNav }) {
     return (
         <aside className={`${styles.sidenav} ${isOpen ? styles.open : ""}`}>
             <button
@@ -18,75 +24,48 @@ const Navbar = ({ isOpen, closeNav }) => {
                 <span className="material-symbols-rounded">close</span>
             </button>
 
-            <ul className={styles.navList}>
-                <li>
-                    <div className={styles.sectionHeader}>
-                        <a href="/">Horses</a>
-                        <button
-                            type="button"
-                            className={styles.arrowBtn}
-                            onClick={() => toggleSection("stable")}
-                            aria-label="Toggle HorseDashboard submenu"
-                        >
-                            <span className="material-symbols-rounded">
-                                {openSection === "stable" ? "expand_less" : "expand_more"}
-                            </span>
-                        </button>
-                    </div>
+            <nav aria-label="Primary navigation" className={styles.navLayout}>
+                <div className={styles.navBlock}>
+                    <p className={styles.navTitle}>Browse</p>
+                    <ul className={styles.navList}>
+                        {browseLinks.map((link) => (
+                            <li key={link.to}>
+                                <NavLink
+                                    to={link.to}
+                                    onClick={closeNav}
+                                    className={({ isActive }) =>
+                                        `${styles.navLink} ${isActive ? styles.activeLink : ""}`
+                                    }
+                                    end={link.to === "/"}
+                                >
+                                    {link.label}
+                                </NavLink>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
 
-                    {openSection === "stable" && (
-                        <ul className={styles.subList}>
-                            <li><a href="/add-horse">+ Horse</a></li>
-                        </ul>
-                    )}
-                </li>
-
-                <li>
-                    <div className={styles.sectionHeader}>
-                        <a href="/inventory">Inventory</a>
-                        <button
-                            type="button"
-                            className={styles.arrowBtn}
-                            onClick={() => toggleSection("inventory")}
-                            aria-label="Toggle Inventory submenu"
-                        >
-                            <span className="material-symbols-rounded">
-                                {openSection === "inventory" ? "expand_less" : "expand_more"}
-                            </span>
-                        </button>
-                    </div>
-
-                    {openSection === "inventory" && (
-                        <ul className={styles.subList}>
-                            <li><a href="/add-item">+ Item</a></li>
-                        </ul>
-                    )}
-                </li>
-
-                <li>
-                    <div className={styles.sectionHeader}>
-                        <a href="/documents">Documents</a>
-                        <button
-                            type="button"
-                            className={styles.arrowBtn}
-                            onClick={() => toggleSection("documents")}
-                            aria-label="Toggle Documents submenu"
-                        >
-                            <span className="material-symbols-rounded">
-                                {openSection === "documents" ? "expand_less" : "expand_more"}
-                            </span>
-                        </button>
-                    </div>
-
-                    {openSection === "documents" && (
-                        <ul className={styles.subList}>
-                            <li><a href="/add-document">+ Document</a></li>
-                        </ul>
-                    )}
-                </li>
-            </ul>
+                <div className={styles.navBlock}>
+                    <p className={styles.navTitle}>Create</p>
+                    <ul className={styles.navList}>
+                        {createLinks.map((link) => (
+                            <li key={link.to}>
+                                <NavLink
+                                    to={link.to}
+                                    onClick={closeNav}
+                                    className={({ isActive }) =>
+                                        `${styles.navLink} ${styles.navAction} ${isActive ? styles.activeLink : ""}`
+                                    }
+                                >
+                                    {link.label}
+                                </NavLink>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </nav>
         </aside>
     );
-};
+}
 
 export default Navbar;

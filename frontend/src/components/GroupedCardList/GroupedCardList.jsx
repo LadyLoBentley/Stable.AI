@@ -1,17 +1,23 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import Card from "../Card/Card.jsx";
 import styles from "./GroupedCardList.module.css";
 
 function GroupedCardList({
     title,
+    subtitle = "",
+    actionLabel = "",
+    actionTo = "",
     categoryOrder = [],
     items = [],
     groupBy,
     getKey,
     getImage,
+    getPdfUrl,
     getImageAlt,
     getTitle,
-    getDetails
+    getDetails,
+    onCardClick
 }) {
     const groupedItems = useMemo(() => {
         return items.reduce((groups, item) => {
@@ -62,7 +68,18 @@ function GroupedCardList({
         <div className={styles.groupedList}>
             <div className={styles.contentWrap}>
                 <div className="listingPageHeader">
-                    <h2 className="mainTitle">{title}</h2>
+                    <div className={styles.headerRow}>
+                        <div>
+                            <h2 className="mainTitle">{title}</h2>
+                            {subtitle && <p className={styles.headerSubtitle}>{subtitle}</p>}
+                        </div>
+
+                        {actionLabel && actionTo && (
+                            <Link to={actionTo} className={`profileActionButton ${styles.headerAction}`}>
+                                {actionLabel}
+                            </Link>
+                        )}
+                    </div>
                 </div>
 
                 {sortedGroups.map((groupName) => {
@@ -86,10 +103,12 @@ function GroupedCardList({
                                     {groupedItems[groupName].map((item) => (
                                         <Card
                                             key={getKey(item)}
-                                            image={getImage(item)}
+                                            image={getImage?.(item)}
+                                            pdfUrl={getPdfUrl?.(item)}
                                             imageAlt={getImageAlt(item)}
                                             title={getTitle(item)}
                                             details={getDetails(item)}
+                                            onClick={() => onCardClick?.(item)}
                                         />
                                     ))}
                                 </div>

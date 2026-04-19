@@ -18,9 +18,7 @@ class CareScheduleEntry(SQLModel):
     notes: Optional[str] = None
 
 class MedicalRecordRequest(SQLModel):
-    horseName: str
-    birthdate: date
-
+    horse_id: str
     vetClinic: str
     vetName: str
     vetPhone: str

@@ -5,6 +5,7 @@ from sqlmodel import SQLModel
 class HorseResponse(SQLModel):
 
     horse_id: str
+    owner_id: str
     horse_name: str
     owner_name: str
     breed: str

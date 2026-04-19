@@ -7,11 +7,19 @@ from models.inventory_items import InventoryItems
 
 from schemas.feed_request import FeedRequest
 
-def create_feed_regime(
-    session: Session,
-    submission: FeedRequest,
-) -> FeedingRegime:
 
+def get_feed_regime_by_horse_id(
+    session: Session,
+    horse_id: str,
+) -> FeedingRegime | None:
+    return session.exec(
+        select(FeedingRegime)
+        .where(FeedingRegime.horse_id == horse_id)
+        .order_by(FeedingRegime.updated_at.desc(), FeedingRegime.created_at.desc())
+    ).first()
+
+
+def _validate_feed_submission(submission: FeedRequest) -> None:
     if submission.feedHay and not submission.hayType:
         raise HTTPException(
             status_code=400,
@@ -30,25 +38,18 @@ def create_feed_regime(
             detail="foodAdditive is required when addFoodAdditive is true"
         )
 
-    # Map the horse name to the horse id found in Horse table
-    horse = session.exec(
-        select(Horse).where(Horse.horse_name == submission.horseName,
-                            Horse.birthdate == submission.birthdate)
-    ).first()
 
-    if not horse:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Horse {submission.horseName} not found"
-        )
-
-    # If horse is given hay, map the hayType with inventory label to get id
+def _resolve_feed_inventory(
+    session: Session,
+    submission: FeedRequest,
+) -> tuple[str | None, str | None, str, str | None]:
     hay_id = None
     hay_replacement_id = None
+
     if submission.feedHay:
         hay = session.exec(
             select(InventoryItems).where(
-    InventoryItems.label == submission.hayType,
+                InventoryItems.label == submission.hayType,
                 InventoryItems.category == "Hay",
             )
         ).first()
@@ -73,11 +74,10 @@ def create_feed_regime(
             raise HTTPException(
                 status_code=404,
                 detail=f"Substitute {submission.hayReplacement} not found"
-        )
+            )
 
         hay_replacement_id = hay_substitute.item_id
 
-    # Map grain type with grain label in inventory to find id
     grain = session.exec(
         select(InventoryItems).where(
             InventoryItems.label == submission.grainType,
@@ -105,30 +105,43 @@ def create_feed_regime(
 
         food_additive_id = food_additive.item_id
 
-    feeding_regime = FeedingRegime(
-        horse_id=horse.horse_id,
-        hay_id=hay_id,
-        hay_replacement_id=hay_replacement_id,
-        grain_id=grain.item_id,
-        food_additive_id=food_additive_id,
+    return hay_id, hay_replacement_id, grain.item_id, food_additive_id
 
-        feed_hay=submission.feedHay,
-        hay_amount=submission.hayAmount,
-        hay_unit="flake",
-        replacement_amount=submission.replacementAmount,
-        replacement_unit=submission.replacementUnit,
 
-        grain_amount = submission.grainAmount,
-        grain_unit = submission.grainUnit,
-        add_food_additive = submission.addFoodAdditive,
-        additive_amount = submission.additiveAmount,
-        additive_unit = submission.additiveUnit,
+def _save_feed_regime(
+    session: Session,
+    horse: Horse,
+    submission: FeedRequest,
+) -> FeedingRegime:
+    _validate_feed_submission(submission)
+    hay_id, hay_replacement_id, grain_id, food_additive_id = _resolve_feed_inventory(session, submission)
 
-        must_separate = submission.mustSeparate,
-        soak_feed = submission.soakFeed,
-        hay_net=submission.hayNet,
-        feeding_instructions = submission.feedingInstructions
-    )
+    feeding_regime = get_feed_regime_by_horse_id(session, horse.horse_id)
+
+    if not feeding_regime:
+        feeding_regime = FeedingRegime(horse_id=horse.horse_id)
+
+    feeding_regime.hay_id = hay_id
+    feeding_regime.hay_replacement_id = hay_replacement_id
+    feeding_regime.grain_id = grain_id
+    feeding_regime.food_additive_id = food_additive_id
+
+    feeding_regime.feed_hay = submission.feedHay
+    feeding_regime.hay_amount = submission.hayAmount
+    feeding_regime.hay_unit = "flake"
+    feeding_regime.replacement_amount = submission.replacementAmount
+    feeding_regime.replacement_unit = submission.replacementUnit
+
+    feeding_regime.grain_amount = submission.grainAmount
+    feeding_regime.grain_unit = submission.grainUnit
+    feeding_regime.add_food_additive = submission.addFoodAdditive
+    feeding_regime.additive_amount = submission.additiveAmount
+    feeding_regime.additive_unit = submission.additiveUnit
+
+    feeding_regime.must_separate = submission.mustSeparate
+    feeding_regime.soak_feed = submission.soakFeed
+    feeding_regime.hay_net = submission.hayNet
+    feeding_regime.feeding_instructions = submission.feedingInstructions
 
     session.add(feeding_regime)
     session.commit()
@@ -136,4 +149,33 @@ def create_feed_regime(
 
     return feeding_regime
 
+def create_feed_regime(
+    session: Session,
+    submission: FeedRequest,
+) -> FeedingRegime:
+    horse = session.exec(
+        select(Horse).where(Horse.horse_name == submission.horseName,
+                            Horse.birthdate == submission.birthdate)
+    ).first()
+
+    if not horse:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Horse {submission.horseName} not found"
+        )
+
+    return _save_feed_regime(session, horse, submission)
+
+
+def update_feed_regime(
+    session: Session,
+    horse_id: str,
+    submission: FeedRequest,
+) -> FeedingRegime:
+    horse = session.get(Horse, horse_id)
+
+    if not horse:
+        raise HTTPException(status_code=404, detail="Horse not found")
+
+    return _save_feed_regime(session, horse, submission)
 

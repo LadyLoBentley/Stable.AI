@@ -19,6 +19,8 @@ MAX_DOC_SIZE = 10 * 1024 * 1024
 # Map content types to file extensions
 CONTENT_TYPE_EXTENSION = {
     "application/pdf": "pdf",
+    "application/msword": "doc",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
     "image/jpeg": "jpg",
     "image/png": "png",
     "image/webp": "webp"

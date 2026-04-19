@@ -27,11 +27,14 @@ function UploadDocument({
         const allowedTypes = [
             "application/pdf",
             "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "image/jpeg",
+            "image/png",
+            "image/webp"
         ];
 
         if (!allowedTypes.includes(file.type)) {
-            setLocalError("Please upload a PDF or Word document.");
+            setLocalError("Please upload a PDF, Word document, or image.");
             onChange(null);
             return;
         }
@@ -77,7 +80,7 @@ function UploadDocument({
                     id={id}
                     name={id}
                     type="file"
-                    accept=".pdf,.doc,.docx"
+                    accept=".pdf,.doc,.docx,image/*"
                     onBlur={onBlur}
                     onChange={handleFileSelect}
                     className="uploadImageInput"
@@ -98,7 +101,7 @@ function UploadDocument({
                     >
                         <span className="uploadImageTitle">Choose a document</span>
                         <span className="uploadImageSubtext">
-                            PDF, DOC, or DOCX up to {maxSizeMB} MB
+                            PDF, DOC, DOCX, JPG, PNG, or WEBP up to {maxSizeMB} MB
                         </span>
                     </label>
                 ) : (

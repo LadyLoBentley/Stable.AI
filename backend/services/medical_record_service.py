@@ -16,7 +16,7 @@ from models.supplements import HorseSupplements
 from models.inventory_items import InventoryItems
 
 from schemas.medical_record_request import MedicalRecordRequest, CareScheduleEntry
-
+from schemas.medical_record_response import MedicalRecordResponse
 
 # Helper function for list of allergies and health conditions
 def normalize_name_list(names: Optional[List[str]]) -> List[str]:
@@ -277,22 +277,97 @@ def sync_horse_supplements(
             )
         )
 
+def get_horse_allergy_names(session: Session, horse_id: str) -> List[str]:
+    standard_allergies = session.exec(
+        select(Allergies.name)
+        .join(HorseAllergyRecords, HorseAllergyRecords.allergy_id == Allergies.id)
+        .where(HorseAllergyRecords.horse_id == horse_id)
+    ).all()
+
+    custom_allergies = session.exec(
+        select(HorseCustomAllergy.allergy_name)
+        .where(HorseCustomAllergy.horse_id == horse_id)
+    ).all()
+
+    return normalize_name_list([*standard_allergies, *custom_allergies])
+
+
+def get_horse_health_condition_names(session: Session, horse_id: str) -> List[str]:
+    standard_conditions = session.exec(
+        select(HealthConditions.name)
+        .join(
+            HorseHealthConditions,
+            HorseHealthConditions.health_condition_id == HealthConditions.id
+        )
+        .where(HorseHealthConditions.horse_id == horse_id)
+    ).all()
+
+    custom_conditions = session.exec(
+        select(HorseCustomHealthCondition.health_condition_name)
+        .where(HorseCustomHealthCondition.horse_id == horse_id)
+    ).all()
+
+    return normalize_name_list([*standard_conditions, *custom_conditions])
+
+
+def build_medical_record_response(
+    session: Session,
+    medical_record: MedicalRecords
+) -> MedicalRecordResponse:
+    allergies = get_horse_allergy_names(session, medical_record.horse_id)
+    medical_conditions = get_horse_health_condition_names(session, medical_record.horse_id)
+
+    return MedicalRecordResponse(
+        horse_id=medical_record.horse_id,
+
+        vet_clinic=medical_record.vet_clinic,
+        vet_name=medical_record.vet_name,
+        vet_phone=medical_record.vet_phone,
+
+        is_same_vet=medical_record.is_same_vet,
+        emergency_clinic=medical_record.emergency_clinic,
+        emergency_vet_name=medical_record.emergency_vet_name,
+        emergency_vet_phone=medical_record.emergency_vet_phone,
+        emergency_authorization=medical_record.emergency_authorization,
+        emergency_instructions=medical_record.emergency_instructions,
+
+        rabies_expiration=medical_record.rabies_expiration,
+        tetanus_expiration=medical_record.tetanus_expiration,
+        west_nile_expiration=medical_record.west_nile_expiration,
+        eee_wee_expiration=medical_record.eee_wee_expiration,
+        flu_rhino_expiration=medical_record.flu_rhino_expiration,
+        coggins_expiration=medical_record.coggins_expiration,
+
+        has_shoes=medical_record.has_shoes,
+        farrier_name=medical_record.farrier_name,
+        farrier_phone=medical_record.farrier_phone,
+        farrier_date=medical_record.farrier_date,
+        dentist_name=medical_record.dentist_name,
+        dentist_phone=medical_record.dentist_phone,
+        dental_date=medical_record.dental_date,
+        chiropractor_name=medical_record.chiropractor_name,
+        chiropractor_phone=medical_record.chiropractor_phone,
+        chiropractor_date=medical_record.chiropractor_date,
+        massage_therapist=medical_record.massage_therapist,
+        therapist_phone=medical_record.therapist_phone,
+        massage_date=medical_record.massage_date,
+        item_id=medical_record.item_id,
+        deworm_provider=medical_record.deworm_provider,
+        deworm_date=medical_record.deworm_date,
+
+        medical_notes=medical_record.medical_notes,
+
+        allergies=allergies,
+        medical_conditions=medical_conditions,
+
+        created_at=medical_record.created_at,
+        updated_at=medical_record.updated_at
+    )
+
 def add_health_record(
         session: Session,
         submission: MedicalRecordRequest,
 ) -> MedicalRecords :
-
-    # Map the horse name to the horse id found in Horse table
-    horse = session.exec(
-        select(Horse).where(Horse.horse_name == submission.horseName,
-                            Horse.birthdate == submission.birthdate)
-    ).first()
-
-    if not horse :
-        raise HTTPException(
-            status_code=404,
-            detail=f"Horse {submission.horseName} not found"
-        )
 
     dewormer_id = None
     if submission.lastDewormer:
@@ -306,11 +381,11 @@ def add_health_record(
         dewormer_id = item.item_id
 
     medical_record = session.exec(
-        select(MedicalRecords).where(MedicalRecords.horse_id == horse.horse_id)
+        select(MedicalRecords).where(MedicalRecords.horse_id == submission.horse_id)
     ).first()
 
     if medical_record:
-        medical_record.horse_id = horse.horse_id
+        medical_record.horse_id = submission.horse_id
         medical_record.item_id = dewormer_id
 
         medical_record.vet_clinic = submission.vetClinic
@@ -351,7 +426,7 @@ def add_health_record(
 
     else:
         medical_record = MedicalRecords(
-            horse_id=horse.horse_id,
+            horse_id=submission.horse_id,
             item_id=dewormer_id,
 
             vet_clinic=submission.vetClinic,
@@ -392,10 +467,10 @@ def add_health_record(
         )
 
     session.add(medical_record)
-    sync_horse_allergies(session, horse.horse_id, submission.allergies)
-    sync_horse_health_conditions(session, horse.horse_id, submission.medicalConditions)
-    sync_horse_medications(session, horse.horse_id, submission.medications)
-    sync_horse_supplements(session, horse.horse_id, submission.supplements)
+    sync_horse_allergies(session, submission.horse_id, submission.allergies)
+    sync_horse_health_conditions(session, submission.horse_id, submission.medicalConditions)
+    sync_horse_medications(session, submission.horse_id, submission.medications)
+    sync_horse_supplements(session, submission.horse_id, submission.supplements)
 
     session.commit()
     session.refresh(medical_record)
