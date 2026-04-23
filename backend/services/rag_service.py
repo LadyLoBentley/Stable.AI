@@ -1,20 +1,49 @@
+import re
+
 import ollama
 from sqlmodel import Session, select
 
 from db.database import engine
-from models.horse import Horse
-from models.owner import OwnerInfo
 from models.barn import Barn
-from models.pasture import Pasture
 from models.feeding_regime import FeedingRegime
-from models.medication import HorseMedication
-from models.supplements import HorseSupplements
+from models.horse import Horse
 from models.inventory_items import InventoryItems
-from services.medical_record_service import get_latest_medical_record, get_latest_medical_records
-
+from models.medication import HorseMedication
+from models.owner import OwnerInfo
+from models.pasture import Pasture
+from models.supplements import HorseSupplements
 from rag.config import LLM_MODEL
 from rag.prompt_builder import build_rag_prompt
 from rag.vector_store import search_documents
+from services.medical_record_service import get_latest_medical_record, get_latest_medical_records
+
+INVENTORY_CATEGORY_ALIASES = {
+    "hay": "Hay",
+    "grain": "Grain",
+    "supplement": "Supplements",
+    "supplements": "Supplements",
+    "electrolyte": "Electrolytes",
+    "electrolytes": "Electrolytes",
+    "medication": "Medication",
+    "medications": "Medication",
+    "food additive": "Food Additive",
+    "food additives": "Food Additive",
+    "additive": "Food Additive",
+    "additives": "Food Additive",
+    "grooming": "Grooming",
+    "barn supplies": "Barn Supplies",
+    "barn supply": "Barn Supplies",
+    "supplies": "Barn Supplies",
+    "supply": "Barn Supplies",
+    "dewormer": "Dewormer",
+    "dewormers": "Dewormer",
+    "treat": "Treats",
+    "treats": "Treats",
+}
+
+
+def normalize_text(value: str | None) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", str(value or "").lower()).strip()
 
 
 def get_known_horse_names() -> list[str]:
@@ -25,6 +54,211 @@ def get_known_horse_names() -> list[str]:
             for horse in horses
             if getattr(horse, "horse_name", None)
         ]
+
+
+def get_known_inventory_labels() -> list[str]:
+    with Session(engine) as session:
+        items = session.exec(select(InventoryItems)).all()
+        return [
+            item.normalized_label or normalize_text(item.label)
+            for item in items
+            if getattr(item, "label", None)
+        ]
+
+
+def question_targets_inventory(question: str) -> bool:
+    q = question.lower()
+    normalized_question = normalize_text(question)
+    known_inventory_labels = get_known_inventory_labels()
+
+    inventory_phrases = [
+        "inventory",
+        "in stock",
+        "stock status",
+        "stock level",
+        "low stock",
+        "out of stock",
+        "on hand",
+        "do we have",
+        "how much do we have",
+        "how many do we have",
+        "quantity",
+        "what items do we have",
+        "what inventory items do we have",
+        "instructions for",
+        "directions for",
+    ]
+
+    if any(phrase in q for phrase in inventory_phrases):
+        return True
+
+    if any(alias in q for alias in INVENTORY_CATEGORY_ALIASES) and any(
+        phrase in q for phrase in ["list", "show", "what", "which", "available"]
+    ):
+        return True
+
+    return any(label and label in normalized_question for label in known_inventory_labels)
+
+
+def get_inventory_category_filters(question: str) -> list[str]:
+    q = question.lower()
+    categories = []
+
+    for alias, category in INVENTORY_CATEGORY_ALIASES.items():
+        if alias in q and category not in categories:
+            categories.append(category)
+
+    return categories
+
+
+def get_matching_horses(question: str, horses: list[Horse]) -> list[Horse]:
+    q = question.lower()
+    return [
+        horse for horse in horses
+        if horse.horse_name and horse.horse_name.lower() in q
+    ]
+
+
+def get_matching_inventory_items(question: str, items: list[InventoryItems]) -> list[InventoryItems]:
+    normalized_question = normalize_text(question)
+    matches = []
+
+    for item in items:
+        normalized_label = item.normalized_label or normalize_text(item.label)
+        if normalized_label and normalized_label in normalized_question:
+            matches.append(item)
+
+    return matches
+
+
+def build_inventory_sources() -> list[dict]:
+    return [
+        {
+            "id": None,
+            "file_name": "database_inventory",
+            "chunk_index": None,
+        }
+    ]
+
+
+def format_inventory_item_summary(item: InventoryItems) -> str:
+    return (
+        f"{item.label} ({item.category}) - "
+        f"{item.quantity} {item.unit}, {item.stock_status.label}"
+    )
+
+
+def format_inventory_item_detail(item: InventoryItems) -> str:
+    return (
+        f"{item.label} is an inventory item in category {item.category}. "
+        f"Grade: {item.grade}. "
+        f"Quantity on hand: {item.quantity} {item.unit}. "
+        f"Stock status: {item.stock_status.label}. "
+        f"Instructions: {item.instructions}"
+    )
+
+
+def try_generate_direct_inventory_answer(question: str) -> dict | None:
+    q = question.lower()
+    asks_instructions = any(phrase in q for phrase in [
+        "instruction",
+        "instructions",
+        "directions",
+        "how do i use",
+        "how should i use",
+    ])
+    asks_stock = any(phrase in q for phrase in [
+        "in stock",
+        "stock status",
+        "stock level",
+        "low stock",
+        "out of stock",
+        "on hand",
+        "do we have",
+        "how much",
+        "how many",
+        "quantity",
+        "available",
+    ])
+    asks_list = any(phrase in q for phrase in [
+        "what inventory",
+        "what items",
+        "what do we have",
+        "which items",
+        "list",
+        "show",
+    ])
+
+    with Session(engine) as session:
+        items = session.exec(select(InventoryItems)).all()
+        matched_items = get_matching_inventory_items(question, items)
+        category_filters = get_inventory_category_filters(question)
+
+        if matched_items:
+            if len(matched_items) == 1:
+                item = matched_items[0]
+
+                if asks_instructions and not asks_stock:
+                    answer = f"{item.label} instructions on file: {item.instructions}"
+                elif asks_stock:
+                    if item.quantity > 0:
+                        answer = (
+                            f"Yes. {item.label} is {item.stock_status.label.lower()} with "
+                            f"{item.quantity} {item.unit} on hand."
+                        )
+                    else:
+                        answer = (
+                            f"No. {item.label} is out of stock with "
+                            f"{item.quantity} {item.unit} on hand."
+                        )
+                else:
+                    answer = format_inventory_item_detail(item)
+
+                return {
+                    "question": question,
+                    "answer": answer,
+                    "sources": build_inventory_sources(),
+                    "horse_links": [],
+                }
+
+            return {
+                "question": question,
+                "answer": "Matching inventory items: " + "; ".join(
+                    format_inventory_item_summary(item) for item in matched_items[:8]
+                ),
+                "sources": build_inventory_sources(),
+                "horse_links": [],
+            }
+
+        filtered_items = items
+        if category_filters:
+            filtered_items = [
+                item for item in filtered_items
+                if item.category in category_filters
+            ]
+
+        if "low stock" in q:
+            filtered_items = [
+                item for item in filtered_items
+                if item.stock_status.label == "Low Stock"
+            ]
+        elif "out of stock" in q:
+            filtered_items = [
+                item for item in filtered_items
+                if item.stock_status.label == "Out of Stock"
+            ]
+
+        if filtered_items and (category_filters or asks_list or "low stock" in q or "out of stock" in q):
+            return {
+                "question": question,
+                "answer": "Inventory items on file: " + "; ".join(
+                    format_inventory_item_summary(item) for item in filtered_items[:12]
+                ),
+                "sources": build_inventory_sources(),
+                "horse_links": [],
+            }
+
+    return None
 
 
 def detect_category(question: str) -> str:
@@ -41,16 +275,20 @@ def detect_category(question: str) -> str:
     ]):
         return "help"
 
+    if any(name in q for name in known_horse_names):
+        return "horse"
+
     if any(word in q for word in ["owner", "owners", "contact", "contacts"]):
         return "owner"
+
+    if question_targets_inventory(question):
+        return "inventory"
 
     if any(word in q for word in ["medical", "vet", "vaccine", "vaccines", "farrier", "dentist"]):
         return "medical"
 
-    if any(name in q for name in known_horse_names):
-        return "horse"
-
-    if any(word in q for word in ["horse", "horses",
+    if any(word in q for word in [
+        "horse", "horses",
         "feeding", "feed", "supplement", "supplements",
         "medication", "medications",
         "temperament", "turnout", "past injury", "injury", "injuries",
@@ -92,6 +330,21 @@ def detect_detail_level(question: str, category: str) -> str:
     ]):
         return "detailed"
 
+    if category == "inventory" and any(phrase in q for phrase in [
+        "instructions",
+        "instruction",
+        "directions",
+        "how much",
+        "how many",
+        "quantity",
+        "stock",
+        "do we have",
+        "tell me about",
+        "details on",
+        "information on"
+    ]):
+        return "detailed"
+
     if any(phrase in q for phrase in [
         "tell me about",
         "what do we have on",
@@ -111,6 +364,8 @@ def detect_detail_level(question: str, category: str) -> str:
         "what owner information",
         "what medical records",
         "what records are on file",
+        "what inventory items do we have",
+        "what items do we have",
     ]):
         return "summary"
 
@@ -123,62 +378,87 @@ def build_comprehensive_horse_context(horse: Horse, session: Session) -> str:
         owner = session.exec(select(OwnerInfo).where(OwnerInfo.owner_id == horse.owner_id)).first()
 
     medical = get_latest_medical_record(session, horse.horse_id)
-    
+
     feed = session.exec(select(FeedingRegime).where(FeedingRegime.horse_id == horse.horse_id)).first()
     feed_str = "None"
     if feed:
         items = []
-        if getattr(feed, 'hay_id', None):
+        if getattr(feed, "hay_id", None):
             inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == feed.hay_id)).first()
-            items.append(f"Hay: {inv.label if inv else 'Unknown'} (Instructions: {inv.instructions if inv else 'None'}) Amount: {feed.hay_amount} {feed.hay_unit}")
-        if getattr(feed, 'grain_id', None):
+            items.append(
+                f"Hay: {inv.label if inv else 'Unknown'} "
+                f"(Instructions: {inv.instructions if inv else 'None'}) "
+                f"Amount: {feed.hay_amount} {feed.hay_unit}"
+            )
+        if getattr(feed, "grain_id", None):
             inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == feed.grain_id)).first()
-            items.append(f"Grain: {inv.label if inv else 'Unknown'} (Instructions: {inv.instructions if inv else 'None'}) Amount: {feed.grain_amount} {feed.grain_unit}")
-        if getattr(feed, 'food_additive_id', None):
+            items.append(
+                f"Grain: {inv.label if inv else 'Unknown'} "
+                f"(Instructions: {inv.instructions if inv else 'None'}) "
+                f"Amount: {feed.grain_amount} {feed.grain_unit}"
+            )
+        if getattr(feed, "food_additive_id", None):
             inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == feed.food_additive_id)).first()
-            items.append(f"Additive: {inv.label if inv else 'Unknown'} (Instructions: {inv.instructions if inv else 'None'}) Amount: {feed.additive_amount} {feed.additive_unit}")
+            items.append(
+                f"Additive: {inv.label if inv else 'Unknown'} "
+                f"(Instructions: {inv.instructions if inv else 'None'}) "
+                f"Amount: {feed.additive_amount} {feed.additive_unit}"
+            )
         feed_str = "; ".join(items) + f" | Notes: {feed.feeding_instructions}"
-    
+
     meds = session.exec(select(HorseMedication).where(HorseMedication.horse_id == horse.horse_id)).all()
     meds_str = "None"
     if meds:
-        m_list = []
-        for m in meds:
-            inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == m.item_id)).first()
-            m_list.append(f"{inv.label if inv else 'Unknown'} (Instructions: {inv.instructions if inv else 'None'}) - {m.dosage_amount} {m.dosage_unit} {m.frequency_type}")
-        meds_str = "; ".join(m_list)
-        
+        medication_list = []
+        for medication in meds:
+            inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == medication.item_id)).first()
+            medication_list.append(
+                f"{inv.label if inv else 'Unknown'} "
+                f"(Instructions: {inv.instructions if inv else 'None'}) - "
+                f"{medication.dosage_amount} {medication.dosage_unit} {medication.frequency_type}"
+            )
+        meds_str = "; ".join(medication_list)
+
     supps = session.exec(select(HorseSupplements).where(HorseSupplements.horse_id == horse.horse_id)).all()
     supps_str = "None"
     if supps:
-        s_list = []
-        for s in supps:
-            inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == s.item_id)).first()
-            s_list.append(f"{inv.label if inv else 'Unknown'} (Instructions: {inv.instructions if inv else 'None'}) - {s.dosage_amount} {s.dosage_unit} {s.frequency_type}")
-        supps_str = "; ".join(s_list)
+        supplement_list = []
+        for supplement in supps:
+            inv = session.exec(select(InventoryItems).where(InventoryItems.item_id == supplement.item_id)).first()
+            supplement_list.append(
+                f"{inv.label if inv else 'Unknown'} "
+                f"(Instructions: {inv.instructions if inv else 'None'}) - "
+                f"{supplement.dosage_amount} {supplement.dosage_unit} {supplement.frequency_type}"
+            )
+        supps_str = "; ".join(supplement_list)
 
     full_text = (
-        f"Comprehensive Profile for {horse.horse_name}:\\n"
-        f"- Basic Info: sex={horse.sex}, birthdate={horse.birthdate}, height={horse.height}, weight={horse.weight}, location={horse.location_type}, turnout={horse.turnout_type}, stall_id={horse.stall_id}, temperament={horse.temperament}, notes={horse.notes}\\n"
-        f"- Behavior/Safety: bite={horse.may_bite}, kick={horse.may_kick}, difficult_to_catch={horse.difficult_to_catch}, herd_dominant={horse.herd_dominant}, sedation_required={horse.sedation_required}, food_aggressive={horse.food_aggressive}, needs_experienced_handler={horse.requires_experienced_handler}\\n"
+        f"Comprehensive Profile for {horse.horse_name}:\n"
+        f"- Basic Info: sex={horse.sex}, birthdate={horse.birthdate}, height={horse.height}, "
+        f"weight={horse.weight}, location={horse.location_type}, turnout={horse.turnout_type}, "
+        f"stall_id={horse.stall_id}, temperament={horse.temperament}, notes={horse.notes}\n"
+        f"- Behavior/Safety: bite={horse.may_bite}, kick={horse.may_kick}, "
+        f"difficult_to_catch={horse.difficult_to_catch}, herd_dominant={horse.herd_dominant}, "
+        f"sedation_required={horse.sedation_required}, food_aggressive={horse.food_aggressive}, "
+        f"needs_experienced_handler={horse.requires_experienced_handler}\n"
     )
     if owner:
-        full_text += f"- Owner Info: {owner.owner_name}, phone={owner.owner_phone}, email={owner.owner_email}, emergency_contact={owner.emergency_contact_name} ({owner.emergency_contact_phone})\\n"
+        full_text += (
+            f"- Owner Info: {owner.owner_name}, phone={owner.owner_phone}, "
+            f"email={owner.owner_email}, emergency_contact={owner.emergency_contact_name} "
+            f"({owner.emergency_contact_phone})\n"
+        )
     if medical:
-        full_text += f"- Medical Info: vet={medical.vet_name} ({medical.vet_phone}), farrier={medical.farrier_name}, coggins_exp={medical.coggins_expiration}, rabies_exp={medical.rabies_expiration}, notes={medical.medical_notes}\\n"
-    
-    full_text += f"- Feeding Regime: {feed_str}\\n"
-    full_text += f"- Medications: {meds_str}\\n"
+        full_text += (
+            f"- Medical Info: vet={medical.vet_name} ({medical.vet_phone}), "
+            f"farrier={medical.farrier_name}, coggins_exp={medical.coggins_expiration}, "
+            f"rabies_exp={medical.rabies_expiration}, notes={medical.medical_notes}\n"
+        )
+
+    full_text += f"- Feeding Regime: {feed_str}\n"
+    full_text += f"- Medications: {meds_str}\n"
     full_text += f"- Supplements: {supps_str}"
     return full_text
-
-def get_matching_horses(question: str, horses: list[Horse]) -> list[Horse]:
-    q = question.lower()
-    matches = [
-        horse for horse in horses
-        if horse.horse_name and horse.horse_name.lower() in q
-    ]
-    return matches
 
 
 def get_structured_context(question: str) -> list[dict]:
@@ -221,8 +501,6 @@ def get_structured_context(question: str) -> list[dict]:
 
         elif category == "owner":
             owners = session.exec(select(OwnerInfo)).all()
-
-            # If a horse name is mentioned, try to find that horse's owner
             horses = session.exec(select(Horse)).all()
             matching_horses = get_matching_horses(question, horses)
 
@@ -349,8 +627,59 @@ def get_structured_context(question: str) -> list[dict]:
                         "metadata": {
                             "file_name": "database_medical_records",
                             "source_type": "structured_db"
-                    }
-                })
+                        }
+                    })
+
+        elif category == "inventory":
+            items = session.exec(select(InventoryItems)).all()
+            matched_items = get_matching_inventory_items(question, items)
+            category_filters = get_inventory_category_filters(question)
+
+            if matched_items:
+                items_to_use = matched_items[:5]
+                inventory_detail_level = "detailed"
+            elif category_filters:
+                items_to_use = [
+                    item for item in items
+                    if item.category in category_filters
+                ][:10]
+                inventory_detail_level = detail_level
+            else:
+                items_to_use = items[:10]
+                inventory_detail_level = detail_level
+
+            for item in items_to_use:
+                if inventory_detail_level == "summary":
+                    structured_chunks.append({
+                        "text": (
+                            f"Inventory summary: "
+                            f"label={item.label}, "
+                            f"category={item.category}, "
+                            f"quantity={item.quantity}, "
+                            f"stock_status={item.stock_status.label}"
+                        ),
+                        "metadata": {
+                            "file_name": "database_inventory",
+                            "source_type": "structured_db"
+                        }
+                    })
+                else:
+                    structured_chunks.append({
+                        "text": (
+                            f"Inventory item: "
+                            f"label={item.label}, "
+                            f"category={item.category}, "
+                            f"grade={item.grade}, "
+                            f"quantity={item.quantity}, "
+                            f"unit={item.unit}, "
+                            f"stock_status={item.stock_status.label}, "
+                            f"instructions={item.instructions}"
+                        ),
+                        "metadata": {
+                            "file_name": "database_inventory",
+                            "source_type": "structured_db"
+                        }
+                    })
 
         elif category == "barn":
             barns = session.exec(select(Barn)).all()
@@ -388,18 +717,13 @@ def get_structured_context(question: str) -> list[dict]:
 
 
 def _get_horse_links(question: str) -> list[dict]:
-    """
-    If the question mentions a horse by name, return a list of
-    {name, horse_id} dicts so the frontend can render profile links.
-    Returns an empty list when no horse name is detected.
-    """
     with Session(engine) as session:
         horses = session.exec(select(Horse)).all()
         matched = get_matching_horses(question, horses)
         return [
-            {"name": h.horse_name, "horse_id": str(h.horse_id)}
-            for h in matched
-            if h.horse_name and h.horse_id
+            {"name": horse.horse_name, "horse_id": str(horse.horse_id)}
+            for horse in matched
+            if horse.horse_name and horse.horse_id
         ]
 
 
@@ -410,13 +734,19 @@ def generate_rag_answer(question: str, top_k: int = 5) -> dict:
         return {
             "question": question,
             "answer": (
-                "Yes. You can ask about the horses in the system, owner information, "
-                "medical records, feeding or barn rules, or ask about a specific horse by name. "
-                "For medical, treatment, or legal decisions, please confirm with Ava, barn management, or the veterinarian."
+                "Yes. You can ask about horses in the system, owner information, "
+                "medical records, feeding details, inventory items, stock levels, "
+                "or ask about a specific horse by name. For medical, treatment, or "
+                "legal decisions, please confirm with Ava, barn management, or the veterinarian."
             ),
             "sources": [],
             "horse_links": [],
         }
+
+    if category == "inventory":
+        direct_inventory_answer = try_generate_direct_inventory_answer(question)
+        if direct_inventory_answer is not None:
+            return direct_inventory_answer
 
     structured_matches = get_structured_context(question)
 
@@ -426,12 +756,6 @@ def generate_rag_answer(question: str, top_k: int = 5) -> dict:
 
     all_context = structured_matches + vector_matches
 
-    # Hard stop: if no context was retrieved from either the database or the
-    # vector store, return a canned "not found" response immediately.
-    # Never call the LLM with an empty context — that is the root cause of
-    # hallucinated answers like calculated ages or invented facts.
-    # Horse profile links are ONLY included in this fallback path so they
-    # never appear alongside a successful answer.
     if not all_context:
         horse_links = _get_horse_links(question)
         return {
